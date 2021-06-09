@@ -20,15 +20,21 @@ export class PersonService {
   async getPerson(id: number) {
     const userValidate: any = await this.userRepository.createQueryBuilder('user')
       .select(['user.id', 'user.email'])
-      .addSelect(['person.id', 'person.name', 'person.lastname', 'person.phone', 'person.dateBirth', 'person.gender'])
-      .innerJoin('user.person', 'person')
+      .innerJoinAndSelect('user.person', 'person')
       .where("user.state = 'active' AND user.id = :id", { id })
       .getOne()
 
     if (!userValidate)
       return { error: 'USER_INACTIVE', message: 'El usuario se encuentra inactivo.' }
 
-    return userValidate
+    delete userValidate.person.id
+
+    const response = {
+      email: userValidate.email,
+      ...userValidate.person
+    }
+
+    return response
   }
 
   async updatePerson(id: number, body: UpdatePersonDto) {
