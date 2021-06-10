@@ -1,5 +1,6 @@
-import { Column, Entity, PrimaryGeneratedColumn, OneToMany, CreateDateColumn, UpdateDateColumn, ManyToOne } from "typeorm";
+import { Column, Entity, PrimaryGeneratedColumn, OneToMany, CreateDateColumn, UpdateDateColumn, ManyToOne, ManyToMany } from "typeorm";
 import { Interests } from "../client/interests.entity";
+import { Course } from "./course.entity";
 
 @Entity("category", { schema: "academy" })
 export class Category {
@@ -13,6 +14,12 @@ export class Category {
   @Column("character varying", { nullable: true })
   description: string
 
+  @Column("character varying", { nullable: true })
+  image: string
+
+  @Column("character varying", { nullable: true })
+  color: string
+
   @Column('boolean', { nullable: true })
   principal: boolean
 
@@ -24,4 +31,7 @@ export class Category {
 
   @OneToMany(() => Interests, interests => interests.category)
   interests: Interests[]
+
+  @ManyToMany(() => Course, course => course.categories)
+  courses: Course[]
 }
