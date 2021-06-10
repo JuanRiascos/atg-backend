@@ -21,10 +21,6 @@ export class NotificationService {
       await this.sendPushNotification(data)
   }
 
-  async sendSMSNotification({ }) {
-
-  }
-
   async sendPushNotification({ }) {
 
   }

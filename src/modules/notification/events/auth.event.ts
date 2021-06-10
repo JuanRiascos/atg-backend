@@ -82,7 +82,9 @@ export class AuthEvent extends AbstractEvent {
         email: user.email,
         name: user.person?.name,
         lastname: user.person?.lastname,
-        redirect: `${this.configService.get('app.appHostClient')}/auth/new-password?code=${user.code}`
+        redirect: user.roles.includes('admin') ?
+        `${this.configService.get('app.appHostAdmin')}/new-password?code=${user.code}` :
+        `${this.configService.get('app.appHostClient')}/new-password?code=${user.code}`
       }
     })
 

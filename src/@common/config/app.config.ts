@@ -5,5 +5,6 @@ export default registerAs('app', () => ({
   prefix: process.env.APP_URL_PREFIX,
   hostServer: process.env.NODE_ENV === 'local' ?
     `${process.env.APP_HOST_SERVER}:${+process.env.PORT}` : process.env.APP_HOST_SERVER,
-  hostClient: process.env.APP_HOST_CLIENT
+  hostClient: process.env.APP_HOST_CLIENT,
+  hostAdmin: process.env.APP_HOST_ADMIN
 }))

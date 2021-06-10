@@ -14,6 +14,14 @@ const ADMINS = [
     phone: "3144627922",
     password: "12345",
     superAdmin: true
+  },
+  {
+    name: "Fabian",
+    lastname: "Claros",
+    email: "yeisonclaros99@gmail.com",
+    phone: "3165425745",
+    password: "12345",
+    superAdmin: true
   }
 ]
 

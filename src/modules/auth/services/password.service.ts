@@ -13,14 +13,17 @@ export class PasswordService {
   constructor(
     @InjectRepository(User) private readonly userRepository: Repository<User>,
     @Inject('CryptoService') private cryptoService
-  ){}
+  ) { }
 
   async forgotPassword(email: string) {
-    const user = await this.userRepository.findOne({ 
-      select: ['id', 'email'],
-      relations: ['person'],
-      where: { email } 
-    });
+    let user: any = await this.userRepository.createQueryBuilder('user')
+      .innerJoinAndSelect('user.person', 'person')
+      .innerJoinAndSelect('user.roles', 'roles')
+      .innerJoinAndSelect('roles.role', 'role')
+      .where('user.email = :email', { email })
+      .getOne()
+
+    user.roles = user.roles.map(item => item.role.key)
 
     if (!user)
       return { error: 'USER_NOT_EXIST', message: 'El usuario no existe' }
@@ -58,7 +61,7 @@ export class PasswordService {
       .getOne()
 
     if (!user)
-    return { error: 'USER_INACTIVE', message: 'El usuario no existe.' }
+      return { error: 'USER_INACTIVE', message: 'El usuario no existe.' }
 
     if (user.state === States.Inactive)
       return { error: 'USER_INACTIVE', message: 'El usuario esta inactivo.' }
