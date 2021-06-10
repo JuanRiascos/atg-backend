@@ -1,6 +1,5 @@
-import { Column, Entity, PrimaryGeneratedColumn, OneToMany, CreateDateColumn, UpdateDateColumn } from "typeorm";
-
-import { Video } from "./video.entity";
+import { Column, Entity, PrimaryGeneratedColumn, OneToMany, CreateDateColumn, UpdateDateColumn, ManyToOne } from "typeorm";
+import { Interests } from "../client/interests.entity";
 
 @Entity("category", { schema: "academy" })
 export class Category {
@@ -8,18 +7,21 @@ export class Category {
   @PrimaryGeneratedColumn({ type: "bigint" })
   id: number;
 
-  @Column("simple-json", { nullable: true })
-  title: any;
+  @Column("character varying", { nullable: true })
+  title: string
 
-  @Column("text", { nullable: true })
-  image: string;
+  @Column("character varying", { nullable: true })
+  description: string
 
-  @OneToMany(type => Video, video => video.category)
-  videos: Video[];
-  
-  @CreateDateColumn({ type: "timestamp", name: "created_at" })
-  createdAt: Date;
+  @Column('boolean', { nullable: true })
+  principal: boolean
 
-  @UpdateDateColumn({ type: "timestamp", name: "updated_at" })
-  updatedAt: Date;
+  @ManyToOne(() => Category, category => category.childs, { nullable: true, onUpdate: 'CASCADE', onDelete: 'CASCADE' })
+  parent: Category;
+
+  @OneToMany(() => Category, category => category.parent, { nullable: true, onUpdate: 'CASCADE', onDelete: 'CASCADE' })
+  childs: Category[];
+
+  @OneToMany(() => Interests, interests => interests.category)
+  interests: Interests[]
 }
