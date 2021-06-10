@@ -15,15 +15,7 @@ import { UserRole } from "./user-role.entity";
 import { UserPermission } from "./user-permission.entity";
 import { States } from "../@enums/index.enum";
 import { NotificationUser } from "../notification/notification-user.entity";
-import { EventTypeUser } from "../notification/event-type-user.entity";
 import { Client } from "../client/client.entity";
-import { Course } from "../academy/course.entity";
-import { Temary } from "../academy/temary.entity";
-import { Video } from "../academy/video.entity";
-import { UserQuestion } from "../academy/user-question.entity";
-import { UserLessonTry } from "../academy/user-lesson-try.entity";
-import { UserTemaryTry } from "../academy/user-temary-try.entity";
-
 @Entity("user", { schema: 'user' })
 @Unique(["email"])
 export class User {
@@ -63,26 +55,5 @@ export class User {
 
   @OneToMany(() => NotificationUser, notifcationUser => notifcationUser.user)
   notifications: Notification[]
-
-  @OneToMany(() => EventTypeUser, eventTypeUser => eventTypeUser.user)
-  eventsType: EventTypeUser[]
-
-  @ManyToMany(type => Course, course => course.users)
-  courses: Course[];
-
-  @ManyToMany(type => Temary, temary => temary.users)
-  temarys: Temary[];
-
-  @ManyToMany(type => Video, video => video.users)
-  videos: Video[];
-
-  @OneToMany(type => UserQuestion, userQuestion => userQuestion.user, { onUpdate: "CASCADE", onDelete: "CASCADE" })
-  userQuestions: UserQuestion[];
-
-  @OneToMany(type => UserLessonTry, userLessonTry => userLessonTry.user, { onUpdate: "CASCADE", onDelete: "CASCADE" })
-  userLessonTry: UserLessonTry[];
-
-  @OneToMany(type => UserTemaryTry, userTemaryTry => userTemaryTry.user, { onUpdate: "CASCADE", onDelete: "CASCADE" })
-  userTemaryTry: UserTemaryTry[];
 
 }

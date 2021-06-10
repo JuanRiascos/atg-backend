@@ -10,7 +10,9 @@ import {
 import { States } from "../@enums/index.enum";
 import { User } from "../user/user.entity";
 import { Favorite } from "./favorite.entity";
+import { Interests } from "./interests.entity";
 import { PaymentHistory } from "./payment-history.entity";
+import { StatusNotification } from "./status-notification.entity";
 
 @Entity("client", { schema: 'client' })
 export class Client {
@@ -29,10 +31,21 @@ export class Client {
   @JoinColumn({ name: 'fk_user' })
   user: User;
 
+  @OneToOne(
+    () => User,
+    user => user.client,
+    { nullable: true, onDelete: 'CASCADE', onUpdate: 'CASCADE' }
+  )
+  @JoinColumn({ name: 'fk_status_notification' })
+  statusNotification: StatusNotification;
+
   @OneToMany(() => Favorite, favorite => favorite.client)
   favorites: Favorite[]
 
   @OneToMany(() => PaymentHistory, paymentHistory => paymentHistory.client)
   payments: PaymentHistory[]
+
+  @OneToMany(() => Interests, interests => interests.client)
+  interests: Interests[]
 
 }
