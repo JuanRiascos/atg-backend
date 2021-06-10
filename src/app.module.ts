@@ -14,6 +14,7 @@ import { AuthModule } from './modules/auth/auth.module';
 import { UserModule } from './modules/user/user.module';
 import { NotificationModule } from './modules/notification/notification.module';
 import { CategoryModule } from './modules/category/category.module';
+import { ClientModule } from './modules/client/client.module';
 
 @Module({
   imports: [
@@ -31,7 +32,8 @@ import { CategoryModule } from './modules/category/category.module';
     AuthModule,
     UserModule,
     NotificationModule,
-    CategoryModule
+    CategoryModule,
+    ClientModule
   ],
   controllers: [AppController],
   providers: [AppService],
