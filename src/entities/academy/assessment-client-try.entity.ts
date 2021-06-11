@@ -1,19 +1,19 @@
 import { Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { Client } from "../client/client.entity";
+import { Assessment } from "./assessment.entity";
 import { ClientQuestion } from "./client-question.entity";
-import { Lesson } from "./lesson.entity";
 
-@Entity('client_lesson_try', { schema: 'academy' })
-export class ClientLessonTry {
+@Entity('assessment_client_try', { schema: 'academy' })
+export class AssessmentClientTry {
 
   @PrimaryGeneratedColumn({ type: 'bigint' })
   id: number
 
-  @ManyToOne(() => Lesson, lesson => lesson.clientTrys)
-  @JoinColumn({ name: 'fk_lesson' })
-  lesson: Lesson
+  @ManyToOne(() => Assessment, assessment => assessment.trys)
+  @JoinColumn({ name: 'fk_assessment' })
+  assessment: Assessment
 
-  @ManyToOne(() => Client, client => client.clientTrys)
+  @ManyToOne(() => Client, client => client.trys)
   @JoinColumn({ name: 'fk_client' })
   client: Client
 

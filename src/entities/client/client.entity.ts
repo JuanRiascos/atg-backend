@@ -8,7 +8,7 @@ import {
 } from "typeorm";
 
 import { States } from "../@enums/index.enum";
-import { ClientLessonTry } from "../academy/client-lesson-try.entity";
+import { AssessmentClientTry } from "../academy/assessment-client-try.entity";
 import { ClientQuestion } from "../academy/client-question.entity";
 import { User } from "../user/user.entity";
 import { Favorite } from "./favorite.entity";
@@ -50,9 +50,9 @@ export class Client {
   @OneToMany(() => Interests, interests => interests.client)
   interests: Interests[]
 
-  @OneToMany(() => ClientLessonTry, clientTry => clientTry.client)
-  clientTrys: ClientLessonTry[]
-
   @OneToMany(() => ClientQuestion, clientQuestion => clientQuestion.client)
   clientQuestion: ClientQuestion[]
+
+  @OneToMany(() => AssessmentClientTry, trys => trys.client)
+  trys: AssessmentClientTry[]
 }

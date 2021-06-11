@@ -20,3 +20,9 @@ export enum Events {
   Signup = 'signup',
   ForgotPassword = 'forgot_password'
 }
+
+export enum TypesExtraReps {
+  Glossary = 'glosary',
+  Resource = 'resource',
+  Template = 'template'
+}

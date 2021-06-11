@@ -1,5 +1,7 @@
-import { Column, Entity, ManyToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, ManyToMany, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Assessment } from "./assessment.entity";
 import { Course } from "./course.entity";
+import { ExtraReps } from "./extra-reps.entity";
 import { Video } from "./video.entity";
 
 @Entity('plan', { schema: 'academy' })
@@ -25,4 +27,10 @@ export class Plan {
 
   @ManyToMany(() => Video, video => video.plans)
   videos: Video[]
+
+  @ManyToMany(() => ExtraReps, extraReps => extraReps.plans)
+  extraReps: ExtraReps[]
+
+  @ManyToMany(() => Assessment, assessment => assessment.plans)
+  assessments: Assessment[]
 }

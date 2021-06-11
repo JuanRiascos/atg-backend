@@ -1,8 +1,9 @@
 import { Column, CreateDateColumn, Entity, JoinTable, ManyToMany, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 import { States } from "../@enums/index.enum";
-import { Category } from "./category.entity";
-import { Lesson } from "./lesson.entity";
+import { Assessment } from "./assessment.entity";
+import { ExtraReps } from "./extra-reps.entity";
 import { Plan } from "./plan.entity";
+import { Video } from "./video.entity";
 
 @Entity('course', { schema: 'academy' })
 export class Course {
@@ -17,10 +18,13 @@ export class Course {
   title: string
 
   @Column('character varying')
-  description: string
+  subtitle: string
 
-  @Column('float')
-  hours: number
+  @Column('boolean', { nullable: true })
+  cover: boolean
+
+  @Column('character varying', { nullable: true })
+  color: string
 
   @Column('character varying', { nullable: true })
   image: string
@@ -31,14 +35,16 @@ export class Course {
   @UpdateDateColumn({ type: "timestamp", name: "updated_at" })
   updatedAt: Date;
 
-  @ManyToMany(() => Category, category => category.courses)
-  @JoinTable({ name: 'course_categories' })
-  categories: Category[]
-
-  @OneToMany(() => Lesson, lesson => lesson.course)
-  lessons: Lesson[]
-
   @ManyToMany(() => Plan, plan => plan.courses)
   @JoinTable({ name: 'course_plans' })
   plans: Plan[]
+
+  @OneToMany(() => Video, video => video.course)
+  videos: Video[]
+
+  @OneToMany(() => ExtraReps, extraReps => extraReps.course)
+  extraReps: ExtraReps[]
+
+  @OneToMany(() => Assessment, assessment => assessment.course)
+  assessments: Assessment[]
 }

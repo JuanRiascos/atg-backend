@@ -1,6 +1,5 @@
-import { Column, Entity, PrimaryGeneratedColumn, OneToMany, CreateDateColumn, UpdateDateColumn, ManyToOne, ManyToMany } from "typeorm";
+import { Column, Entity, PrimaryGeneratedColumn, OneToMany, ManyToOne } from "typeorm";
 import { Interests } from "../client/interests.entity";
-import { Course } from "./course.entity";
 
 @Entity("category", { schema: "academy" })
 export class Category {
@@ -31,7 +30,4 @@ export class Category {
 
   @OneToMany(() => Interests, interests => interests.category)
   interests: Interests[]
-
-  @ManyToMany(() => Course, course => course.categories)
-  courses: Course[]
 }

@@ -1,5 +1,6 @@
-import { Column, Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
-import { Lesson } from "./lesson.entity";
+import { Column, Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne, OneToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Assessment } from "./assessment.entity";
+import { Course } from "./course.entity";
 import { Plan } from "./plan.entity";
 
 @Entity('video', { schema: 'academy' })
@@ -9,7 +10,7 @@ export class Video {
   id: number
 
   @Column('character varying')
-  name: string
+  title: string
 
   @Column('int', { nullable: true })
   duration: number
@@ -20,11 +21,17 @@ export class Video {
   @Column('character varying', { nullable: true })
   url: string
 
-  @ManyToOne(() => Lesson, lesson => lesson.files)
-  @JoinColumn({ name: 'fk_lesson' })
-  lesson: Lesson
+  @Column('character varying', { nullable: true })
+  tag: string
 
   @ManyToMany(() => Plan, plan => plan.courses)
   @JoinTable({ name: 'video_plans' })
   plans: Plan[]
+
+  @ManyToOne(() => Course, course => course.videos)
+  @JoinColumn({ name: 'fk_course' })
+  course: Course
+
+  @OneToOne(() => Assessment, assessment => assessment.video)
+  assessment: Assessment
 }

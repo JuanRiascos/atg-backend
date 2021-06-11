@@ -1,7 +1,7 @@
 import { Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 import { Client } from "../client/client.entity";
 import { Answer } from "./answer.entity";
-import { ClientLessonTry } from "./client-lesson-try.entity";
+import { AssessmentClientTry } from "./assessment-client-try.entity";
 import { Question } from "./question.entity";
 
 @Entity('client_question', { schema: 'academy' })
@@ -22,7 +22,8 @@ export class ClientQuestion {
   @JoinColumn({ name: 'fk_answer' })
   answer: Answer
 
-  @ManyToOne(() => ClientLessonTry, tryLesson => tryLesson.clientQuestion)
+  @ManyToOne(() => AssessmentClientTry, tryClient => tryClient.clientQuestion)
   @JoinColumn({ name: 'fk_try' })
-  try: ClientLessonTry
+  try: AssessmentClientTry
+
 }

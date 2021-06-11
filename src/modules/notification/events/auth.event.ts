@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from "@nestjs/common";
+import { Injectable } from "@nestjs/common";
 import { OnEvent } from '@nestjs/event-emitter'
 import { Templates } from "src/@common/services/sendgrid.service";
 import { Events, TypesNotifications } from "src/entities/@enums/index.enum";
@@ -9,9 +9,8 @@ export class AuthEvent extends AbstractEvent {
 
   @OnEvent(Events.SignupAdmin)
   async signupAdmin({ user }) {
-
     const event = await this.eventRepository.save({
-      type: Events.SignupAdmin,
+      eventType: Events.SignupAdmin,
       description: `Se registro un nuevo usuario administrador ${user.email}`
     })
 
@@ -39,11 +38,11 @@ export class AuthEvent extends AbstractEvent {
   }
 
   @OnEvent(Events.Signup)
-  async signupComensal({ user }) {
+  async signup({ user }) {
 
     const event = await this.eventRepository.save({
-      type: Events.Signup,
-      description: `Se registro un nuevo comensal ${user.email}`
+      eventType: Events.Signup,
+      description: `Se registro un nuevo cliente ${user.email}`
     })
 
     const notification = await this.notificationRepository.save({
@@ -71,8 +70,9 @@ export class AuthEvent extends AbstractEvent {
   @OnEvent(Events.ForgotPassword)
   async forgotPassword({ user }) {
     const event = await this.eventRepository.save({
-      type: Events.ForgotPassword,
-      description: `Se solicitio una recuperación de contraseña ${user.email}`
+      eventType: Events.ForgotPassword,
+      description: `Se solicitio una recuperación de contraseña ${user.email}`,
+
     })
 
     const notification = await this.notificationRepository.save({
@@ -83,8 +83,8 @@ export class AuthEvent extends AbstractEvent {
         name: user.person?.name,
         lastname: user.person?.lastname,
         redirect: user.roles.includes('admin') ?
-        `${this.configService.get('app.appHostAdmin')}/new-password?code=${user.code}` :
-        `${this.configService.get('app.appHostClient')}/new-password?code=${user.code}`
+          `${this.configService.get('app.appHostAdmin')}/new-password?code=${user.code}` :
+          `${this.configService.get('app.appHostClient')}/new-password?code=${user.code}`
       }
     })
 
