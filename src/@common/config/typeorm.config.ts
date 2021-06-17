@@ -10,6 +10,9 @@ export default registerAs('typeorm', () => {
     password: process.env.DB_PASSWORD,
     database: process.env.DB_DATABASE,
     synchronize: true,
+    ssl: {
+      rejectUnauthorized: false
+    },
     entities: ['dist/entities/**/*.entity.js']
     //entities: [(process.env.NODE_ENV === 'local' ? 'src/entities/**/*.ts' : 'dist/entities/**/*.js' )]
   }
