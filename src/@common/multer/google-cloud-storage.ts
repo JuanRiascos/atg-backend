@@ -5,13 +5,13 @@ import { ConfigService } from '@nestjs/config'
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const { Storage } = require('@google-cloud/storage');
 const storage = new Storage({
-  /* projectId: 'tenacious-cocoa-304914',
-  keyFilename: join(__dirname, '../../../src/@common', 'tenacious-cocoa-304914-e4487e801341.json') */
+  projectId: 'atg-storage',
+  keyFilename: join(__dirname, '../../../src/@common', 'atg-storage-6db5ababc632.json')
 });
 
 const configService = new ConfigService()
 console.log('gcs', configService.get('gcs.bucket'))
-const bucket = storage.bucket('atg_dev');
+const bucket = storage.bucket('atg-staging');
 
 export default class MulterGoogleCloudStorage {
 
