@@ -2,7 +2,7 @@ import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColum
 import { ClientQuestion } from "./client-question.entity";
 import { Question } from "./question.entity";
 
-@Entity('annswer', { schema: 'academy' })
+@Entity('answer', { schema: 'academy' })
 export class Answer {
 
   @PrimaryGeneratedColumn({ type: 'bigint' })

@@ -3,22 +3,22 @@ import { AuthGuard } from '@nestjs/passport';
 import { Roles } from 'src/@common/decorators/roles.decorator';
 import { ResponseError, ResponseSuccess } from 'src/@common/interfaces/response';
 import { Roles as roles } from '../../@common/constants/role.constant'
-import { CategoryService } from './category.service';
-import { CategoryDto } from './dto/category.dto';
+import { InterestService } from './interest.service';
+import { InterestDto } from './dto/interest.dto';
 
-@Controller('category')
-export class CategoryController {
+@Controller('interest')
+export class InterestController {
 
   constructor(
-    private readonly categoryService: CategoryService
+    private readonly interestService: InterestService
   ) { }
 
   @Get()
-  async getCategory(@Query('id') id: number): Promise<ResponseError | ResponseSuccess> {
+  async getInterest(@Query('id') id: number): Promise<ResponseError | ResponseSuccess> {
     if (!id)
       throw new BadRequestException()
 
-    const response: any = await this.categoryService.getCategory(id)
+    const response: any = await this.interestService.getInterest(id)
 
     if (response.error)
       throw new NotFoundException(response)
@@ -28,7 +28,7 @@ export class CategoryController {
 
   @Get('/principals')
   async getPrincipals(): Promise<ResponseError | ResponseSuccess> {
-    const response: any = await this.categoryService.getCategoriesPrincipals()
+    const response: any = await this.interestService.getCategoriesPrincipals()
 
     if (response.error)
       throw new BadRequestException(response)
@@ -39,8 +39,8 @@ export class CategoryController {
   @Post('')
   @UseGuards(AuthGuard('jwt'))
   @Roles(roles.ADMIN)
-  async createCategory(@Body() body: CategoryDto): Promise<ResponseError | ResponseSuccess> {
-    const response: any = await this.categoryService.createCategory(body)
+  async createInterest(@Body() body: InterestDto): Promise<ResponseError | ResponseSuccess> {
+    const response: any = await this.interestService.createInterest(body)
 
     if (response.error)
       throw new BadRequestException(response.error)
@@ -51,8 +51,8 @@ export class CategoryController {
   @Put('/:id')
   @UseGuards(AuthGuard('jwt'))
   @Roles(roles.ADMIN)
-  async updateCategory(@Param('id', ParseIntPipe) id: number, @Body() body: CategoryDto): Promise<ResponseError | ResponseSuccess> {
-    const response: any = await this.categoryService.updateCategory(id, body)
+  async updateInterest(@Param('id', ParseIntPipe) id: number, @Body() body: InterestDto): Promise<ResponseError | ResponseSuccess> {
+    const response: any = await this.interestService.updateInterest(id, body)
 
     if (response.error)
       throw new BadRequestException(response)
@@ -63,8 +63,8 @@ export class CategoryController {
   @Delete('/:id')
   @UseGuards(AuthGuard('jwt'))
   @Roles(roles.ADMIN)
-  async deleteCategory(@Param('id', ParseIntPipe) id: number): Promise<ResponseError | ResponseSuccess> {
-    const response: any = await this.categoryService.deleteCategory(id)
+  async deleteInterest(@Param('id', ParseIntPipe) id: number): Promise<ResponseError | ResponseSuccess> {
+    const response: any = await this.interestService.deleteInterest(id)
 
     if (response.error)
       throw new BadRequestException(response)
