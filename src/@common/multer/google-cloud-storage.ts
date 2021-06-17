@@ -11,7 +11,7 @@ const storage = new Storage({
 
 const configService = new ConfigService()
 console.log('gcs', configService.get('gcs.bucket'))
-const bucket = storage.bucket(configService.get('gcs.bucket'));
+const bucket = storage.bucket('atg_dev');
 
 export default class MulterGoogleCloudStorage {
 

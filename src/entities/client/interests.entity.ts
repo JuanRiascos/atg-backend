@@ -1,6 +1,6 @@
 import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 import { States } from "../@enums/index.enum";
-import { Category } from "../academy/category.entity";
+import { Interest } from "../academy/interest.entity";
 import { Client } from "./client.entity";
 
 @Entity('interests', { schema: 'client' })
@@ -16,7 +16,7 @@ export class Interests {
   @JoinColumn({ name: 'fk_client' })
   client: Client
 
-  @ManyToOne(() => Category, category => category.interests)
+  @ManyToOne(() => Interest, interest => interest.interests)
   @JoinColumn({ name: 'fk_category' })
-  category: Category
+  interest: Interest
 }

@@ -1,6 +1,6 @@
 import { IsNumber, IsOptional, IsString } from "class-validator"
 
-export class CategoryDto {
+export class InterestDto {
 
   @IsString()
   title: string
