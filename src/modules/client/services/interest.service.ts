@@ -30,8 +30,10 @@ export class InterestService {
       relations: ['clients']
     })
 
-    interest.clients.filter((client) => client.id !== clientId)
-    interest.clients = [...interest.clients, client]
+    if (interest.clients.some((client) => client.id == clientId))
+      interest.clients.filter((client) => client.id !== clientId)
+    else
+      interest.clients = [...interest.clients, client]
 
     await this.interestRepository.save(interest)
 
