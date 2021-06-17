@@ -13,7 +13,6 @@ import jwtConfig from './@common/config/jwt.config';
 import { AuthModule } from './modules/auth/auth.module';
 import { UserModule } from './modules/user/user.module';
 import { NotificationModule } from './modules/notification/notification.module';
-import { CategoryModule } from './modules/category/category.module';
 import { ClientModule } from './modules/client/client.module';
 
 @Module({
@@ -32,7 +31,6 @@ import { ClientModule } from './modules/client/client.module';
     AuthModule,
     UserModule,
     NotificationModule,
-    CategoryModule,
     ClientModule
   ],
   controllers: [AppController],
