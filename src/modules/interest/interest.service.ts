@@ -76,7 +76,6 @@ export class InterestService {
   async updateInterest(id: number, body: InterestDto) {
     const update = await this.interestRepository.update(id, {
       title: body.title,
-      description: body.description
     })
 
     if (update.affected !== 1)

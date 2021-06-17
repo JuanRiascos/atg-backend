@@ -23,6 +23,7 @@ import { Roles as roles } from '../../@common/constants/role.constant'
 import { Permissions } from 'src/@common/decorators/permissions.decorator';
 import { Permissions as permissions } from '../../@common/constants/permission.constant'
 import { Events } from 'src/entities/@enums/index.enum';
+import { NewPassworAuthenticatedDto } from './dto/new-password-authenticated.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -113,6 +114,20 @@ export class AuthController {
   @Post('/new-password')
   async newPassword(@Body() body: NewPasswordDto): Promise<ResponseError | ResponseSuccess> {
     const response: any = await this.passwordService.newPassword(body);
+
+    if (response.success) {
+      return { success: 'OK' }
+    } else
+      throw new BadRequestException(response);
+  }
+
+  @Post('/new-password-authenticated')
+  @UseGuards(AuthGuard('jwt'))
+  async newPasswordIsAuthenticated(
+    @Body() body: NewPassworAuthenticatedDto,
+    @Req() req
+  ): Promise<ResponseError | ResponseSuccess> {
+    const response: any = await this.passwordService.newPasswordIsAuthenticated(body, req.user);
 
     if (response.success) {
       return { success: 'OK' }

@@ -36,6 +36,7 @@ import { CourseModule } from './modules/course/course.module';
     InterestModule,
     ClientModule,
     CourseModule,
+    ClientModule
   ],
   controllers: [AppController],
   providers: [AppService],

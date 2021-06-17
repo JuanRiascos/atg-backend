@@ -7,6 +7,7 @@ import { NewPasswordDto } from "../dto/new-password.dto";
 import { Roles } from "src/@common/constants/role.constant";
 import { User } from "src/entities/user/user.entity";
 import { States } from "src/entities/@enums/index.enum";
+import { NewPassworAuthenticatedDto } from "../dto/new-password-authenticated.dto";
 
 @Injectable()
 export class PasswordService {
@@ -52,6 +53,26 @@ export class PasswordService {
     return { success: 'OK' }
   }
 
+  async newPasswordIsAuthenticated(body: NewPassworAuthenticatedDto, userAuthenticated: any) {
+    const user = await this.userRepository.findOne({
+      where: {
+        id: userAuthenticated.id
+      }
+    });
+
+    if (!user)
+      return { error: "USER_NOT_EXIST", message: "El usuario no existe" }
+
+    if (user.state === States.Inactive)
+      return { error: 'USER_INACTIVE', message: 'El usuario esta inactivo.' }
+
+    body.password = this.cryptoService.encrypt(body.password);
+    await this.userRepository.update({ id: user.id }, { password: body.password, code: null })
+
+    return { success: 'OK' }
+
+  }
+
   async changePassword(userId: number, body: any) {
     const user = await this.userRepository.createQueryBuilder('user')
       .select(['user.id', 'user.email', 'user.state'])
@@ -71,4 +92,5 @@ export class PasswordService {
 
     return { success: 'OK' }
   }
+  
 }

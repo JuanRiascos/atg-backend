@@ -98,5 +98,4 @@ export class UserController {
 
     return { success: 'OK', payload: response }
   }
-
 }
