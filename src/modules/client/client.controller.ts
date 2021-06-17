@@ -24,7 +24,10 @@ export class ClientController {
 
   @Put('/change-interest/:id')
   @UseGuards(AuthGuard('jwt'))
-  async changeInterest(@Req() req, @Param('id', ParseIntPipe) id: number): Promise<ResponseError | ResponseSuccess> {
+  async changeInterest(
+    @Req() req,
+    @Param('id', ParseIntPipe) id: number
+  ): Promise<ResponseError | ResponseSuccess> {
     const response: any = await this.interestService.changeInterest(req.user.atgAppClientId, id)
 
     if (response.error)
