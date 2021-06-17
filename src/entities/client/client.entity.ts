@@ -5,14 +5,15 @@ import {
   Column,
   OneToOne,
   OneToMany,
+  ManyToMany,
 } from "typeorm";
 
 import { States } from "../@enums/index.enum";
 import { AssessmentClientTry } from "../academy/assessment-client-try.entity";
 import { ClientQuestion } from "../academy/client-question.entity";
+import { Interest } from "../academy/interest.entity";
 import { User } from "../user/user.entity";
 import { Favorite } from "./favorite.entity";
-import { Interests } from "./interests.entity";
 import { PaymentHistory } from "./payment-history.entity";
 import { StatusNotification } from "./status-notification.entity";
 
@@ -47,8 +48,11 @@ export class Client {
   @OneToMany(() => PaymentHistory, paymentHistory => paymentHistory.client)
   payments: PaymentHistory[]
 
-  @OneToMany(() => Interests, interests => interests.client)
-  interests: Interests[]
+  /* @OneToMany(() => Interests, interests => interests.client)
+  interests: Interests[] */
+
+  @ManyToMany(() => Interest, interest => interest.clients)
+  interests: Interest[];
 
   @OneToMany(() => ClientQuestion, clientQuestion => clientQuestion.client)
   clientQuestion: ClientQuestion[]

@@ -1,39 +1,37 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { States } from "src/entities/@enums/index.enum";
-import { Interests } from "src/entities/client/interests.entity";
 import { Repository } from "typeorm";
+
+import { Interest } from "src/entities/academy/interest.entity";
+import { Client } from "src/entities/client/client.entity";
 
 @Injectable()
 export class InterestService {
 
   constructor(
-    @InjectRepository(Interests) private readonly interestRepository: Repository<Interests>
+    @InjectRepository(Interest) private readonly interestRepository: Repository<Interest>,
+    @InjectRepository(Client) private readonly clientRepository: Repository<Client>
   ) { }
 
   async getInterestsClient(clientId: number) {
     const interests = await this.interestRepository.createQueryBuilder('interest')
-      .addSelect(['category.id', 'category.title'])
-      .innerJoin('interest.category', 'category')
-      .innerJoin('interest.client', 'client', 'client.id = :clientId', { clientId })
+      .addSelect(['client.id'])
+      .innerJoin('interest.clients', 'client', 'client.id = :clientId', { clientId })
       .getMany()
-
-    if (!interests)
-      return { error: 'NOT_FOUND' }
 
     return interests
   }
 
-  async changeInterest(clientId: number, categoryId: number) {
-    const interest = await this.interestRepository.createQueryBuilder('interest')
-      .innerJoin('interest.category', 'category', 'category.id = :categoryId', { categoryId })
-      .innerJoin('interest.client', 'client', 'client.id = :clientId', { clientId })
-      .getOne()
+  async changeInterest(clientId: number, interestId: number) {
 
-    if (!interest)
-      return { error: 'NOT_FOUND' }
+    let client = await this.clientRepository.findOne(clientId)
 
-    interest.state = interest.state === States.Active ? States.Inactive : States.Active
+    let interest = await this.interestRepository.findOne(interestId, {
+      relations: ['clients']
+    })
+
+    interest.clients.filter((client) => client.id !== clientId)
+    interest.clients = [...interest.clients, client]
 
     await this.interestRepository.save(interest)
 

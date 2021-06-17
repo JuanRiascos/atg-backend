@@ -1,6 +1,5 @@
-import { Column, Entity, PrimaryGeneratedColumn, OneToMany, ManyToOne } from "typeorm";
-import { Interests } from "../client/interests.entity";
-
+import { Column, Entity, PrimaryGeneratedColumn, OneToMany, ManyToOne, ManyToMany, JoinTable } from "typeorm";
+import { Client } from "../client/client.entity";
 @Entity("interest", { schema: "academy" })
 export class Interest {
 
@@ -9,6 +8,9 @@ export class Interest {
 
   @Column("character varying", { nullable: true })
   title: string
+
+  @Column("character varying", { nullable: true })
+  description: string
 
   @Column('boolean', { nullable: true })
   principal: boolean
@@ -19,6 +21,10 @@ export class Interest {
   @OneToMany(() => Interest, interest => interest.parent, { nullable: true, onUpdate: 'CASCADE', onDelete: 'CASCADE' })
   childs: Interest[];
 
-  @OneToMany(() => Interests, interests => interests.interest)
-  interests: Interests[]
+  /* @OneToMany(() => Interests, interests => interests.interest)
+  interests: Interests[] */
+
+  @ManyToMany(() => Client, client => client.interests)
+  @JoinTable()
+  clients: Client[];
 }
