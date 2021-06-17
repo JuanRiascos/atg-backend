@@ -41,7 +41,7 @@ export class CourseController {
   @Post('/create')
   @UseGuards(AuthGuard('jwt'))
   @Roles(roles.ADMIN)
-  @UseInterceptors(FileInterceptor('image', multer.storageGCS('course')))
+  @UseInterceptors(FileInterceptor('image', multer.storageGCS('courses/covers')))
   async createCourse(@UploadedFile() file, @Body() body): Promise<ResponseError | ResponseSuccess> {
     const data = JSON.parse(body.data)
     const response: any = await this.manageService.createCourse(data, file?.path)
@@ -55,7 +55,7 @@ export class CourseController {
   @Put('/update/:courseId')
   @UseGuards(AuthGuard('jwt'))
   @Roles(roles.ADMIN)
-  @UseInterceptors(FileInterceptor('image', multer.storageGCS('course')))
+  @UseInterceptors(FileInterceptor('image', multer.storageGCS('courses/covers')))
   async updateCourse(@Param('courseId', ParseIntPipe) courseId: number, @UploadedFile() file, @Body() body): Promise<ResponseError | ResponseSuccess> {
     const data = JSON.parse(body.data)
     const response: any = await this.manageService.updateCourse(courseId, data, file?.path)
