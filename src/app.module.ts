@@ -13,7 +13,9 @@ import jwtConfig from './@common/config/jwt.config';
 import { AuthModule } from './modules/auth/auth.module';
 import { UserModule } from './modules/user/user.module';
 import { NotificationModule } from './modules/notification/notification.module';
+import { InterestModule } from './modules/interest/interest.module';
 import { ClientModule } from './modules/client/client.module';
+import { CourseModule } from './modules/course/course.module';
 
 @Module({
   imports: [
@@ -31,6 +33,9 @@ import { ClientModule } from './modules/client/client.module';
     AuthModule,
     UserModule,
     NotificationModule,
+    InterestModule,
+    ClientModule,
+    CourseModule,
     ClientModule
   ],
   controllers: [AppController],
