@@ -16,6 +16,8 @@ export class InterestService {
   async getInterestsClient(clientId: number) {
     const interests = await this.interestRepository.createQueryBuilder('interest')
       .addSelect(['client.id'])
+      .andWhere('interest.principal = :principal', { principal: true })
+      .innerJoinAndSelect('interest.childs', 'childs')
       .innerJoin('interest.clients', 'client', 'client.id = :clientId', { clientId })
       .getMany()
 
