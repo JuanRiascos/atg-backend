@@ -10,15 +10,6 @@ export class Interest {
   @Column("character varying", { nullable: true })
   title: string
 
-  @Column("character varying", { nullable: true })
-  description: string
-
-  @Column("character varying", { nullable: true })
-  image: string
-
-  @Column("character varying", { nullable: true })
-  color: string
-
   @Column('boolean', { nullable: true })
   principal: boolean
 
