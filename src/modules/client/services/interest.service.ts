@@ -18,8 +18,8 @@ export class InterestService {
     const interests = await this.interestRepository.createQueryBuilder('interest')
       .addSelect(['client.id'])
       .andWhere('interest.principal = :principal', { principal: true })
-      .innerJoinAndSelect('interest.childs', 'childs')
-      .leftJoinAndSelect('interest.clients', 'client', 'client.id = :clientId', { clientId })
+      .innerJoinAndSelect('interest.childs', 'child')
+      .leftJoinAndSelect('child.clients', 'client', 'client.id = :clientId', { clientId })
       .getMany()
 
     return interests
