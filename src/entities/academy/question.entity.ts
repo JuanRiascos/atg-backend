@@ -8,10 +8,7 @@ export class Question {
 
   @PrimaryGeneratedColumn({ type: 'bigint' })
   id: number
-
-  @Column('character varying', { nullable: true })
-  title: string
-
+  
   @Column("text", { nullable: true })
   description: any;
 

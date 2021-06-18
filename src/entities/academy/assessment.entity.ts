@@ -14,6 +14,15 @@ export class Assessment {
   @Column('character varying')
   title: string
 
+  @Column('text', { nullable: true })
+  description: string
+
+  @Column('bigint', { nullable: true })
+  duration: number
+
+  @Column('text', { nullable: true })
+  instructions: string
+
   @ManyToOne(() => Course, course => course.assessments)
   @JoinColumn({ name: 'fk_course' })
   course: Course
