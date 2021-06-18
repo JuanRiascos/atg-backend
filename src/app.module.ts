@@ -16,6 +16,8 @@ import { NotificationModule } from './modules/notification/notification.module';
 import { InterestModule } from './modules/interest/interest.module';
 import { ClientModule } from './modules/client/client.module';
 import { CourseModule } from './modules/course/course.module';
+import { ExtraModule } from './modules/extra/extra.module';
+import { CaseModule } from './modules/case/case.module';
 
 @Module({
   imports: [
@@ -36,7 +38,9 @@ import { CourseModule } from './modules/course/course.module';
     InterestModule,
     ClientModule,
     CourseModule,
-    ClientModule
+    ClientModule,
+    ExtraModule,
+    CaseModule
   ],
   controllers: [AppController],
   providers: [AppService],

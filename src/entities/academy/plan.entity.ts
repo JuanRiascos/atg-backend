@@ -1,5 +1,6 @@
 import { Column, Entity, ManyToMany, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 import { Assessment } from "./assessment.entity";
+import { CaseStudies } from "./case-studies.entity";
 import { Course } from "./course.entity";
 import { ExtraReps } from "./extra-reps.entity";
 import { Video } from "./video.entity";
@@ -33,4 +34,7 @@ export class Plan {
 
   @ManyToMany(() => Assessment, assessment => assessment.plans)
   assessments: Assessment[]
+
+  @ManyToMany(() => CaseStudies, caseStudies => caseStudies.plans)
+  caseStudies: CaseStudies[]
 }
