@@ -11,12 +11,15 @@ export class InterestService {
   constructor(
     @InjectRepository(Interest) private readonly interestRepository: Repository<Interest>,
     @InjectRepository(Client) private readonly clientRepository: Repository<Client>
-  ) { }
+  ) {
+  }
 
   async getInterestsClient(clientId: number) {
     const interests = await this.interestRepository.createQueryBuilder('interest')
       .addSelect(['client.id'])
-      .innerJoin('interest.clients', 'client', 'client.id = :clientId', { clientId })
+      .andWhere('interest.principal = :principal', { principal: true })
+      .innerJoinAndSelect('interest.childs', 'childs')
+      .leftJoinAndSelect('interest.clients', 'client', 'client.id = :clientId', { clientId })
       .getMany()
 
     return interests
