@@ -19,6 +19,7 @@ import { CourseModule } from './modules/course/course.module';
 import { ExtraModule } from './modules/extra/extra.module';
 import { CaseModule } from './modules/case/case.module';
 import { VideoModule } from './modules/video/video.module';
+import { AssessmentModule } from './modules/assessment/assessment.module';
 
 @Module({
   imports: [
@@ -42,7 +43,8 @@ import { VideoModule } from './modules/video/video.module';
     ClientModule,
     ExtraModule,
     CaseModule,
-    VideoModule
+    VideoModule,
+    AssessmentModule
   ],
   controllers: [AppController],
   providers: [AppService],
