@@ -54,14 +54,17 @@ export class PasswordService {
   }
 
   async newPasswordIsAuthenticated(body: NewPassworAuthenticatedDto, userAuthenticated: any) {
+    body.passwordCurrent = this.cryptoService.encrypt(body.passwordCurrent)
+
     const user = await this.userRepository.findOne({
       where: {
-        id: userAuthenticated.id
+        id: userAuthenticated.id,
+        password: body.passwordCurrent
       }
     });
 
     if (!user)
-      return { error: "USER_NOT_EXIST", message: "El usuario no existe" }
+      return { error: "PASSWORD_CURRENT_NOT_COINCIDENCE", message: "No hay coincidencia con la contraseña actual" }
 
     if (user.state === States.Inactive)
       return { error: 'USER_INACTIVE', message: 'El usuario esta inactivo.' }
@@ -92,5 +95,5 @@ export class PasswordService {
 
     return { success: 'OK' }
   }
-  
+
 }
