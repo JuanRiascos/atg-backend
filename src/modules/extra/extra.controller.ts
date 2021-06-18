@@ -14,7 +14,7 @@ export class ExtraController {
     private readonly extraService: ExtraService
   ) { }
 
-  @Get('/:courseId')
+  @Get('/all/:courseId')
   async getExtraRepsCourse(@Param('courseId', ParseIntPipe) courseId: number): Promise<ResponseError | ResponseSuccess> {
     const response: any = await this.extraService.getExtraReps(courseId)
 
