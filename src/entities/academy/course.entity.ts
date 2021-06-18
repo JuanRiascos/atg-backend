@@ -1,6 +1,7 @@
 import { Column, CreateDateColumn, Entity, JoinTable, ManyToMany, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 import { States } from "../@enums/index.enum";
 import { Assessment } from "./assessment.entity";
+import { CaseStudies } from "./case-studies.entity";
 import { ExtraReps } from "./extra-reps.entity";
 import { Plan } from "./plan.entity";
 import { Video } from "./video.entity";
@@ -44,6 +45,9 @@ export class Course {
 
   @OneToMany(() => ExtraReps, extraReps => extraReps.course)
   extraReps: ExtraReps[]
+
+  @OneToMany(() => CaseStudies, caseStudies => caseStudies.course)
+  caseStudies: CaseStudies[]
 
   @OneToMany(() => Assessment, assessment => assessment.course)
   assessments: Assessment[]
