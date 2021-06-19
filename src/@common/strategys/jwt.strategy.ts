@@ -27,5 +27,6 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
 
   validate(token: TokenJwt) {
     return this.tokenService.validateToken(token);
+    
   }
 }

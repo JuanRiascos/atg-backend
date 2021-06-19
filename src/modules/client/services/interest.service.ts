@@ -19,7 +19,9 @@ export class InterestService {
       .addSelect(['client.id'])
       .andWhere('interest.principal = :principal', { principal: true })
       .innerJoinAndSelect('interest.childs', 'child')
-      .leftJoinAndSelect('child.clients', 'client', 'client.id = :clientId', { clientId })
+      .leftJoin('child.clients', 'client', 'client.id = :clientId', { clientId })
+      .orderBy("interest.id", "ASC")
+      .addOrderBy("child.id", "ASC")
       .getMany()
 
     return interests
@@ -34,7 +36,7 @@ export class InterestService {
     })
 
     if (interest.clients.some((client) => client.id == clientId))
-      interest.clients.filter((client) => client.id !== clientId)
+      interest.clients = interest.clients.filter((client) => client.id !== clientId)
     else
       interest.clients = [...interest.clients, client]
 
