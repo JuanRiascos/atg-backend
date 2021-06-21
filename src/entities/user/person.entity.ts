@@ -20,6 +20,12 @@ export class Person {
   @Column('character varying', { nullable: true })
   image: string
 
+  @Column('character varying', { nullable: true })
+  sport: string
+  
+  @Column('character varying', { nullable: true })
+  ocupation
+
   @OneToOne(type => User, user => user.person)
   @JoinColumn({ name: 'fk_user' })
   user: Person;

@@ -9,7 +9,6 @@ import {
   Req,
   BadRequestException,
   Param,
-  Post,
   UseInterceptors,
   UploadedFile,
   NotFoundException,
@@ -103,7 +102,7 @@ export class UserController {
 
   @Put('/update-photo-profile')
   @UseGuards(AuthGuard('jwt'))
-  @UseInterceptors(FileInterceptor('image', multer.storageGCS('courses/covers')))
+  @UseInterceptors(FileInterceptor('image', multer.storageGCS('users/profile')))
   async updatePhotoProfile(
     @Request() req,
     @UploadedFile() file
