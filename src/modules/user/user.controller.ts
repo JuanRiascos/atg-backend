@@ -27,6 +27,8 @@ import { Roles } from 'src/@common/decorators/roles.decorator';
 import { Roles as roles } from '../../@common/constants/role.constant'
 import { Permissions as permissions } from '../../@common/constants/permission.constant'
 import { Permissions } from 'src/@common/decorators/permissions.decorator';
+import { FileInterceptor } from '@nestjs/platform-express';
+import multer from 'src/@common/multer/multer';
 
 @Controller('user')
 export class UserController {
@@ -98,4 +100,24 @@ export class UserController {
 
     return { success: 'OK', payload: response }
   }
+
+  @Put('/update-photo-profile')
+  @UseGuards(AuthGuard('jwt'))
+  @UseInterceptors(FileInterceptor('image', multer.storageGCS('courses/covers')))
+  async updatePhotoProfile(
+    @Request() req,
+    @UploadedFile() file
+  ): Promise<ResponseError | ResponseSuccess> {
+    const response: any = await this.personService.updatePhotoProfile(req.user, file?.path);
+
+    if (response.error) {
+      if (response.error === 'USER_INACTIVE')
+        throw new UnauthorizedException(response)
+
+      throw new BadRequestException(response)
+    }
+
+    return { success: 'OK', message: 'Datos actualizados correctamente' }
+  }
+
 }

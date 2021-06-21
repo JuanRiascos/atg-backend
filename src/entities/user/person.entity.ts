@@ -17,6 +17,9 @@ export class Person {
   @Column("character varying", { nullable: true, length: 15 })
   phone: string;
 
+  @Column('character varying', { nullable: true })
+  image: string
+
   @OneToOne(type => User, user => user.person)
   @JoinColumn({ name: 'fk_user' })
   user: Person;

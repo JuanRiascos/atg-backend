@@ -77,4 +77,33 @@ export class PersonService {
     return update
   }
 
+  async updatePhotoProfile(userAuntenticated, imageUrl: string) {
+    if (!imageUrl)
+      return { error: 'ERROR_UPLOAD_IMAGE', message: 'No se pudo cargar la imagen.' }
+
+    let body
+
+    const user = await this.userRepository.findOne({
+      select: ['id', 'email'],
+      join: {
+        alias: 'user',
+        innerJoinAndSelect: { person: 'user.person' }
+      },
+      where: { id: userAuntenticated?.id, state: States.Active }
+    })
+
+    if (!user)
+      return { error: 'USER_INACTIVE', message: 'El usuario se encuentra inactivo.' }
+
+    if (imageUrl)
+      body = { image: imageUrl }
+
+    const update = await this.personRepository.update(user?.person?.id, body);
+
+    if (update?.affected !== 1)
+      return { error: 'ERROR_UPDATE', message: 'Ocurrio un problema al actualizar los datos.' }
+
+    return update
+  }
+
 }
