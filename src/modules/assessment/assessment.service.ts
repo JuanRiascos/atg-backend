@@ -26,7 +26,7 @@ export class AssessmentService {
         duration,
       })
 
-      let cont = 1
+      /* let cont = 1
       for (const item of questions) {
         await this.questionRepository.save({
           assessment,
@@ -35,12 +35,21 @@ export class AssessmentService {
         })
 
         cont++
-      }
+      } */
 
     } catch (error) {
       return { error }
     }
 
     return assessment
+  }
+
+  async deleteAssessment(assessmentId: number) {
+    try {
+      await this.assessmentRepository.delete(assessmentId)
+    } catch (error) {
+      return { error }
+    }
+    return { message: 'Assessment deleted succesfully' }
   }
 }
