@@ -13,6 +13,8 @@ import { ManageService } from './services/manage.service';
 import { Client } from 'src/entities/client/client.entity';
 import { Ocupation } from 'src/entities/user/ocupation.entity';
 import { OcupationService } from './services/ocupation.service';
+import { Sport } from 'src/entities/user/sport.entity';
+import { SportService } from './services/sport.service';
 
 @Module({
   imports: [
@@ -21,6 +23,7 @@ import { OcupationService } from './services/ocupation.service';
       Person,
       Client,
       Ocupation,
+      Sport,
       UserRole,
       UserPermission
     ])
@@ -31,7 +34,8 @@ import { OcupationService } from './services/ocupation.service';
     PersonService,
     FindService,
     ManageService,
-    OcupationService
+    OcupationService,
+    SportService
   ],
   exports: [PermissionsService]
 })

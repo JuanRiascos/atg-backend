@@ -29,6 +29,7 @@ import { Permissions } from 'src/@common/decorators/permissions.decorator';
 import { FileInterceptor } from '@nestjs/platform-express';
 import multer from 'src/@common/multer/multer';
 import { OcupationService } from './services/ocupation.service';
+import { SportService } from './services/sport.service';
 
 @Controller('user')
 export class UserController {
@@ -38,6 +39,7 @@ export class UserController {
     private readonly findService: FindService,
     private readonly manageService: ManageService,
     private readonly ocupationService: OcupationService,
+    private readonly sportService: SportService,
   ) { }
 
   @Get('/get-permissions')
@@ -127,6 +129,15 @@ export class UserController {
     const ocupations = await this.ocupationService.getOcupations();
 
     return { success: 'OK', payload: ocupations }
+
+  }
+
+  @Get('/get-sports')
+  @UseGuards(AuthGuard('jwt'))
+  async getSports(): Promise<ResponseError | ResponseSuccess> {
+    const sports = await this.sportService.getSports();
+
+    return { success: 'OK', payload: sports }
 
   }
 
