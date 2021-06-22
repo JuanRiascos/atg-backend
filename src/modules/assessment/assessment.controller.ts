@@ -7,6 +7,7 @@ import { AssessmentService } from './services/assessment.service';
 import { AssessmentDto } from './dto/assessment.dto';
 import { QuestionService } from './services/question.service';
 import { QuestionDto } from './dto/question.dto';
+import { AnswerDto } from './dto/answer.dto';
 
 @Controller('assessment')
 export class AssessmentController {
@@ -56,7 +57,7 @@ export class AssessmentController {
   @Delete('/:assessmentId')
   @UseGuards(AuthGuard('jwt'))
   @Roles(roles.ADMIN)
-  async deleteAssessment(@Param('assessmentId', ParseIntPipe) assessmentId: number) {
+  async deleteAssessment(@Param('assessmentId', ParseIntPipe) assessmentId: number): Promise<ResponseError | ResponseSuccess> {
     const response: any = await this.assessmentService.deleteAssessment(assessmentId)
 
     if (response.error)
@@ -92,7 +93,7 @@ export class AssessmentController {
   @Delete('/delete-question/:questionId')
   @UseGuards(AuthGuard('jwt'))
   @Roles(roles.ADMIN)
-  async deleteQuestion(@Param('questionId', ParseIntPipe) questionId: number) {
+  async deleteQuestion(@Param('questionId', ParseIntPipe) questionId: number): Promise<ResponseError | ResponseSuccess> {
     const response: any = await this.questionService.deleteQuestion(questionId)
 
     if (response.error)
@@ -101,5 +102,16 @@ export class AssessmentController {
     return { success: 'OK', payload: response }
   }
 
+  @Post('/add-answer')
+  @UseGuards(AuthGuard('jwt'))
+  @Roles(roles.ADMIN)
+  async addAnswerToQuestion(@Body() body: AnswerDto): Promise<ResponseError | ResponseSuccess> {
+    const response: any = await this.questionService.addAnswerToQuestion(body)
+
+    if (response.error)
+      throw new BadRequestException(response)
+
+    return { success: 'OK', payload: response }
+  }
 
 }
