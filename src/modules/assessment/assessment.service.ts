@@ -13,11 +13,11 @@ export class AssessmentService {
     @InjectRepository(Question) private readonly questionRepository: Repository<Question>
   ) { }
 
-  async getAssessment(courseId: number, assessmentId: number) {
+  async getAssessment(assessmentId: number) {
     let assessment
     try {
       assessment = await this.assessmentRepository.findOne({
-        where: { id: assessmentId, course: { id: courseId } }
+        where: { id: assessmentId }
       })
     } catch (error) {
       return { error }
