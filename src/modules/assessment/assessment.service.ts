@@ -13,6 +13,37 @@ export class AssessmentService {
     @InjectRepository(Question) private readonly questionRepository: Repository<Question>
   ) { }
 
+  async getAssessment(courseId: number, assessmentId: number) {
+    let assessment
+    try {
+      assessment = await this.assessmentRepository.findOne({
+        where: { id: assessmentId, course: { id: courseId } }
+      })
+    } catch (error) {
+      return { error }
+    }
+    return assessment
+  }
+
+  async updateAssessment(assessmentId: number, data: AssessmentDto) {
+    let body: any = { ...data }
+
+    let assessment
+    try {
+      assessment = await this.assessmentRepository.findOne(assessmentId)
+
+      if (!assessment)
+        return { error: 'NOT_FOUND' }
+
+      assessment = { ...assessment, ...body }
+      await this.assessmentRepository.save(assessment)
+    } catch (error) {
+      return { error }
+    }
+
+    return { message: 'updated assessment' }
+  }
+
   async createAssessment(body: AssessmentDto) {
     const { title, description, instructions, duration, questions, courseId } = body
     let assessment

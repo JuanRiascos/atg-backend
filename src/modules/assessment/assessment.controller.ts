@@ -1,4 +1,4 @@
-import { BadRequestException, Body, Controller, Delete, Param, ParseIntPipe, Post, UseGuards } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Delete, Get, Param, ParseIntPipe, Post, Put, Query, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { Roles as roles } from 'src/@common/constants/role.constant';
 import { Roles } from 'src/@common/decorators/roles.decorator';
@@ -13,6 +13,19 @@ export class AssessmentController {
     private readonly assessmentService: AssessmentService
   ) { }
 
+  @Get()
+  @UseGuards(AuthGuard('jwt'))
+  @Roles(roles.ADMIN)
+  async getAssessment(@Query() query): Promise<ResponseError | ResponseSuccess> {
+    const response: any = await this.assessmentService.getAssessment(query.courseId, query.assessmentId)
+
+    if (response.error)
+      throw new BadRequestException(response)
+
+    return { success: 'OK', payload: response }
+  }
+
+
   @Post('/create')
   @UseGuards(AuthGuard('jwt'))
   @Roles(roles.ADMIN)
@@ -24,6 +37,19 @@ export class AssessmentController {
 
     return { success: 'OK', payload: response }
   }
+
+  @Put('/update/:assessmentId')
+  @UseGuards(AuthGuard('jwt'))
+  @Roles(roles.ADMIN)
+  async updateAssessment(@Param('assessmentId', ParseIntPipe) assessmentId: number, @Body() body: AssessmentDto): Promise<ResponseError | ResponseSuccess> {
+    const response: any = await this.assessmentService.updateAssessment(assessmentId, body)
+
+    if (response.error)
+      throw new BadRequestException(response)
+
+    return { success: 'OK', payload: response }
+  }
+
 
   @Delete('/:assessmentId')
   @UseGuards(AuthGuard('jwt'))
