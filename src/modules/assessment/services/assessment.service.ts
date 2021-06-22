@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Assessment } from 'src/entities/academy/assessment.entity';
 import { Question } from 'src/entities/academy/question.entity';
 import { Repository } from 'typeorm';
-import { AssessmentDto } from './dto/assessment.dto';
+import { AssessmentDto } from '../dto/assessment.dto';
 
 @Injectable()
 export class AssessmentService {
@@ -16,9 +16,11 @@ export class AssessmentService {
   async getAssessment(assessmentId: number) {
     let assessment
     try {
-      assessment = await this.assessmentRepository.findOne({
-        where: { id: assessmentId }
-      })
+      assessment = await this.assessmentRepository.createQueryBuilder('assessment')
+        .leftJoinAndSelect('assessment.questions', 'questions')
+        .leftJoinAndSelect('questions.answers', 'answers')
+        .where('assessment.id = :assessmentId', { assessmentId })
+        .getOne()
     } catch (error) {
       return { error }
     }

@@ -33,6 +33,8 @@ export class FindService {
         .where('course.id = :courseId', { courseId })
         .leftJoinAndSelect('course.extraReps', 'extraReps')
         .leftJoinAndSelect('course.assessments', 'assessments')
+        .leftJoinAndSelect('assessments.questions', 'questions')
+        .leftJoinAndSelect('questions.answers', 'answers')
         .leftJoinAndSelect('course.videos', 'videos')
         .leftJoinAndSelect('course.caseStudies', 'caseStudies')
         .getOne()

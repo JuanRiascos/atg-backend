@@ -3,14 +3,17 @@ import { AuthGuard } from '@nestjs/passport';
 import { Roles as roles } from 'src/@common/constants/role.constant';
 import { Roles } from 'src/@common/decorators/roles.decorator';
 import { ResponseError, ResponseSuccess } from 'src/@common/interfaces/response';
-import { AssessmentService } from './assessment.service';
+import { AssessmentService } from './services/assessment.service';
 import { AssessmentDto } from './dto/assessment.dto';
+import { QuestionService } from './services/question.service';
+import { QuestionDto } from './dto/question.dto';
 
 @Controller('assessment')
 export class AssessmentController {
 
   constructor(
-    private readonly assessmentService: AssessmentService
+    private readonly assessmentService: AssessmentService,
+    private readonly questionService: QuestionService
   ) { }
 
   @Get()
@@ -50,11 +53,10 @@ export class AssessmentController {
     return { success: 'OK', payload: response }
   }
 
-
   @Delete('/:assessmentId')
   @UseGuards(AuthGuard('jwt'))
   @Roles(roles.ADMIN)
-  async deleteExtraRep(@Param('assessmentId', ParseIntPipe) assessmentId: number) {
+  async deleteAssessment(@Param('assessmentId', ParseIntPipe) assessmentId: number) {
     const response: any = await this.assessmentService.deleteAssessment(assessmentId)
 
     if (response.error)
@@ -62,5 +64,42 @@ export class AssessmentController {
 
     return { success: 'OK', payload: response }
   }
+
+  @Post('/add-question')
+  @UseGuards(AuthGuard('jwt'))
+  @Roles(roles.ADMIN)
+  async addQuestion(@Body() body: QuestionDto): Promise<ResponseSuccess | ResponseError> {
+    const response: any = await this.questionService.addQuestion(body)
+
+    if (response.error)
+      throw new BadRequestException(response)
+
+    return { success: 'OK', payload: response }
+  }
+
+  @Put('/update-question/:questionId')
+  @UseGuards(AuthGuard('jwt'))
+  @Roles(roles.ADMIN)
+  async updateQuestion(@Param('questionId', ParseIntPipe) questionId: number, @Body() body: QuestionDto): Promise<ResponseError | ResponseSuccess> {
+    const response: any = await this.questionService.updateQuestion(questionId, body)
+
+    if (response.error)
+      throw new BadRequestException(response)
+
+    return { success: 'OK', payload: response }
+  }
+
+  @Delete('/delete-question/:questionId')
+  @UseGuards(AuthGuard('jwt'))
+  @Roles(roles.ADMIN)
+  async deleteQuestion(@Param('questionId', ParseIntPipe) questionId: number) {
+    const response: any = await this.questionService.deleteQuestion(questionId)
+
+    if (response.error)
+      throw new BadRequestException(response)
+
+    return { success: 'OK', payload: response }
+  }
+
 
 }
