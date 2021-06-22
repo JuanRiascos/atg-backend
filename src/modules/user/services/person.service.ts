@@ -24,7 +24,7 @@ export class PersonService {
       .select(['user.id', 'user.email'])
       .addSelect(['client.city'])
       .innerJoinAndSelect('user.person', 'person')
-      .innerJoin('user.client', 'client')
+      .leftJoin('user.client', 'client')
       .leftJoinAndSelect('person.ocupation', 'ocupation')
       .where("user.state = 'active' AND user.id = :id", { id })
       .getOne()
