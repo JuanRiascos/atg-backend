@@ -1,4 +1,4 @@
-import { BadRequestException, Body, Controller, Post, UseGuards } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Delete, Param, ParseIntPipe, Post, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { Roles as roles } from 'src/@common/constants/role.constant';
 import { Roles } from 'src/@common/decorators/roles.decorator';
@@ -18,6 +18,18 @@ export class AssessmentController {
   @Roles(roles.ADMIN)
   async createAssessment(@Body() body: AssessmentDto): Promise<ResponseSuccess | ResponseError> {
     const response: any = await this.assessmentService.createAssessment(body)
+
+    if (response.error)
+      throw new BadRequestException(response)
+
+    return { success: 'OK', payload: response }
+  }
+
+  @Delete('/:assessmentId')
+  @UseGuards(AuthGuard('jwt'))
+  @Roles(roles.ADMIN)
+  async deleteExtraRep(@Param('assessmentId', ParseIntPipe) assessmentId: number) {
+    const response: any = await this.assessmentService.deleteAssessment(assessmentId)
 
     if (response.error)
       throw new BadRequestException(response)
