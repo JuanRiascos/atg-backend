@@ -10,12 +10,17 @@ import { UserRole } from 'src/entities/user/user-role.entity';
 import { UserPermission } from 'src/entities/user/user-permission.entity';
 import { FindService } from './services/find.service';
 import { ManageService } from './services/manage.service';
+import { Client } from 'src/entities/client/client.entity';
+import { Ocupation } from 'src/entities/user/ocupation.entity';
+import { OcupationService } from './services/ocupation.service';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([
       User,
       Person,
+      Client,
+      Ocupation,
       UserRole,
       UserPermission
     ])
@@ -25,7 +30,8 @@ import { ManageService } from './services/manage.service';
     PermissionsService,
     PersonService,
     FindService,
-    ManageService
+    ManageService,
+    OcupationService
   ],
   exports: [PermissionsService]
 })

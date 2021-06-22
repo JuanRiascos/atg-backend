@@ -26,6 +26,9 @@ export class Client {
   @Column("enum", { enum: States, default: States.Active })
   state: States;
 
+  @Column('character varying', { nullable: true })
+  city: string
+
   @OneToOne(
     () => User,
     user => user.client,

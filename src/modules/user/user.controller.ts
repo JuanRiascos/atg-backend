@@ -28,6 +28,7 @@ import { Permissions as permissions } from '../../@common/constants/permission.c
 import { Permissions } from 'src/@common/decorators/permissions.decorator';
 import { FileInterceptor } from '@nestjs/platform-express';
 import multer from 'src/@common/multer/multer';
+import { OcupationService } from './services/ocupation.service';
 
 @Controller('user')
 export class UserController {
@@ -35,7 +36,8 @@ export class UserController {
     private readonly permissionsService: PermissionsService,
     private readonly personService: PersonService,
     private readonly findService: FindService,
-    private readonly manageService: ManageService
+    private readonly manageService: ManageService,
+    private readonly ocupationService: OcupationService,
   ) { }
 
   @Get('/get-permissions')
@@ -117,6 +119,15 @@ export class UserController {
     }
 
     return { success: 'OK', message: 'Datos actualizados correctamente' }
+  }
+
+  @Get('/get-ocupations')
+  @UseGuards(AuthGuard('jwt'))
+  async getOcupations(): Promise<ResponseError | ResponseSuccess> {
+    const ocupations = await this.ocupationService.getOcupations();
+
+    return { success: 'OK', payload: ocupations }
+
   }
 
 }

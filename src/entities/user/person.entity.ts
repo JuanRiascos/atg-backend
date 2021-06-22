@@ -1,7 +1,7 @@
-import { Column, Entity, JoinColumn, PrimaryGeneratedColumn, OneToOne } from "typeorm";
+import { Column, Entity, JoinColumn, PrimaryGeneratedColumn, OneToOne, ManyToOne } from "typeorm";
+import { Ocupation } from "./ocupation.entity";
 
 import { User } from "./user.entity";
-
 @Entity("person", { schema: 'user' })
 export class Person {
 
@@ -22,12 +22,16 @@ export class Person {
 
   @Column('character varying', { nullable: true })
   sport: string
-  
+
   @Column('character varying', { nullable: true })
-  ocupation
+  positionCurrentJob: string
 
   @OneToOne(type => User, user => user.person)
   @JoinColumn({ name: 'fk_user' })
-  user: Person;
+  user: User;
+
+  @ManyToOne(() => Ocupation, ocupation => ocupation.persons)
+  @JoinColumn({ name: 'fk_ocupation' })
+  ocupation: Ocupation;
 
 }
