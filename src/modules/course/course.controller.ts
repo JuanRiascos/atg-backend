@@ -77,4 +77,16 @@ export class CourseController {
 
     return { success: 'OK', payload: response }
   }
+
+  @Put('/set-cover/:courseId')
+  @UseGuards(AuthGuard('jwt'))
+  @Roles(roles.ADMIN)
+  async setCoverCourse(@Param('courseId', ParseIntPipe) courseId: number): Promise<ResponseError | ResponseSuccess> {
+    const response: any = await this.manageService.setCoverCourse(courseId)
+
+    if(response.error)
+      throw new BadRequestException(response)
+
+    return { success: 'OK', payload: response }
+  }
 }

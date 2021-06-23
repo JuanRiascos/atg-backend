@@ -59,4 +59,24 @@ export class ManageService {
     }
     return { message: 'Course deleted succesfully' }
   }
+
+  async setCoverCourse(courseId: number) {
+    try {
+      await this.courseRepository.update(courseId, {
+        cover: true
+      })
+
+      await this.courseRepository.createQueryBuilder('course')
+        .update()
+        .set({
+          cover: false
+        })
+        .where('course.id != :courseId', { courseId })
+        .execute()
+    } catch (error) {
+      return { error }
+    }
+
+    return { message: 'update cover course' }
+  }
 }
