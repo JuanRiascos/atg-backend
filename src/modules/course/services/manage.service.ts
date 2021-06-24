@@ -11,8 +11,12 @@ export class ManageService {
     @InjectRepository(Course) private readonly courseRepository: Repository<Course>
   ) { }
 
-  async createCourse(data: CourseDto, imageUrl: string) {
+  async createCourse(data: CourseDto, image: any, iconCases: any, iconReps: any) {
     const { color, title, subtitle } = data
+
+    image = image && image[0]
+    iconReps = iconReps && iconReps[0]
+    iconCases = iconCases && iconCases[0]
 
     let course
     try {
@@ -20,7 +24,9 @@ export class ManageService {
         title,
         subtitle,
         color,
-        image: imageUrl
+        image: image?.path,
+        iconReps: iconReps?.path,
+        iconCases: iconCases?.path
       })
     } catch (error) {
       return { error }
@@ -29,11 +35,19 @@ export class ManageService {
     return course
   }
 
-  async updateCourse(courseId: number, data: CourseDto, imageUrl: string) {
+  async updateCourse(courseId: number, data: CourseDto, image: any, iconCases: any, iconReps: any) {
     let body: any = { ...data }
 
-    if (imageUrl)
-      body = { ...body, image: imageUrl }
+    image = image && image[0]
+    iconReps = iconReps && iconReps[0]
+    iconCases = iconCases && iconCases[0]
+
+    if (image)
+      body = { ...body, image: image?.path }
+    if (iconReps)
+      body = { ...body, iconReps: iconReps?.path }
+    if (iconCases)
+      body = { ...body, iconCases: iconCases?.path }
 
     let course
     try {

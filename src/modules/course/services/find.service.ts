@@ -15,7 +15,7 @@ export class FindService {
     try {
       courses = await this.courseRepository.createQueryBuilder('course')
         .select(['course.id', 'course.title', 'course.subtitle', 'course.cover',
-          'course.color', 'course.image'])
+          'course.color', 'course.image', 'course.iconReps', 'course.iconCases'])
         .addOrderBy('course.title')
         .getMany()
     } catch (error) {

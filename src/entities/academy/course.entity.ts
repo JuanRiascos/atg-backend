@@ -30,6 +30,12 @@ export class Course {
   @Column('character varying', { nullable: true })
   image: string
 
+  @Column('character varying', { nullable: true })
+  iconReps: string
+
+  @Column('character varying', { nullable: true })
+  iconCases: string
+
   @CreateDateColumn({ type: "timestamp", name: "created_at" })
   createdAt: Date;
 

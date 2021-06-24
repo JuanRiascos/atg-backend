@@ -47,7 +47,7 @@ export class VideoService {
     let body: any = { ...data }
 
     if (imageUrl)
-      body = { ...body, imageUrl }
+      body = { ...body, image: imageUrl }
 
     let video
     try {
