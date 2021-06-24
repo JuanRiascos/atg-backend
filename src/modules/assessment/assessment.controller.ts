@@ -102,11 +102,35 @@ export class AssessmentController {
     return { success: 'OK', payload: response }
   }
 
+  @Delete('/delete-answer/:answerId')
+  @UseGuards(AuthGuard('jwt'))
+  @Roles(roles.ADMIN)
+  async deleteAnswer(@Param('answerId', ParseIntPipe) answerId: number): Promise<ResponseError | ResponseSuccess> {
+    const response: any = await this.questionService.deleteAnswerToQuestion(answerId)
+
+    if (response.error)
+      throw new BadRequestException(response)
+
+    return { success: 'OK', payload: response }
+  }
+
   @Post('/add-answer')
   @UseGuards(AuthGuard('jwt'))
   @Roles(roles.ADMIN)
   async addAnswerToQuestion(@Body() body: AnswerDto): Promise<ResponseError | ResponseSuccess> {
     const response: any = await this.questionService.addAnswerToQuestion(body)
+
+    if (response.error)
+      throw new BadRequestException(response)
+
+    return { success: 'OK', payload: response }
+  }
+
+  @Put('/update-answer/:answerId')
+  @UseGuards(AuthGuard('jwt'))
+  @Roles(roles.ADMIN)
+  async updateAnswerToQuestion(@Param('answerId', ParseIntPipe) answerId: number, @Body() body: AnswerDto): Promise<ResponseError | ResponseSuccess> {
+    const response: any = await this.questionService.updateAnswerToQuestion(answerId, body)
 
     if (response.error)
       throw new BadRequestException(response)
