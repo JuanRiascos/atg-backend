@@ -30,7 +30,7 @@ export class FindService {
     try {
       course = await this.courseRepository.createQueryBuilder('course')
         .select(['course.id', 'course.title', 'course.subtitle', 'course.cover',
-          'course.color', 'course.image'])
+          'course.color', 'course.image', 'course.iconReps', 'course.iconCases'])
         .where('course.id = :courseId', { courseId })
         .leftJoinAndSelect('course.extraReps', 'extraReps')
         .leftJoinAndSelect('course.assessments', 'assessments')
