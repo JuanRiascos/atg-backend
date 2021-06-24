@@ -100,8 +100,8 @@ export class CourseController {
   @Put('/set-cover/:courseId')
   @UseGuards(AuthGuard('jwt'))
   @Roles(roles.ADMIN)
-  async setCoverCourse(@Param('courseId', ParseIntPipe) courseId: number): Promise<ResponseError | ResponseSuccess> {
-    const response: any = await this.manageService.setCoverCourse(courseId)
+  async setCoverCourse(@Param('courseId', ParseIntPipe) courseId: number, @Body() body: any): Promise<ResponseError | ResponseSuccess> {
+    const response: any = await this.manageService.setCoverCourse(courseId, body?.value)
 
     if (response.error)
       throw new BadRequestException(response)
