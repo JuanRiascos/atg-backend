@@ -24,6 +24,9 @@ export class Video {
   @Column('character varying', { nullable: true })
   tag: string
 
+  @Column('boolean', { default: false })
+  free: boolean
+
   @ManyToOne(() => Course, course => course.videos)
   @JoinColumn({ name: 'fk_course' })
   course: Course

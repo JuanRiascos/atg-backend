@@ -18,6 +18,9 @@ export class ExtraReps {
   @Column('character varying', { nullable: true })
   fileUrl: string
 
+  @Column('boolean', { default: false })
+  free: boolean
+
   @ManyToOne(() => Course, course => course.extraReps)
   @JoinColumn({ name: 'fk_course' })
   course: Course

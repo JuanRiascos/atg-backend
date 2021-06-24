@@ -23,6 +23,9 @@ export class Assessment {
   @Column('text', { nullable: true })
   instructions: string
 
+  @Column('boolean', { default: false })
+  free: boolean
+
   @ManyToOne(() => Course, course => course.assessments)
   @JoinColumn({ name: 'fk_course' })
   course: Course

@@ -14,6 +14,9 @@ export class CaseStudies {
   @Column('character varying', { nullable: true })
   fileUrl: string
 
+  @Column('boolean', { default: false })
+  free: boolean
+
   @ManyToOne(() => Course, course => course.caseStudies)
   @JoinColumn({ name: 'fk_course' })
   course: Course
