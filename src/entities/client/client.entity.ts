@@ -51,9 +51,6 @@ export class Client {
   @OneToMany(() => PaymentHistory, paymentHistory => paymentHistory.client)
   payments: PaymentHistory[]
 
-  /* @OneToMany(() => Interests, interests => interests.client)
-  interests: Interests[] */
-
   @ManyToMany(() => Interest, interest => interest.clients)
   interests: Interest[];
 

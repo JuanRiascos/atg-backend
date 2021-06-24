@@ -18,10 +18,6 @@ export class ExtraReps {
   @Column('character varying', { nullable: true })
   fileUrl: string
 
-  @ManyToMany(() => Plan, plan => plan.extraReps)
-  @JoinTable({ name: 'extra_reps_plans' })
-  plans: Plan[]
-
   @ManyToOne(() => Course, course => course.extraReps)
   @JoinColumn({ name: 'fk_course' })
   course: Course

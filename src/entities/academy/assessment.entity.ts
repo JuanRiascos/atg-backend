@@ -27,10 +27,6 @@ export class Assessment {
   @JoinColumn({ name: 'fk_course' })
   course: Course
 
-  @ManyToMany(() => Plan, plan => plan.assessments)
-  @JoinTable({ name: 'assessment_plans' })
-  plans: Plan[]
-
   @OneToMany(() => Question, question => question.assessment)
   questions: Question[]
 

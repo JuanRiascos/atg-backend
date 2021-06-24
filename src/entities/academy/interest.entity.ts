@@ -21,9 +21,6 @@ export class Interest {
   @OneToMany(() => Interest, interest => interest.parent, { nullable: true, onUpdate: 'CASCADE', onDelete: 'CASCADE' })
   childs: Interest[];
 
-  /* @OneToMany(() => Interests, interests => interests.interest)
-  interests: Interests[] */
-
   @ManyToMany(() => Client, client => client.interests)
   @JoinTable()
   clients: Client[];
