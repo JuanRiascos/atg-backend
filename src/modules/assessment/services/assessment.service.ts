@@ -47,7 +47,7 @@ export class AssessmentService {
   }
 
   async createAssessment(body: AssessmentDto) {
-    const { title, description, instructions, duration, questions, courseId } = body
+    const { title, description, instructions, duration, questions, free, courseId } = body
     let assessment
 
     try {
@@ -57,6 +57,7 @@ export class AssessmentService {
         description,
         instructions,
         duration,
+        free,
       })
 
       /* let cont = 1

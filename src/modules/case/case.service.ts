@@ -25,13 +25,14 @@ export class CaseService {
   }
 
   async addCase(data: CaseDto, fileUrl: string) {
-    const { courseId, title } = data
+    const { courseId, title, free } = data
 
     let caseStudy
     try {
       caseStudy = await this.caseRepository.save({
         title,
         fileUrl,
+        free,
         course: { id: courseId }
       })
     } catch (error) {

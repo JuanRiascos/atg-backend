@@ -25,7 +25,7 @@ export class ExtraService {
   }
 
   async addExtraRep(data: ExtraDto, fileUrl: string) {
-    const { courseId, title, type } = data
+    const { courseId, title, type, free } = data
 
     let extra
     try {
@@ -33,6 +33,7 @@ export class ExtraService {
         title,
         fileUrl,
         type,
+        free,
         course: { id: courseId }
       })
     } catch (error) {
