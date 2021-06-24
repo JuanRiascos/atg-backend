@@ -35,6 +35,7 @@ export class InterestService {
       .leftJoinAndSelect('interest.childs', 'childs')
       .where('interest.principal = true')
       .orderBy('interest.title')
+      .addOrderBy('childs.title')
       .getMany()
 
     return interests
