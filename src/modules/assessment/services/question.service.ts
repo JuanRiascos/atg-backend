@@ -19,10 +19,16 @@ export class QuestionService {
   async addQuestion(body: QuestionDto) {
     const { assessmentId, description } = body
 
+    let count = await this.questionRepository.createQueryBuilder('question')
+      .orderBy('question.order', 'ASC')
+      .innerJoin('question.assessment', 'assessment', 'assessment.id = :assessmentId', { assessmentId })
+      .getCount()
+
     let question
     try {
       question = await this.questionRepository.save({
         description,
+        order: (count + 1),
         assessment: { id: assessmentId }
       })
     } catch (error) {
@@ -64,11 +70,17 @@ export class QuestionService {
   async addAnswerToQuestion(body: AnswerDto) {
     const { questionId, description, correct } = body
 
+    let count = await this.answerRepository.createQueryBuilder('answer')
+      .orderBy('answer.order', 'ASC')
+      .innerJoin('answer.question', 'question', 'question.id = :questionId', { questionId })
+      .getCount()
+
     let answer
     try {
       answer = await this.answerRepository.save({
         description,
         correct,
+        order: (count + 1),
         question: { id: questionId }
       })
 

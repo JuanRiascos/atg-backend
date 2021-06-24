@@ -20,6 +20,8 @@ export class AssessmentService {
         .leftJoinAndSelect('assessment.questions', 'questions')
         .leftJoinAndSelect('questions.answers', 'answers')
         .where('assessment.id = :assessmentId', { assessmentId })
+        .addOrderBy('questions.order', 'ASC')
+        .addOrderBy('answers.order', 'ASC')
         .getOne()
     } catch (error) {
       return { error }
