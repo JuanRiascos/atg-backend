@@ -17,7 +17,7 @@ export class QuestionService {
   ) { }
 
   async addQuestion(body: QuestionDto) {
-    const { assessmentId, description } = body
+    const { assessmentId, description, multiple } = body
 
     let count = await this.questionRepository.createQueryBuilder('question')
       .orderBy('question.order', 'ASC')
@@ -29,6 +29,7 @@ export class QuestionService {
       question = await this.questionRepository.save({
         description,
         order: (count + 1),
+        multiple,
         assessment: { id: assessmentId }
       })
     } catch (error) {
@@ -39,7 +40,7 @@ export class QuestionService {
   }
 
   async updateQuestion(questionId: number, body: QuestionDto) {
-    const { assessmentId, description } = body
+    const { assessmentId, description, multiple } = body
 
     let question
     try {
@@ -48,9 +49,24 @@ export class QuestionService {
         return { error: 'NOT_FOUND' }
 
       question = await this.questionRepository.findOne(questionId)
-      question = { ...question, ...body }
 
+      let change = false
+      if (question.multiple === true && multiple === false)
+        change = true
+
+      question = { ...question, ...body }
       await this.questionRepository.save(question)
+
+      if (change) {
+        let answers = await this.answerRepository.createQueryBuilder('answer')
+          .innerJoin('answer.question', 'question', 'question.id = :questionId', { questionId })
+          .getMany()
+        for (const item of answers) {
+          this.answerRepository.update(item.id, {
+            correct: false
+          })
+        }
+      }
     } catch (error) {
       return { error }
     }
@@ -77,6 +93,9 @@ export class QuestionService {
 
     let answer
     try {
+
+      let question = await this.questionRepository.findOne(questionId)
+
       answer = await this.answerRepository.save({
         description,
         correct,
@@ -84,14 +103,17 @@ export class QuestionService {
         question: { id: questionId }
       })
 
-      if (correct)
-        await this.answerRepository.createQueryBuilder('answer')
-          .update()
-          .set({
+      if (!question.multiple && correct) {
+        let answers = await this.answerRepository.createQueryBuilder('answer')
+          .innerJoin('answer.question', 'question', 'question.id = :questionId', { questionId })
+          .where('answer.id != :id', { id: answer.id })
+          .getMany()
+        for (const item of answers) {
+          this.answerRepository.update(item.id, {
             correct: false
           })
-          .where('answer.id != :id', { id: answer.id })
-          .execute()
+        }
+      }
     } catch (error) {
       return { error }
     }
@@ -113,14 +135,17 @@ export class QuestionService {
 
       await this.answerRepository.save(answer)
 
-      if (correct)
-        await this.answerRepository.createQueryBuilder('answer')
-          .update()
-          .set({
+      if (!question.multiple && correct) {
+        let answers = await this.answerRepository.createQueryBuilder('answer')
+          .innerJoin('answer.question', 'question', 'question.id = :questionId', { questionId })
+          .where('answer.id != :id', { id: answer.id })
+          .getMany()
+        for (const item of answers) {
+          this.answerRepository.update(item.id, {
             correct: false
           })
-          .where('answer.id != :id', { id: answer.id })
-          .execute()
+        }
+      }
     } catch (error) {
       return { error }
     }

@@ -1,4 +1,4 @@
-import { IsNumber, IsOptional, IsString } from "class-validator";
+import { IsBoolean, IsNumber, IsOptional, IsString } from "class-validator";
 
 export class QuestionDto {
 
@@ -8,4 +8,8 @@ export class QuestionDto {
 
   @IsString()
   description: string
+
+  @IsBoolean()
+  @IsOptional()
+  multiple: boolean
 }
