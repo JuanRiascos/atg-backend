@@ -12,8 +12,7 @@ export class UpdatePersonDto {
   @IsEmail()
   email: string
 
-  @IsString()
-  city: string;
+  city: any;
 
   ocupation: any;
 

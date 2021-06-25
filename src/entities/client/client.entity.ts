@@ -26,8 +26,8 @@ export class Client {
   @Column("enum", { enum: States, default: States.Active })
   state: States;
 
-  @Column('character varying', { nullable: true })
-  city: string
+  @Column('simple-json', { nullable: true })
+  city: any
 
   @OneToOne(
     () => User,
