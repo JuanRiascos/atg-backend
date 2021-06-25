@@ -23,13 +23,12 @@ export class Assessment {
   @Column('text', { nullable: true })
   instructions: string
 
+  @Column('boolean', { default: false })
+  free: boolean
+
   @ManyToOne(() => Course, course => course.assessments)
   @JoinColumn({ name: 'fk_course' })
   course: Course
-
-  @ManyToMany(() => Plan, plan => plan.assessments)
-  @JoinTable({ name: 'assessment_plans' })
-  plans: Plan[]
 
   @OneToMany(() => Question, question => question.assessment)
   questions: Question[]

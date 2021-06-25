@@ -31,13 +31,13 @@ export class FindService {
       course = await this.courseRepository.createQueryBuilder('course')
         .select(['course.id', 'course.title', 'course.subtitle', 'course.cover',
           'course.color', 'course.image', 'course.iconReps', 'course.iconCases'])
-        .where('course.id = :courseId', { courseId })
         .leftJoinAndSelect('course.extraReps', 'extraReps')
         .leftJoinAndSelect('course.assessments', 'assessments')
         .leftJoinAndSelect('assessments.questions', 'questions')
         .leftJoinAndSelect('questions.answers', 'answers')
         .leftJoinAndSelect('course.videos', 'videos')
         .leftJoinAndSelect('course.caseStudies', 'caseStudies')
+        .where('course.id = :courseId', { courseId })
         .getOne()
     } catch (error) {
       return { error }

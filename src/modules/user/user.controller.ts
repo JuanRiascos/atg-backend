@@ -106,7 +106,7 @@ export class UserController {
 
   @Put('/update-photo-profile')
   @UseGuards(AuthGuard('jwt'))
-  @UseInterceptors(FileInterceptor('image', multer.storageGCS('users/profile')))
+  @UseInterceptors(FileInterceptor('image', multer.storageGCS('users/profiles')))
   async updatePhotoProfile(
     @Request() req,
     @UploadedFile() file

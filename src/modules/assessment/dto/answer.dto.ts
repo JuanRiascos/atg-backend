@@ -10,5 +10,6 @@ export class AnswerDto {
   description: string
 
   @IsBoolean()
+  @IsOptional()
   correct: boolean
 }

@@ -27,7 +27,7 @@ export class CaseController {
   @Post()
   @UseGuards(AuthGuard('jwt'))
   @Roles(roles.ADMIN)
-  @UseInterceptors(FileInterceptor('file', multer.storageGCS('courses/documents')))
+  @UseInterceptors(FileInterceptor('file', multer.storageGCS('courses/documents/case-studies')))
   async addCase(@Body() body, @UploadedFile() file): Promise<ResponseError | ResponseSuccess> {
     const data = JSON.parse(body.data)
     const response: any = await this.caseService.addCase(data, file?.path)
@@ -41,7 +41,7 @@ export class CaseController {
   @Put('/:caseId')
   @UseGuards(AuthGuard('jwt'))
   @Roles(roles.ADMIN)
-  @UseInterceptors(FileInterceptor('file', multer.storageGCS('courses/documents')))
+  @UseInterceptors(FileInterceptor('file', multer.storageGCS('courses/documents/case-studies')))
   async updateExtraRep(@Param('caseId', ParseIntPipe) caseId: number, @Body() body, @UploadedFile() file): Promise<ResponseError | ResponseSuccess> {
     const data = JSON.parse(body.data)
     const response: any = await this.caseService.updateCase(caseId, data, file?.path)

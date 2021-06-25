@@ -74,19 +74,20 @@ export class ManageService {
     return { message: 'Course deleted succesfully' }
   }
 
-  async setCoverCourse(courseId: number) {
+  async setCoverCourse(courseId: number, value: boolean) {
     try {
       await this.courseRepository.update(courseId, {
-        cover: true
+        cover: value
       })
 
-      await this.courseRepository.createQueryBuilder('course')
-        .update()
-        .set({
-          cover: false
-        })
-        .where('course.id != :courseId', { courseId })
-        .execute()
+      if (value)
+        await this.courseRepository.createQueryBuilder('course')
+          .update()
+          .set({
+            cover: false
+          })
+          .where('course.id != :courseId', { courseId })
+          .execute()
     } catch (error) {
       return { error }
     }

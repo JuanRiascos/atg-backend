@@ -22,19 +22,4 @@ export class Plan {
 
   @Column('int', { nullable: true })
   duration: number
-
-  @ManyToMany(() => Course, course => course.plans)
-  courses: Course[]
-
-  @ManyToMany(() => Video, video => video.plans)
-  videos: Video[]
-
-  @ManyToMany(() => ExtraReps, extraReps => extraReps.plans)
-  extraReps: ExtraReps[]
-
-  @ManyToMany(() => Assessment, assessment => assessment.plans)
-  assessments: Assessment[]
-
-  @ManyToMany(() => CaseStudies, caseStudies => caseStudies.plans)
-  caseStudies: CaseStudies[]
 }

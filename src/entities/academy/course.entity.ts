@@ -42,10 +42,6 @@ export class Course {
   @UpdateDateColumn({ type: "timestamp", name: "updated_at" })
   updatedAt: Date;
 
-  @ManyToMany(() => Plan, plan => plan.courses)
-  @JoinTable({ name: 'course_plans' })
-  plans: Plan[]
-
   @OneToMany(() => Video, video => video.course)
   videos: Video[]
 

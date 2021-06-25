@@ -1,4 +1,4 @@
-import { IsNumber, IsOptional, IsString } from "class-validator"
+import { IsBoolean, IsNumber, IsOptional, IsString } from "class-validator"
 
 export class VideoDto {
 
@@ -14,4 +14,8 @@ export class VideoDto {
   @IsNumber()
   @IsOptional()
   courseId: number
+
+  @IsBoolean()
+  @IsOptional()
+  free: boolean
 }

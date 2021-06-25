@@ -25,7 +25,7 @@ export class VideoService {
   }
 
   async createVideo(data: VideoDto, imageUrl: string) {
-    const { title, courseId, duration, url } = data
+    const { title, courseId, duration, url, free } = data
 
     let video
     try {
@@ -34,6 +34,7 @@ export class VideoService {
         duration,
         image: imageUrl,
         url,
+        free,
         course: { id: courseId }
       })
     } catch (error) {
@@ -62,7 +63,7 @@ export class VideoService {
       return { error }
     }
 
-    return { message: 'updated case' }
+    return { message: 'updated video' }
   }
 
   async deleteVideo(videoId: number) {

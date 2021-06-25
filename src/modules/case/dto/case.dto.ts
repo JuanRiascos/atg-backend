@@ -1,4 +1,4 @@
-import { IsNumber, IsOptional, IsString } from "class-validator";
+import { IsBoolean, IsNumber, IsOptional, IsString } from "class-validator";
 
 export class CaseDto {
 
@@ -8,4 +8,8 @@ export class CaseDto {
   @IsNumber()
   @IsOptional()
   courseId: number
+
+  @IsBoolean()
+  @IsOptional()
+  free: boolean
 }

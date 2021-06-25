@@ -27,7 +27,7 @@ export class ExtraController {
   @Post()
   @UseGuards(AuthGuard('jwt'))
   @Roles(roles.ADMIN)
-  @UseInterceptors(FileInterceptor('file', multer.storageGCS('courses/documents')))
+  @UseInterceptors(FileInterceptor('file', multer.storageGCS('courses/documents/extra-reps')))
   async addExtraRep(@Body() body, @UploadedFile() file): Promise<ResponseError | ResponseSuccess> {
     const data = JSON.parse(body.data)
     const response: any = await this.extraService.addExtraRep(data, file?.path)
@@ -41,7 +41,7 @@ export class ExtraController {
   @Put('/:extraId')
   @UseGuards(AuthGuard('jwt'))
   @Roles(roles.ADMIN)
-  @UseInterceptors(FileInterceptor('file', multer.storageGCS('courses/documents')))
+  @UseInterceptors(FileInterceptor('file', multer.storageGCS('courses/documents/extra-reps')))
   async updateExtraRep(@Param('extraId', ParseIntPipe) extraId: number, @Body() body, @UploadedFile() file): Promise<ResponseError | ResponseSuccess> {
     const data = JSON.parse(body.data)
     const response: any = await this.extraService.updateExtraRep(extraId, data, file?.path)

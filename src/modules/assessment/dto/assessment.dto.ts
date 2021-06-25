@@ -1,4 +1,4 @@
-import { IsArray, IsNumber, IsOptional, IsString, Length } from "class-validator"
+import { IsArray, IsBoolean, IsNumber, IsOptional, IsString, Length } from "class-validator"
 
 export class AssessmentDto {
 
@@ -23,4 +23,8 @@ export class AssessmentDto {
   @IsOptional()
   @IsArray()
   questions: any
+
+  @IsBoolean()
+  @IsOptional()
+  free: boolean
 }

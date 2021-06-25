@@ -19,10 +19,16 @@ export class QuestionService {
   async addQuestion(body: QuestionDto) {
     const { assessmentId, description } = body
 
+    let count = await this.questionRepository.createQueryBuilder('question')
+      .orderBy('question.order', 'ASC')
+      .innerJoin('question.assessment', 'assessment', 'assessment.id = :assessmentId', { assessmentId })
+      .getCount()
+
     let question
     try {
       question = await this.questionRepository.save({
         description,
+        order: (count + 1),
         assessment: { id: assessmentId }
       })
     } catch (error) {
@@ -64,11 +70,17 @@ export class QuestionService {
   async addAnswerToQuestion(body: AnswerDto) {
     const { questionId, description, correct } = body
 
+    let count = await this.answerRepository.createQueryBuilder('answer')
+      .orderBy('answer.order', 'ASC')
+      .innerJoin('answer.question', 'question', 'question.id = :questionId', { questionId })
+      .getCount()
+
     let answer
     try {
       answer = await this.answerRepository.save({
         description,
         correct,
+        order: (count + 1),
         question: { id: questionId }
       })
 
@@ -85,5 +97,43 @@ export class QuestionService {
     }
 
     return answer
+  }
+
+  async updateAnswerToQuestion(answerId: number, body: AnswerDto) {
+    const { description, questionId, correct } = body
+
+    let answer
+    try {
+      let question = await this.questionRepository.findOne(questionId)
+      if (!questionId)
+        return { error: 'NOT_FOUND' }
+
+      answer = await this.answerRepository.findOne(answerId)
+      answer = { ...answer, ...body }
+
+      await this.answerRepository.save(answer)
+
+      if (correct)
+        await this.answerRepository.createQueryBuilder('answer')
+          .update()
+          .set({
+            correct: false
+          })
+          .where('answer.id != :id', { id: answer.id })
+          .execute()
+    } catch (error) {
+      return { error }
+    }
+
+    return { message: 'updated answer' }
+  }
+
+  async deleteAnswerToQuestion(answerId: number) {
+    try {
+      await this.answerRepository.delete(answerId)
+    } catch (error) {
+      return { error }
+    }
+    return { message: 'Answer deleted succesfully' }
   }
 }

@@ -20,6 +20,8 @@ export class AssessmentService {
         .leftJoinAndSelect('assessment.questions', 'questions')
         .leftJoinAndSelect('questions.answers', 'answers')
         .where('assessment.id = :assessmentId', { assessmentId })
+        .addOrderBy('questions.order', 'ASC')
+        .addOrderBy('answers.order', 'ASC')
         .getOne()
     } catch (error) {
       return { error }
@@ -47,7 +49,7 @@ export class AssessmentService {
   }
 
   async createAssessment(body: AssessmentDto) {
-    const { title, description, instructions, duration, questions, courseId } = body
+    const { title, description, instructions, duration, questions, free, courseId } = body
     let assessment
 
     try {
@@ -57,6 +59,7 @@ export class AssessmentService {
         description,
         instructions,
         duration,
+        free,
       })
 
       /* let cont = 1

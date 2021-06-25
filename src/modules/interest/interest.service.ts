@@ -34,6 +34,8 @@ export class InterestService {
     let interests = await this.interestRepository.createQueryBuilder('interest')
       .leftJoinAndSelect('interest.childs', 'childs')
       .where('interest.principal = true')
+      .orderBy('interest.title')
+      .addOrderBy('childs.title')
       .getMany()
 
     return interests
