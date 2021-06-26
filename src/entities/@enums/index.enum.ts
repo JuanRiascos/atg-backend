@@ -26,3 +26,8 @@ export enum TypesExtraReps {
   Resource = 'resource',
   Template = 'template'
 }
+
+export enum TypesRecurrence {
+  Annual = 'annual',
+  Monthly = 'monthly'
+}
