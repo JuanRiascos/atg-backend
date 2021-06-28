@@ -21,10 +21,6 @@ export class StripeService {
 
   async verifyCard(req, body) {
 
-    const user = await this.userRepository.findOne(req.user.id, {
-      relations: ['client']
-    })
-
     try {
       const response = await stripe.paymentMethods.create(
         {
@@ -67,16 +63,7 @@ export class StripeService {
       },
     }
 
-    let customer
-
-    if (user?.client?.idCustomerStripe)
-      customer = await stripe.customers.update(
-        user?.client?.idCustomerStripe,
-        customerBody
-      );
-    else
-      customer = await stripe.customers.create(customerBody);
-
+    const customer = await stripe.customers.create(customerBody);
 
     if (!customer?.id) {
       const error = { error: 'ERROR_CUSTOMER', detail: 'Ocurrio un problema al crear cliente' }
@@ -116,9 +103,9 @@ export class StripeService {
     }
   }
 
-  async cancelSubscription(body) {
+  async cancelSubscription(body, req) {
     let deletedSubscription
-    
+
     try {
       deletedSubscription = await stripe.subscriptions.del(
         body.subscriptionId
@@ -132,10 +119,18 @@ export class StripeService {
       where: { idStripe: body.subscriptionId }
     })
 
-    if (deletedSubscription?.id)
+    if (deletedSubscription?.id) {
       await this.subscriptionRepository.update(subscription?.id, {
         stateSubscription: StateSubscription.Canceled
       })
+
+      const user = await this.userRepository.findOne(req.user.id, {
+        relations: ['client', 'person']
+      })
+
+      await this.clientRepository.update(user?.client?.id, { idCustomerStripe: null })
+
+    }
 
     return deletedSubscription
   }

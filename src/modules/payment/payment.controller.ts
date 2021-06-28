@@ -29,8 +29,9 @@ export class PaymentController {
   @Post('cancel-subscription')
   @UseGuards(AuthGuard('jwt'))
   async cancelSubscription(
-    @Body() body
+    @Body() body,
+    @Request() req
   ) {
-    return await this.stripeService.cancelSubscription(body)
+    return await this.stripeService.cancelSubscription(body, req)
   }
 }
