@@ -1,4 +1,4 @@
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 import { Client } from "../client/client.entity";
 import { Plan } from "./plan.entity";
 
@@ -12,9 +12,11 @@ export class Subscription {
   idStripe: string
 
   @ManyToOne(() => Client, client => client.subscriptions)
+  @JoinColumn({ name: 'fk_client' })
   client: Client;
 
   @ManyToOne(() => Plan, plan => plan.subscriptions)
+  @JoinColumn({ name: 'fk_plan' })
   plan: Plan;
 
 }
