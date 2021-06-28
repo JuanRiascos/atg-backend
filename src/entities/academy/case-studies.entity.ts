@@ -17,6 +17,9 @@ export class CaseStudies {
   @Column('boolean', { default: false })
   free: boolean
 
+  @Column("bigint", { nullable: true })
+  order: number;
+
   @ManyToOne(() => Course, course => course.caseStudies)
   @JoinColumn({ name: 'fk_course' })
   course: Course

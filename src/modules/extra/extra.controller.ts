@@ -64,4 +64,17 @@ export class ExtraController {
     return { success: 'OK', payload: response }
   }
 
+  @Post('/update-order')
+  @UseGuards(AuthGuard('jwt'))
+  @Roles(roles.ADMIN)
+  async updateOrder(@Body() body) {
+    const response: any = await this.extraService.updateOrder(body)
+
+    if (response.error)
+      throw new BadRequestException(response)
+
+    return { success: 'OK', payload: response }
+  }
+
+
 }

@@ -8,12 +8,15 @@ export class Question {
 
   @PrimaryGeneratedColumn({ type: 'bigint' })
   id: number
-  
+
   @Column("text", { nullable: true })
   description: any;
 
   @Column("bigint", { nullable: true })
   order: number;
+
+  @Column('boolean', { nullable: true, default: false })
+  multiple: boolean
 
   @ManyToOne(() => Assessment, assessment => assessment.questions)
   @JoinColumn({ name: 'fk_assessment' })

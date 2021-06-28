@@ -27,12 +27,18 @@ export class CaseService {
   async addCase(data: CaseDto, fileUrl: string) {
     const { courseId, title, free } = data
 
+    let count = await this.caseRepository.createQueryBuilder('case')
+      .orderBy('case.order', 'ASC')
+      .innerJoin('case.course', 'course', 'course.id = :courseId', { courseId })
+      .getCount()
+
     let caseStudy
     try {
       caseStudy = await this.caseRepository.save({
         title,
         fileUrl,
         free,
+        order: (count + 1),
         course: { id: courseId }
       })
     } catch (error) {
@@ -71,6 +77,25 @@ export class CaseService {
       return { error }
     }
     return { message: 'Case study deleted succesfully' }
+  }
+
+  async updateOrder(body: any) {
+    const { cases, courseId } = body
+
+    try {
+      await Promise.all(cases.map(async (caseStudy, index) => {
+        await this.caseRepository.update(caseStudy.id, { order: (index + 1) })
+      }))
+    } catch (error) {
+      return { error }
+    }
+
+    let response = await this.caseRepository.createQueryBuilder('case')
+      .innerJoin('case.course', 'course', 'course.id = :courseId', { courseId })
+      .orderBy('case.order', 'ASC')
+      .getMany()
+
+    return response
   }
 
 }

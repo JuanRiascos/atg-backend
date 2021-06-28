@@ -38,6 +38,9 @@ export class FindService {
         .leftJoinAndSelect('course.videos', 'videos')
         .leftJoinAndSelect('course.caseStudies', 'caseStudies')
         .where('course.id = :courseId', { courseId })
+        .addOrderBy('caseStudies.order', 'ASC')
+        .addOrderBy('extraReps.order', 'ASC')
+        .addOrderBy('videos.order', 'ASC')
         .getOne()
     } catch (error) {
       return { error }

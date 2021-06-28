@@ -27,6 +27,11 @@ export class VideoService {
   async createVideo(data: VideoDto, imageUrl: string) {
     const { title, courseId, duration, url, free } = data
 
+    let count = await this.videoRepository.createQueryBuilder('video')
+      .orderBy('video.order', 'ASC')
+      .innerJoin('video.course', 'course', 'course.id = :courseId', { courseId })
+      .getCount()
+
     let video
     try {
       video = await this.videoRepository.save({
@@ -35,6 +40,7 @@ export class VideoService {
         image: imageUrl,
         url,
         free,
+        order: (count + 1),
         course: { id: courseId }
       })
     } catch (error) {
@@ -73,6 +79,25 @@ export class VideoService {
       return { error }
     }
     return { message: 'Video deleted succesfully' }
+  }
+
+  async updateOrder(body: any) {
+    const { videos, courseId } = body
+
+    try {
+      await Promise.all(videos.map(async (video, index) => {
+        await this.videoRepository.update(video.id, { order: (index + 1) })
+      }))
+    } catch (error) {
+      return { error }
+    }
+
+    let response = await this.videoRepository.createQueryBuilder('video')
+      .innerJoin('video.course', 'course', 'course.id = :courseId', { courseId })
+      .orderBy('video.order', 'ASC')
+      .getMany()
+
+    return response
   }
 
 
