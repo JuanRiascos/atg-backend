@@ -1,10 +1,10 @@
-import { Column, Entity, ManyToMany, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
-import { Assessment } from "./assessment.entity";
-import { CaseStudies } from "./case-studies.entity";
-import { Course } from "./course.entity";
-import { ExtraReps } from "./extra-reps.entity";
-import { Video } from "./video.entity";
-
+import {
+  Column,
+  Entity,
+  OneToMany,
+  PrimaryGeneratedColumn
+} from "typeorm";
+import { Subscription } from "../payment/subscription.entity";
 @Entity('plan', { schema: 'academy' })
 export class Plan {
 
@@ -22,4 +22,5 @@ export class Plan {
 
   @Column('int', { nullable: true })
   duration: number
+
 }
