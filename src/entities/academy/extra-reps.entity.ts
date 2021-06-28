@@ -21,6 +21,9 @@ export class ExtraReps {
   @Column('boolean', { default: false })
   free: boolean
 
+  @Column("bigint", { nullable: true })
+  order: number;
+
   @ManyToOne(() => Course, course => course.extraReps)
   @JoinColumn({ name: 'fk_course' })
   course: Course

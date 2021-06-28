@@ -27,6 +27,11 @@ export class ExtraService {
   async addExtraRep(data: ExtraDto, fileUrl: string) {
     const { courseId, title, type, free } = data
 
+    let count = await this.extraRepsRepository.createQueryBuilder('extra')
+      .orderBy('extra.order', 'ASC')
+      .innerJoin('extra.course', 'course', 'course.id = :courseId', { courseId })
+      .getCount()
+
     let extra
     try {
       extra = await this.extraRepsRepository.save({
@@ -34,6 +39,7 @@ export class ExtraService {
         fileUrl,
         type,
         free,
+        order: (count + 1),
         course: { id: courseId }
       })
     } catch (error) {
@@ -72,5 +78,24 @@ export class ExtraService {
       return { error }
     }
     return { message: 'Extra reps deleted succesfully' }
+  }
+
+  async updateOrder(body: any) {
+    const { extras, courseId } = body
+
+    try {
+      await Promise.all(extras.map(async (extra, index) => {
+        await this.extraRepsRepository.update(extra.id, { order: (index + 1) })
+      }))
+    } catch (error) {
+      return { error }
+    }
+
+    let response = await this.extraRepsRepository.createQueryBuilder('extra')
+      .innerJoin('extra.course', 'course', 'course.id = :courseId', { courseId })
+      .orderBy('extra.order', 'ASC')
+      .getMany()
+
+    return response
   }
 }
