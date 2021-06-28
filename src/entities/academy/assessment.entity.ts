@@ -1,7 +1,6 @@
 import { Column, Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 import { AssessmentClientTry } from "./assessment-client-try.entity";
 import { Course } from "./course.entity";
-import { Plan } from "./plan.entity";
 import { Question } from "./question.entity";
 import { Video } from "./video.entity";
 

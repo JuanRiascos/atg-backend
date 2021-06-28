@@ -3,7 +3,6 @@ import { States } from "../@enums/index.enum";
 import { Assessment } from "./assessment.entity";
 import { CaseStudies } from "./case-studies.entity";
 import { ExtraReps } from "./extra-reps.entity";
-import { Plan } from "./plan.entity";
 import { Video } from "./video.entity";
 
 @Entity('course', { schema: 'academy' })

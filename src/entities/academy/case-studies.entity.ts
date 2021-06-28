@@ -1,6 +1,5 @@
 import { Column, Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 import { Course } from "./course.entity";
-import { Plan } from "./plan.entity";
 
 @Entity('case_studies', { schema: 'academy' })
 export class CaseStudies {

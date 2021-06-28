@@ -2,8 +2,8 @@ import { BadRequestException, Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 
-import { Plan } from "src/entities/academy/plan.entity";
 import { User } from "src/entities/user/user.entity";
+import { Plan } from "src/entities/payment/plan.entity";
 const stripe = require('stripe')('sk_test_51Iz5zpF7UQ2vcSsa6tNrNcJ5klDLBcWIv6yCD8YgAm5R9X5YXA3Q1h0ln9Pk8k9YR2UcegkGPKEn9nQ7hTkEGewB00YM0UalJ0');
 
 @Injectable()

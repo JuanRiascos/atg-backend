@@ -1,8 +1,13 @@
-import { Column, Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne, OneToOne, PrimaryGeneratedColumn } from "typeorm";
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  OneToOne,
+  PrimaryGeneratedColumn
+} from "typeorm";
 import { Assessment } from "./assessment.entity";
 import { Course } from "./course.entity";
-import { Plan } from "./plan.entity";
-
 @Entity('video', { schema: 'academy' })
 export class Video {
 
