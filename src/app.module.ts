@@ -20,6 +20,7 @@ import { ExtraModule } from './modules/extra/extra.module';
 import { CaseModule } from './modules/case/case.module';
 import { VideoModule } from './modules/video/video.module';
 import { AssessmentModule } from './modules/assessment/assessment.module';
+import { PaymentModule } from './modules/payment/payment.module';
 
 @Module({
   imports: [
@@ -44,7 +45,8 @@ import { AssessmentModule } from './modules/assessment/assessment.module';
     ExtraModule,
     CaseModule,
     VideoModule,
-    AssessmentModule
+    AssessmentModule,
+    PaymentModule
   ],
   controllers: [AppController],
   providers: [AppService],
