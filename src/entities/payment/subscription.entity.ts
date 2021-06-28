@@ -12,7 +12,7 @@ export class Subscription {
   @Column("character varying", { name: "id_stripe" })
   idStripe: string
 
-  @Column('enum', { enum: StateSubscription, name: "state_subscription" })
+  @Column('enum', { enum: StateSubscription, name: "state_subscription", nullable: true })
   stateSubscription: StateSubscription
 
   @ManyToOne(() => Client, client => client.subscriptions)
