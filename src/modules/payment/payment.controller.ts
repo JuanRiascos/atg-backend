@@ -25,4 +25,12 @@ export class PaymentController {
   ) {
     return await this.stripeService.createCustomer(body, req)
   }
+
+  @Post('cancel-subscription')
+  @UseGuards(AuthGuard('jwt'))
+  async cancelSubscription(
+    @Body() body
+  ) {
+    return await this.stripeService.cancelSubscription(body)
+  }
 }

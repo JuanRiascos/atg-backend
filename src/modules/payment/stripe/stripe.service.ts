@@ -105,4 +105,17 @@ export class StripeService {
       throw new BadRequestException(error)
     }
   }
+
+  async cancelSubscription(body) {
+    try {
+      const deleted = await stripe.subscriptions.del(
+        body.subscriptionId
+      );
+
+      return deleted
+    } catch (error) {
+      const code = { error: 'ERROR_CARD', detail: error.code }
+      throw new BadRequestException(code)
+    }
+  }
 }
