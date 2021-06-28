@@ -13,6 +13,18 @@ export class AssessmentService {
     @InjectRepository(Question) private readonly questionRepository: Repository<Question>
   ) { }
 
+  async getAssessments() {
+    let assessments
+    try {
+      assessments = await this.assessmentRepository.createQueryBuilder('assessment')
+        .addSelect(['course.title', 'course.color'])
+        .innerJoin('assessment.course', 'course')
+        .getMany()
+    } catch (error) {
+      return { error }
+    }
+  }
+
   async getAssessment(assessmentId: number) {
     let assessment
     try {

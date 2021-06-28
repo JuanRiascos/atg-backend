@@ -19,6 +19,18 @@ export class AssessmentController {
     private readonly answerService: AnswerService
   ) { }
 
+  @Get('/all')
+  @UseGuards(AuthGuard('jwt'))
+  @Roles(roles.ADMIN)
+  async getAssessments(): Promise<ResponseError | ResponseSuccess> {
+    const response: any = await this.assessmentService.getAssessments()
+
+    if (response.error)
+      throw new BadRequestException(response)
+
+    return { success: 'OK', payload: response }
+  }
+
   @Get()
   @UseGuards(AuthGuard('jwt'))
   @Roles(roles.ADMIN)
