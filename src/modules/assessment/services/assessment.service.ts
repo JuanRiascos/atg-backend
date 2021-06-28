@@ -23,6 +23,8 @@ export class AssessmentService {
     } catch (error) {
       return { error }
     }
+
+    return assessments
   }
 
   async getAssessment(assessmentId: number) {
