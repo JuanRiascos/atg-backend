@@ -27,6 +27,9 @@ export class Client {
   @Column("enum", { enum: States, default: States.Active })
   state: States;
 
+  @Column("character varying", { name: "id_customer_stripe", nullable: true })
+  idCustomerStripe: string;
+
   @Column('simple-json', { nullable: true })
   city: any
 

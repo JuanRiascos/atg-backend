@@ -1,4 +1,5 @@
 import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { StateSubscription } from "../@enums/index.enum";
 import { Client } from "../client/client.entity";
 import { Plan } from "./plan.entity";
 
@@ -10,6 +11,9 @@ export class Subscription {
 
   @Column("character varying", { name: "id_stripe" })
   idStripe: string
+
+  @Column('enum', { enum: StateSubscription, name: "state_subscription" })
+  stateSubscription: StateSubscription
 
   @ManyToOne(() => Client, client => client.subscriptions)
   @JoinColumn({ name: 'fk_client' })

@@ -31,3 +31,13 @@ export enum TypesRecurrence {
   Annual = 'annual',
   Monthly = 'monthly'
 }
+
+export enum StateSubscription {
+  Active = "active",
+  Past_due = "past_due",
+  Unpaid = "unpaid",
+  Canceled = "canceled",
+  Incomplete = "incomplete",
+  Incomplete_expired = "incomplete_expired",
+  Trialing = "trialing"
+}
