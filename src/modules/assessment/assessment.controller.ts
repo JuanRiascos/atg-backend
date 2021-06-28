@@ -8,13 +8,15 @@ import { AssessmentDto } from './dto/assessment.dto';
 import { QuestionService } from './services/question.service';
 import { QuestionDto } from './dto/question.dto';
 import { AnswerDto } from './dto/answer.dto';
+import { AnswerService } from './services/answer.service';
 
 @Controller('assessment')
 export class AssessmentController {
 
   constructor(
     private readonly assessmentService: AssessmentService,
-    private readonly questionService: QuestionService
+    private readonly questionService: QuestionService,
+    private readonly answerService: AnswerService
   ) { }
 
   @Get()
@@ -106,7 +108,7 @@ export class AssessmentController {
   @UseGuards(AuthGuard('jwt'))
   @Roles(roles.ADMIN)
   async deleteAnswer(@Param('answerId', ParseIntPipe) answerId: number): Promise<ResponseError | ResponseSuccess> {
-    const response: any = await this.questionService.deleteAnswerToQuestion(answerId)
+    const response: any = await this.answerService.deleteAnswerToQuestion(answerId)
 
     if (response.error)
       throw new BadRequestException(response)
@@ -118,7 +120,7 @@ export class AssessmentController {
   @UseGuards(AuthGuard('jwt'))
   @Roles(roles.ADMIN)
   async addAnswerToQuestion(@Body() body: AnswerDto): Promise<ResponseError | ResponseSuccess> {
-    const response: any = await this.questionService.addAnswerToQuestion(body)
+    const response: any = await this.answerService.addAnswerToQuestion(body)
 
     if (response.error)
       throw new BadRequestException(response)
@@ -130,12 +132,37 @@ export class AssessmentController {
   @UseGuards(AuthGuard('jwt'))
   @Roles(roles.ADMIN)
   async updateAnswerToQuestion(@Param('answerId', ParseIntPipe) answerId: number, @Body() body: AnswerDto): Promise<ResponseError | ResponseSuccess> {
-    const response: any = await this.questionService.updateAnswerToQuestion(answerId, body)
+    const response: any = await this.answerService.updateAnswerToQuestion(answerId, body)
 
     if (response.error)
       throw new BadRequestException(response)
 
     return { success: 'OK', payload: response }
   }
+
+  @Put('/update-order-answers')
+  @UseGuards(AuthGuard('jwt'))
+  @Roles(roles.ADMIN)
+  async updateOrderAnswers(@Body() body): Promise<ResponseError | ResponseSuccess> {
+    const response: any = await this.answerService.updateOrderAnswers(body)
+
+    if (response.error)
+      throw new BadRequestException(response)
+
+    return { success: 'OK', payload: response }
+  }
+
+  @Put('/update-order-questions')
+  @UseGuards(AuthGuard('jwt'))
+  @Roles(roles.ADMIN)
+  async updateOrderQuestions(@Body() body): Promise<ResponseError | ResponseSuccess> {
+    const response: any = await this.questionService.updateOrderQuestions(body)
+
+    if (response.error)
+      throw new BadRequestException(response)
+
+    return { success: 'OK', payload: response }
+  }
+
 
 }
