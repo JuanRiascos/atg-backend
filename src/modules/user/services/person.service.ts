@@ -7,7 +7,7 @@ import { UpdatePersonDto } from "../dto/update-person.dto";
 import { SendgridService, Templates } from "src/@common/services/sendgrid.service";
 import { User } from "src/entities/user/user.entity";
 import { Person } from "src/entities/user/person.entity";
-import { States } from "src/entities/@enums/index.enum";
+import { States, StateSubscription } from "src/entities/@enums/index.enum";
 import { Client } from "src/entities/client/client.entity";
 
 @Injectable()
@@ -20,11 +20,19 @@ export class PersonService {
   ) { }
 
   async getPerson(id: number) {
-    const userValidate: any = await this.userRepository.createQueryBuilder('user')
+    const userValidate = await this.userRepository.createQueryBuilder('user')
       .select(['user.id', 'user.email'])
       .addSelect(['client.city'])
       .innerJoinAndSelect('user.person', 'person')
       .leftJoin('user.client', 'client')
+      .leftJoinAndSelect(
+        'client.subscriptions',
+        'subscription',
+        'subscription.stateSubscription = :stateSubscription',
+        {
+          stateSubscription: StateSubscription.Active
+        }
+      )
       .leftJoinAndSelect('person.ocupation', 'ocupation')
       .leftJoinAndSelect('person.sport', 'sport')
       .where("user.state = 'active' AND user.id = :id", { id })
@@ -39,6 +47,10 @@ export class PersonService {
       email: userValidate.email,
       ...userValidate.person,
       ...userValidate.client,
+      stateSubscription: userValidate?.client?.subscriptions?.length ?
+        StateSubscription.Active
+        :
+        StateSubscription.Inactive
     }
 
     return response

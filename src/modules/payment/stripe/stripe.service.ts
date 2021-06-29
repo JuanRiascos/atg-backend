@@ -35,7 +35,13 @@ export class StripeService {
       );
 
       if (response?.id) {
-        return { payment_method: response.id }
+        /* return { payment_method: response.id } */
+        return await this.createCustomer({
+          typesRecurrence: body.typesRecurrence,
+          payment_method: response.id
+        },
+          req
+        )
       } else {
         const error = { error: 'ERROR_CARD', detail: 'Ocurrio un problema al verificar la targeta' }
         throw new BadRequestException(error)
