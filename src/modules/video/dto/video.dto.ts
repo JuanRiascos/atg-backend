@@ -5,6 +5,14 @@ export class VideoDto {
   @IsString()
   title: string
 
+  @IsString()
+  @IsOptional()
+  subtitle: string
+
+  @IsString()
+  @IsOptional()
+  description: string
+
   @IsNumber()
   duration: number
 

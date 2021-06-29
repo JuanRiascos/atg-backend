@@ -17,6 +17,12 @@ export class Video {
   @Column('character varying')
   title: string
 
+  @Column('character varying', { nullable: true })
+  subtitle: string
+
+  @Column('character varying', { nullable: true })
+  description: string
+
   @Column('int', { nullable: true })
   duration: number
 

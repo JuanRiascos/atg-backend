@@ -25,7 +25,7 @@ export class VideoService {
   }
 
   async createVideo(data: VideoDto, imageUrl: string) {
-    const { title, courseId, duration, url, free } = data
+    const { title, courseId, duration, url, free, subtitle, description } = data
 
     let count = await this.videoRepository.createQueryBuilder('video')
       .orderBy('video.order', 'ASC')
@@ -40,6 +40,8 @@ export class VideoService {
         image: imageUrl,
         url,
         free,
+        subtitle,
+        description,
         order: (count + 1),
         course: { id: courseId }
       })
