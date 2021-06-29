@@ -42,3 +42,8 @@ export enum StateSubscription {
   Trialing = "trialing",
   Inactive = "inactive"
 }
+
+export enum StateTry {
+  Started = 'started',
+  Finished = 'finished'
+}

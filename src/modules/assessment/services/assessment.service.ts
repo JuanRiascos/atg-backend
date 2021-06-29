@@ -13,13 +13,24 @@ export class AssessmentService {
     @InjectRepository(Question) private readonly questionRepository: Repository<Question>
   ) { }
 
-  async getAssessments() {
+  async getAssessments(clientId: number) {
     let assessments
     try {
       assessments = await this.assessmentRepository.createQueryBuilder('assessment')
         .addSelect(['course.title', 'course.color'])
         .innerJoin('assessment.course', 'course')
+        .leftJoinAndSelect('assessment.trys', 'trys')
+        .leftJoin('trys.client', 'client', 'client.id = :clientId', { clientId })
+        .leftJoinAndSelect('trys.responses', 'responses')
         .getMany()
+
+      assessments.map(item => {
+        if (item.trys.length === 0)
+          item['status'] = 'none'
+        else {
+          item['status'] = item.trys[0].status
+        }
+      })
     } catch (error) {
       return { error }
     }
