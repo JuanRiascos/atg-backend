@@ -39,5 +39,6 @@ export enum StateSubscription {
   Canceled = "canceled",
   Incomplete = "incomplete",
   Incomplete_expired = "incomplete_expired",
-  Trialing = "trialing"
+  Trialing = "trialing",
+  Inactive = "inactive"
 }
