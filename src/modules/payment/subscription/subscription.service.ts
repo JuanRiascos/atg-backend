@@ -14,7 +14,6 @@ export class SubscriptionService {
   }
 
   async getSubscriptionByUser(atgAppClientId) {
-
     const client = await this.clientRepository.createQueryBuilder('client')
       .select(["client.id"])
       .leftJoinAndSelect(

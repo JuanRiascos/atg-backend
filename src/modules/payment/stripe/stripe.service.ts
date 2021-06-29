@@ -94,12 +94,19 @@ export class StripeService {
         plan,
         stateSubscription: StateSubscription.Active
       })
-      /* Enviar correo de pago exitoso */
 
       return { subscription, customer }
 
-    } else if (subscription?.status === 'incomplete') {
-      const error = { error: 'ERROR_SUBSCRIPTION_INCOMPLETE', detail: 'fondos insuficientes' }
+    } else if (subscription?.status === StateSubscription.Incomplete) {
+
+      await this.subscriptionRepository.save({
+        client: user?.client,
+        idStripe: subscription?.id,
+        plan,
+        stateSubscription: StateSubscription.Incomplete
+      })
+
+      const error = { error: 'ERROR_SUBSCRIPTION_INCOMPLETE', detail: 'Primer intento de pago fallido' }
       throw new BadRequestException(error)
 
     } else {
