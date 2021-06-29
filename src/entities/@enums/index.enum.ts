@@ -41,3 +41,8 @@ export enum StateSubscription {
   Incomplete_expired = "incomplete_expired",
   Trialing = "trialing"
 }
+
+export enum StateTry {
+  Started = 'started',
+  Finished = 'finished'
+}

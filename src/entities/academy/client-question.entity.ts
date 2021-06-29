@@ -22,7 +22,7 @@ export class ClientQuestion {
   @JoinColumn({ name: 'fk_answer' })
   answer: Answer
 
-  @ManyToOne(() => AssessmentClientTry, tryClient => tryClient.clientQuestion)
+  @ManyToOne(() => AssessmentClientTry, tryClient => tryClient.responses)
   @JoinColumn({ name: 'fk_try' })
   try: AssessmentClientTry
 

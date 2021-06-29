@@ -1,4 +1,5 @@
-import { Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { StateTry } from "../@enums/index.enum";
 import { Client } from "../client/client.entity";
 import { Assessment } from "./assessment.entity";
 import { ClientQuestion } from "./client-question.entity";
@@ -9,6 +10,9 @@ export class AssessmentClientTry {
   @PrimaryGeneratedColumn({ type: 'bigint' })
   id: number
 
+  @Column('enum', { enum: StateTry, nullable: true })
+  status: StateTry
+
   @ManyToOne(() => Assessment, assessment => assessment.trys)
   @JoinColumn({ name: 'fk_assessment' })
   assessment: Assessment
@@ -17,6 +21,6 @@ export class AssessmentClientTry {
   @JoinColumn({ name: 'fk_client' })
   client: Client
 
-  @OneToMany(() => ClientQuestion, clientQuestion => clientQuestion.try)
-  clientQuestion: ClientQuestion[]
+  @OneToMany(() => ClientQuestion, responses => responses.try)
+  responses: ClientQuestion[]
 }

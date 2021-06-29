@@ -1,4 +1,4 @@
-import { BadRequestException, Body, Controller, Delete, Get, Param, ParseIntPipe, Post, Put, Query, UseGuards } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Delete, Get, Param, ParseIntPipe, Post, Put, Query, Req, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { Roles as roles } from 'src/@common/constants/role.constant';
 import { Roles } from 'src/@common/decorators/roles.decorator';
@@ -22,8 +22,8 @@ export class AssessmentController {
   @Get('/all')
   @UseGuards(AuthGuard('jwt'))
   @Roles(roles.ADMIN)
-  async getAssessments(): Promise<ResponseError | ResponseSuccess> {
-    const response: any = await this.assessmentService.getAssessments()
+  async getAssessments(@Req() req): Promise<ResponseError | ResponseSuccess> {
+    const response: any = await this.assessmentService.getAssessments(req.user.atgAppClientId)
 
     if (response.error)
       throw new BadRequestException(response)
