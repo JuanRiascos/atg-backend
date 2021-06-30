@@ -15,8 +15,8 @@ export class Subscription {
   @Column('enum', { enum: StateSubscription, name: "state_subscription", nullable: true })
   stateSubscription: StateSubscription
 
-  @Column({ name: 'current_period_end', nullable: true, type: "bigint" })
-  currenPeriodEnd: number;
+  @Column("timestamp", { name: "subscription_end_date", nullable: true })
+  subscriptionEndDate: Date;
 
   @ManyToOne(() => Client, client => client.subscriptions)
   @JoinColumn({ name: 'fk_client' })

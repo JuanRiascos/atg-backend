@@ -1,6 +1,7 @@
+import { Repository } from "typeorm";
 import { BadRequestException, Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { Repository } from "typeorm";
+import moment from 'moment'
 
 import { User } from "src/entities/user/user.entity";
 import { Plan } from "src/entities/payment/plan.entity";
@@ -135,7 +136,7 @@ export class StripeService {
     if (deletedSubscription?.id) {
       await this.subscriptionRepository.update(subscription?.id, {
         stateSubscription: StateSubscription.Canceled,
-        currenPeriodEnd: deletedSubscription?.current_period_end
+        subscriptionEndDate: moment(deletedSubscription?.current_period_end, "X")
       })
 
       const user = await this.userRepository.findOne(req.user.id, {
