@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { HttpService, Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { Course } from "src/entities/academy/course.entity";
@@ -7,7 +7,8 @@ import { Course } from "src/entities/academy/course.entity";
 export class FindService {
 
   constructor(
-    @InjectRepository(Course) private readonly courseRepository: Repository<Course>
+    @InjectRepository(Course) private readonly courseRepository: Repository<Course>,
+    private readonly httpService: HttpService,
   ) { }
 
   async getCourses() {
@@ -48,6 +49,20 @@ export class FindService {
 
     if (!course)
       return { error: 'NOT_FOUND' }
+
+    for (const video of course?.videos) {
+      if (video.url) {
+        const response = await this.httpService.get(
+          `https://player.vimeo.com/video/${video?.url?.replace("https://vimeo.com/", "")}/config`
+        ).toPromise()
+
+        const data = await response.data
+        let urlVimeo = data?.request?.files?.hls?.cdns?.akfire_interconnect_quic?.url
+
+        video['urlVimeo'] = urlVimeo || video?.url
+      }
+    }
+
 
     return course
   }
