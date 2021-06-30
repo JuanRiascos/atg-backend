@@ -28,9 +28,9 @@ export class PersonService {
       .leftJoinAndSelect(
         'client.subscriptions',
         'subscription',
-        'subscription.stateSubscription = :stateSubscription',
+        'subscription.stateSubscription IN (:...stateSubscription)',
         {
-          stateSubscription: StateSubscription.Active
+          stateSubscription: [StateSubscription.Active, StateSubscription.Canceled]
         }
       )
       .leftJoinAndSelect('person.ocupation', 'ocupation')

@@ -134,7 +134,8 @@ export class StripeService {
 
     if (deletedSubscription?.id) {
       await this.subscriptionRepository.update(subscription?.id, {
-        stateSubscription: StateSubscription.Canceled
+        stateSubscription: StateSubscription.Canceled,
+        currenPeriodEnd: deletedSubscription?.current_period_end
       })
 
       const user = await this.userRepository.findOne(req.user.id, {

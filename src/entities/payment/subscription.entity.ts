@@ -15,6 +15,9 @@ export class Subscription {
   @Column('enum', { enum: StateSubscription, name: "state_subscription", nullable: true })
   stateSubscription: StateSubscription
 
+  @Column({ name: 'current_period_end', nullable: true, type: "bigint" })
+  currenPeriodEnd: number;
+
   @ManyToOne(() => Client, client => client.subscriptions)
   @JoinColumn({ name: 'fk_client' })
   client: Client;

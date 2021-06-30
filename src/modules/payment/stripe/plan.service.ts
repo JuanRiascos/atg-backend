@@ -18,11 +18,12 @@ export class PlanService {
       .leftJoinAndSelect(
         'plan.subscriptions',
         'subscription',
-        'subscription.stateSubscription = :stateSubscription',
+        'subscription.stateSubscription IN (:...stateSubscription)',
         {
-          stateSubscription: StateSubscription.Active
+          stateSubscription: [StateSubscription.Active, StateSubscription.Canceled]
         }
       )
+      /* .where("user.id IN (:...ids)", { ids: [1, 2, 3, 4] }) */
       .leftJoin('subscription.client', 'client', 'client.id = :clientId', { clientId: req?.user?.atgAppClientId })
       .orderBy("plan.id", "ASC")
       .getMany()
