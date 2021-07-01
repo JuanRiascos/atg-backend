@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { StateTry } from 'src/entities/@enums/index.enum';
 import { AssessmentClientTry } from 'src/entities/academy/assessment-client-try.entity';
 import { Assessment } from 'src/entities/academy/assessment.entity';
 import { Question } from 'src/entities/academy/question.entity';
@@ -110,7 +111,8 @@ export class AssessmentService {
     try {
       await this.tryRepository.save({
         assessment: { id: assessmentId },
-        client: { id: clientId }
+        client: { id: clientId },
+        status: StateTry.Started
       })
     } catch (error) {
       return { error }
