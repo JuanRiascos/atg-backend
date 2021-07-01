@@ -40,7 +40,7 @@ export class AssessmentService {
     return assessments
   }
 
-  async getAssessment(assessmentId: number) {
+  async getAssessment(assessmentId: number, clientId: number) {
     let assessment
     try {
       assessment = await this.assessmentRepository.createQueryBuilder('assessment')
@@ -48,10 +48,18 @@ export class AssessmentService {
         .innerJoin('assessment.course', 'course')
         .leftJoinAndSelect('assessment.questions', 'questions')
         .leftJoinAndSelect('questions.answers', 'answers')
+        .leftJoinAndSelect('assessment.trys', 'trys')
+        .leftJoin('trys.client', 'client', 'client.id = :clientId', { clientId })
         .where('assessment.id = :assessmentId', { assessmentId })
         .addOrderBy('questions.order', 'ASC')
         .addOrderBy('answers.order', 'ASC')
         .getOne()
+
+      if (assessment.trys.length === 0)
+        assessment['status'] = 'none'
+      else {
+        assessment['status'] = assessment.trys[0].status
+      }
     } catch (error) {
       return { error }
     }

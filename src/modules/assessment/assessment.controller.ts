@@ -34,8 +34,8 @@ export class AssessmentController {
   @Get()
   @UseGuards(AuthGuard('jwt'))
   @Roles(roles.ADMIN)
-  async getAssessment(@Query() query): Promise<ResponseError | ResponseSuccess> {
-    const response: any = await this.assessmentService.getAssessment(query.assessmentId)
+  async getAssessment(@Query() query, @Req() req): Promise<ResponseError | ResponseSuccess> {
+    const response: any = await this.assessmentService.getAssessment(query.assessmentId, req.user.atgAppClientId)
 
     if (response.error)
       throw new BadRequestException(response)
