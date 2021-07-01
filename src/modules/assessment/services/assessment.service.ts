@@ -48,6 +48,7 @@ export class AssessmentService {
           item['progress'] = (responses / questions) * 100
         }
         delete item.questions
+        delete item?.trys
       })
 
     } catch (error) {
@@ -67,12 +68,12 @@ export class AssessmentService {
         .leftJoinAndSelect('questions.answers', 'answers')
         .leftJoinAndSelect('assessment.trys', 'trys')
         .leftJoinAndSelect('trys.responses', 'responses')
-        .leftJoinAndSelect('responses.questions', 'questionsR')
+        .leftJoin('responses.question', 'question')
         .leftJoin('trys.client', 'client', 'client.id = :clientId', { clientId })
         .where('assessment.id = :assessmentId', { assessmentId })
         .addOrderBy('questions.order', 'ASC')
         .addOrderBy('answers.order', 'ASC')
-        .addOrderBy('questionsR.order', 'ASC')
+        .addOrderBy('question.order', 'ASC')
         .getOne()
 
       if (assessment.trys.length === 0)
