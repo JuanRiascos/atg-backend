@@ -42,6 +42,8 @@ export class FindService {
         .addOrderBy('caseStudies.order', 'ASC')
         .addOrderBy('extraReps.order', 'ASC')
         .addOrderBy('videos.order', 'ASC')
+        .addOrderBy('questions.order', 'ASC')
+        .addOrderBy('answers.order', 'ASC')
         .getOne()
     } catch (error) {
       return { error }
