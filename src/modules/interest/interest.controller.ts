@@ -5,6 +5,7 @@ import { ResponseError, ResponseSuccess } from 'src/@common/interfaces/response'
 import { Roles as roles } from '../../@common/constants/role.constant'
 import { InterestService } from './interest.service';
 import { InterestDto } from './dto/interest.dto';
+import { RolesGuard } from 'src/@common/guards/roles.guard';
 
 @Controller('interest')
 export class InterestController {
@@ -36,8 +37,8 @@ export class InterestController {
     return { success: 'OK', payload: response }
   }
 
-  @Post('')
-  @UseGuards(AuthGuard('jwt'))
+  @Post()
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Roles(roles.ADMIN)
   async createInterest(@Body() body: InterestDto): Promise<ResponseError | ResponseSuccess> {
     const response: any = await this.interestService.createInterest(body)
@@ -49,7 +50,7 @@ export class InterestController {
   }
 
   @Put('/:id')
-  @UseGuards(AuthGuard('jwt'))
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Roles(roles.ADMIN)
   async updateInterest(@Param('id', ParseIntPipe) id: number, @Body() body: InterestDto): Promise<ResponseError | ResponseSuccess> {
     const response: any = await this.interestService.updateInterest(id, body)
@@ -61,7 +62,7 @@ export class InterestController {
   }
 
   @Delete('/:id')
-  @UseGuards(AuthGuard('jwt'))
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Roles(roles.ADMIN)
   async deleteInterest(@Param('id', ParseIntPipe) id: number): Promise<ResponseError | ResponseSuccess> {
     const response: any = await this.interestService.deleteInterest(id)

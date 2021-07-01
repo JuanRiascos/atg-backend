@@ -9,6 +9,7 @@ import { QuestionService } from './services/question.service';
 import { QuestionDto } from './dto/question.dto';
 import { AnswerDto } from './dto/answer.dto';
 import { AnswerService } from './services/answer.service';
+import { RolesGuard } from 'src/@common/guards/roles.guard';
 
 @Controller('assessment')
 export class AssessmentController {
@@ -21,7 +22,6 @@ export class AssessmentController {
 
   @Get('/all')
   @UseGuards(AuthGuard('jwt'))
-  @Roles(roles.ADMIN)
   async getAssessments(@Req() req): Promise<ResponseError | ResponseSuccess> {
     const response: any = await this.assessmentService.getAssessments(req.user.atgAppClientId)
 
@@ -33,7 +33,6 @@ export class AssessmentController {
 
   @Get()
   @UseGuards(AuthGuard('jwt'))
-  @Roles(roles.ADMIN)
   async getAssessment(@Query() query, @Req() req): Promise<ResponseError | ResponseSuccess> {
     const response: any = await this.assessmentService.getAssessment(query.assessmentId, req.user.atgAppClientId)
 
@@ -44,8 +43,8 @@ export class AssessmentController {
   }
 
   @Get('/start-assessment')
-  @UseGuards(AuthGuard('jwt'))
-  @Roles(roles.ADMIN)
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Roles(roles.CLIENT)
   async startAssessment(@Query() query, @Req() req): Promise<ResponseError | ResponseSuccess> {
     const response: any = await this.assessmentService.startAssessment(query.assessmentId, req.user.atgAppClientId)
 
@@ -55,10 +54,8 @@ export class AssessmentController {
     return { success: 'OK', payload: response }
   }
 
-
-
   @Post('/create')
-  @UseGuards(AuthGuard('jwt'))
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Roles(roles.ADMIN)
   async createAssessment(@Body() body: AssessmentDto): Promise<ResponseSuccess | ResponseError> {
     const response: any = await this.assessmentService.createAssessment(body)
@@ -70,7 +67,7 @@ export class AssessmentController {
   }
 
   @Put('/update/:assessmentId')
-  @UseGuards(AuthGuard('jwt'))
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Roles(roles.ADMIN)
   async updateAssessment(@Param('assessmentId', ParseIntPipe) assessmentId: number, @Body() body: AssessmentDto): Promise<ResponseError | ResponseSuccess> {
     const response: any = await this.assessmentService.updateAssessment(assessmentId, body)
@@ -82,7 +79,7 @@ export class AssessmentController {
   }
 
   @Delete('/:assessmentId')
-  @UseGuards(AuthGuard('jwt'))
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Roles(roles.ADMIN)
   async deleteAssessment(@Param('assessmentId', ParseIntPipe) assessmentId: number): Promise<ResponseError | ResponseSuccess> {
     const response: any = await this.assessmentService.deleteAssessment(assessmentId)
@@ -94,7 +91,7 @@ export class AssessmentController {
   }
 
   @Post('/add-question')
-  @UseGuards(AuthGuard('jwt'))
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Roles(roles.ADMIN)
   async addQuestion(@Body() body: QuestionDto): Promise<ResponseSuccess | ResponseError> {
     const response: any = await this.questionService.addQuestion(body)
@@ -106,7 +103,7 @@ export class AssessmentController {
   }
 
   @Put('/update-question/:questionId')
-  @UseGuards(AuthGuard('jwt'))
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Roles(roles.ADMIN)
   async updateQuestion(@Param('questionId', ParseIntPipe) questionId: number, @Body() body: QuestionDto): Promise<ResponseError | ResponseSuccess> {
     const response: any = await this.questionService.updateQuestion(questionId, body)
@@ -118,7 +115,7 @@ export class AssessmentController {
   }
 
   @Delete('/delete-question/:questionId')
-  @UseGuards(AuthGuard('jwt'))
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Roles(roles.ADMIN)
   async deleteQuestion(@Param('questionId', ParseIntPipe) questionId: number): Promise<ResponseError | ResponseSuccess> {
     const response: any = await this.questionService.deleteQuestion(questionId)
@@ -130,7 +127,7 @@ export class AssessmentController {
   }
 
   @Delete('/delete-answer/:answerId')
-  @UseGuards(AuthGuard('jwt'))
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Roles(roles.ADMIN)
   async deleteAnswer(@Param('answerId', ParseIntPipe) answerId: number): Promise<ResponseError | ResponseSuccess> {
     const response: any = await this.answerService.deleteAnswerToQuestion(answerId)
@@ -142,7 +139,7 @@ export class AssessmentController {
   }
 
   @Post('/add-answer')
-  @UseGuards(AuthGuard('jwt'))
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Roles(roles.ADMIN)
   async addAnswerToQuestion(@Body() body: AnswerDto): Promise<ResponseError | ResponseSuccess> {
     const response: any = await this.answerService.addAnswerToQuestion(body)
@@ -154,7 +151,7 @@ export class AssessmentController {
   }
 
   @Put('/update-answer/:answerId')
-  @UseGuards(AuthGuard('jwt'))
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Roles(roles.ADMIN)
   async updateAnswerToQuestion(@Param('answerId', ParseIntPipe) answerId: number, @Body() body: AnswerDto): Promise<ResponseError | ResponseSuccess> {
     const response: any = await this.answerService.updateAnswerToQuestion(answerId, body)
@@ -166,7 +163,7 @@ export class AssessmentController {
   }
 
   @Put('/update-order-answers')
-  @UseGuards(AuthGuard('jwt'))
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Roles(roles.ADMIN)
   async updateOrderAnswers(@Body() body): Promise<ResponseError | ResponseSuccess> {
     const response: any = await this.answerService.updateOrderAnswers(body)
@@ -178,7 +175,7 @@ export class AssessmentController {
   }
 
   @Put('/update-order-questions')
-  @UseGuards(AuthGuard('jwt'))
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Roles(roles.ADMIN)
   async updateOrderQuestions(@Body() body): Promise<ResponseError | ResponseSuccess> {
     const response: any = await this.questionService.updateOrderQuestions(body)

@@ -1,6 +1,9 @@
 import { BadRequestException, Controller, Get, Param, ParseIntPipe, Put, Req, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { response } from 'express';
+import { Roles as roles } from 'src/@common/constants/role.constant';
+import { Roles } from 'src/@common/decorators/roles.decorator';
+import { RolesGuard } from 'src/@common/guards/roles.guard';
 import { ResponseError, ResponseSuccess } from 'src/@common/interfaces/response';
 import { InterestService } from './services/interest.service';
 
@@ -23,7 +26,8 @@ export class ClientController {
   }
 
   @Put('/change-interest/:id')
-  @UseGuards(AuthGuard('jwt'))
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Roles(roles.CLIENT)
   async changeInterest(
     @Req() req,
     @Param('id', ParseIntPipe) id: number

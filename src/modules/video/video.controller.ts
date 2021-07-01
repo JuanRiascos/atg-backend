@@ -3,6 +3,7 @@ import { AuthGuard } from '@nestjs/passport';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { Roles as roles } from 'src/@common/constants/role.constant';
 import { Roles } from 'src/@common/decorators/roles.decorator';
+import { RolesGuard } from 'src/@common/guards/roles.guard';
 import { ResponseError, ResponseSuccess } from 'src/@common/interfaces/response';
 import multer from 'src/@common/multer/multer';
 import { VideoService } from './video.service';
@@ -25,7 +26,7 @@ export class VideoController {
   }
 
   @Post()
-  @UseGuards(AuthGuard('jwt'))
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Roles(roles.ADMIN)
   @UseInterceptors(FileInterceptor('image', multer.storageGCS('courses/covers')))
   async addVideo(@Body() body, @UploadedFile() file): Promise<ResponseError | ResponseSuccess> {
@@ -39,7 +40,7 @@ export class VideoController {
   }
 
   @Put('/:videoId')
-  @UseGuards(AuthGuard('jwt'))
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Roles(roles.ADMIN)
   @UseInterceptors(FileInterceptor('image', multer.storageGCS('courses/covers')))
   async updateExtraRep(@Param('videoId', ParseIntPipe) videoId: number, @Body() body, @UploadedFile() file): Promise<ResponseError | ResponseSuccess> {
@@ -53,7 +54,7 @@ export class VideoController {
   }
 
   @Delete('/:videoId')
-  @UseGuards(AuthGuard('jwt'))
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Roles(roles.ADMIN)
   async deleteExtraRep(@Param('videoId', ParseIntPipe) videoId: number) {
     const response: any = await this.videoService.deleteVideo(videoId)
@@ -65,7 +66,7 @@ export class VideoController {
   }
 
   @Post('/update-order')
-  @UseGuards(AuthGuard('jwt'))
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Roles(roles.ADMIN)
   async updateOrder(@Body() body) {
     const response: any = await this.videoService.updateOrder(body)

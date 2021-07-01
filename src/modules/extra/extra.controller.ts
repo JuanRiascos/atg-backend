@@ -2,6 +2,7 @@ import { BadRequestException, Body, Controller, Delete, Get, Param, ParseIntPipe
 import { AuthGuard } from '@nestjs/passport';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { Roles } from 'src/@common/decorators/roles.decorator';
+import { RolesGuard } from 'src/@common/guards/roles.guard';
 import { ResponseError, ResponseSuccess } from 'src/@common/interfaces/response';
 import multer from 'src/@common/multer/multer';
 import { Roles as roles } from '../../@common/constants/role.constant'
@@ -25,7 +26,7 @@ export class ExtraController {
   }
 
   @Post()
-  @UseGuards(AuthGuard('jwt'))
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Roles(roles.ADMIN)
   @UseInterceptors(FileInterceptor('file', multer.storageGCS('courses/documents/extra-reps')))
   async addExtraRep(@Body() body, @UploadedFile() file): Promise<ResponseError | ResponseSuccess> {
@@ -39,7 +40,7 @@ export class ExtraController {
   }
 
   @Put('/:extraId')
-  @UseGuards(AuthGuard('jwt'))
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Roles(roles.ADMIN)
   @UseInterceptors(FileInterceptor('file', multer.storageGCS('courses/documents/extra-reps')))
   async updateExtraRep(@Param('extraId', ParseIntPipe) extraId: number, @Body() body, @UploadedFile() file): Promise<ResponseError | ResponseSuccess> {
@@ -53,7 +54,7 @@ export class ExtraController {
   }
 
   @Delete('/:extraId')
-  @UseGuards(AuthGuard('jwt'))
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Roles(roles.ADMIN)
   async deleteExtraRep(@Param('extraId', ParseIntPipe) extraId: number) {
     const response: any = await this.extraService.deleteExtraRep(extraId)
@@ -65,7 +66,7 @@ export class ExtraController {
   }
 
   @Post('/update-order')
-  @UseGuards(AuthGuard('jwt'))
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Roles(roles.ADMIN)
   async updateOrder(@Body() body) {
     const response: any = await this.extraService.updateOrder(body)

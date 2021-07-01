@@ -3,6 +3,7 @@ import { AuthGuard } from '@nestjs/passport';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { Roles as roles } from 'src/@common/constants/role.constant';
 import { Roles } from 'src/@common/decorators/roles.decorator';
+import { RolesGuard } from 'src/@common/guards/roles.guard';
 import { ResponseError, ResponseSuccess } from 'src/@common/interfaces/response';
 import multer from 'src/@common/multer/multer';
 import { CaseService } from './case.service';
@@ -25,7 +26,7 @@ export class CaseController {
   }
 
   @Post()
-  @UseGuards(AuthGuard('jwt'))
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Roles(roles.ADMIN)
   @UseInterceptors(FileInterceptor('file', multer.storageGCS('courses/documents/case-studies')))
   async addCase(@Body() body, @UploadedFile() file): Promise<ResponseError | ResponseSuccess> {
@@ -39,7 +40,7 @@ export class CaseController {
   }
 
   @Put('/:caseId')
-  @UseGuards(AuthGuard('jwt'))
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Roles(roles.ADMIN)
   @UseInterceptors(FileInterceptor('file', multer.storageGCS('courses/documents/case-studies')))
   async updateExtraRep(@Param('caseId', ParseIntPipe) caseId: number, @Body() body, @UploadedFile() file): Promise<ResponseError | ResponseSuccess> {
@@ -53,7 +54,7 @@ export class CaseController {
   }
 
   @Delete('/:caseId')
-  @UseGuards(AuthGuard('jwt'))
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Roles(roles.ADMIN)
   async deleteExtraRep(@Param('caseId', ParseIntPipe) caseId: number) {
     const response: any = await this.caseService.deleteCase(caseId)
@@ -65,7 +66,7 @@ export class CaseController {
   }
 
   @Post('/update-order')
-  @UseGuards(AuthGuard('jwt'))
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Roles(roles.ADMIN)
   async updateOrder(@Body() body) {
     const response: any = await this.caseService.updateOrder(body)

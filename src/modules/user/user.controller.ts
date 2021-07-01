@@ -30,6 +30,7 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import multer from 'src/@common/multer/multer';
 import { OcupationService } from './services/ocupation.service';
 import { SportService } from './services/sport.service';
+import { RolesGuard } from 'src/@common/guards/roles.guard';
 
 @Controller('user')
 export class UserController {
@@ -80,7 +81,7 @@ export class UserController {
   }
 
   @Get('/list-admins')
-  @UseGuards(AuthGuard('jwt'))
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Roles(roles.ADMIN)
   async getListAdmins(@Req() req): Promise<ResponseError | ResponseSuccess> {
     const response: any = await this.findService.getListAdmins(req.user.id)
@@ -92,7 +93,7 @@ export class UserController {
   }
 
   @Put('/delete-admin/:id')
-  @UseGuards(AuthGuard('jwt'))
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Roles(roles.ADMIN)
   @Permissions(permissions.ADMIN_USERS)
   async deleteAdmin(@Param('id', ParseIntPipe) id: number): Promise<ResponseError | ResponseSuccess> {

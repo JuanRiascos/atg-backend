@@ -24,6 +24,7 @@ import { Permissions } from 'src/@common/decorators/permissions.decorator';
 import { Permissions as permissions } from '../../@common/constants/permission.constant'
 import { Events } from 'src/entities/@enums/index.enum';
 import { NewPassworAuthenticatedDto } from './dto/new-password-authenticated.dto';
+import { RolesGuard } from 'src/@common/guards/roles.guard';
 
 @Controller('auth')
 export class AuthController {
@@ -66,7 +67,7 @@ export class AuthController {
   }
 
   @Post('/signup-admin')
-  @UseGuards(AuthGuard('jwt'))
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Roles(roles.ADMIN)
   @Permissions(permissions.ADMIN_USERS)
   async signupAdmin(@Body() body: SignupDto): Promise<ResponseError | ResponseSuccess> {
@@ -136,7 +137,7 @@ export class AuthController {
   }
 
   @Post('/change-password')
-  @UseGuards(AuthGuard('jwt'))
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Roles(roles.ADMIN)
   async changePassword(@Req() req, @Body() body: any): Promise<ResponseError | ResponseSuccess> {
     const response: any = await this.passwordService.changePassword(req.user.id, body);

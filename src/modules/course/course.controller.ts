@@ -7,6 +7,7 @@ import { Roles as roles } from '../../@common/constants/role.constant'
 import { Roles } from 'src/@common/decorators/roles.decorator';
 import { FileFieldsInterceptor, FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
 import multer from 'src/@common/multer/multer';
+import { RolesGuard } from 'src/@common/guards/roles.guard';
 
 @Controller('course')
 export class CourseController {
@@ -39,7 +40,7 @@ export class CourseController {
   }
 
   @Post('/create')
-  @UseGuards(AuthGuard('jwt'))
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Roles(roles.ADMIN)
   @UseInterceptors(FileFieldsInterceptor([
     { name: 'image' },
@@ -62,7 +63,7 @@ export class CourseController {
   }
 
   @Put('/update/:courseId')
-  @UseGuards(AuthGuard('jwt'))
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Roles(roles.ADMIN)
   @UseInterceptors(FileFieldsInterceptor([
     { name: 'image' },
@@ -86,7 +87,7 @@ export class CourseController {
   }
 
   @Delete('/:courseId')
-  @UseGuards(AuthGuard('jwt'))
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Roles(roles.ADMIN)
   async deleteCourse(@Param('courseId', ParseIntPipe) courseId: number): Promise<ResponseError | ResponseSuccess> {
     const response: any = await this.manageService.deleteCourse(courseId)
@@ -98,7 +99,7 @@ export class CourseController {
   }
 
   @Put('/set-cover/:courseId')
-  @UseGuards(AuthGuard('jwt'))
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Roles(roles.ADMIN)
   async setCoverCourse(@Param('courseId', ParseIntPipe) courseId: number, @Body() body: any): Promise<ResponseError | ResponseSuccess> {
     const response: any = await this.manageService.setCoverCourse(courseId, body?.value)
