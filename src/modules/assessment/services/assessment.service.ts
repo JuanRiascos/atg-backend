@@ -21,7 +21,6 @@ export class AssessmentService {
         .innerJoin('assessment.course', 'course')
         .leftJoinAndSelect('assessment.trys', 'trys')
         .leftJoin('trys.client', 'client', 'client.id = :clientId', { clientId })
-        .leftJoinAndSelect('trys.responses', 'responses')
         .getMany()
 
       assessments.map(item => {
@@ -42,6 +41,8 @@ export class AssessmentService {
     let assessment
     try {
       assessment = await this.assessmentRepository.createQueryBuilder('assessment')
+        .addSelect(['course.title', 'course.color'])
+        .innerJoin('assessment.course', 'course')
         .leftJoinAndSelect('assessment.questions', 'questions')
         .leftJoinAndSelect('questions.answers', 'answers')
         .where('assessment.id = :assessmentId', { assessmentId })
