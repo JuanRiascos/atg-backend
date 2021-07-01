@@ -9,21 +9,23 @@ import { PaymentController } from './payment.controller';
 import { PlanService } from './stripe/plan.service';
 import { StripeService } from './stripe/stripe.service';
 import { SubscriptionService } from './subscription/subscription.service';
+import { ValidateSuscription } from './validateSuscription/validateSuscription.cronjob';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([
+      Subscription,
       Plan,
       User,
-      Client,
-      Subscription
-    ]),
+      Client
+    ])
   ],
   controllers: [PaymentController],
   providers: [
     StripeService,
     PlanService,
-    SubscriptionService
+    SubscriptionService,
+    ValidateSuscription
   ]
 })
 export class PaymentModule { }

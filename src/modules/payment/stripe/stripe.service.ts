@@ -1,7 +1,7 @@
 import { Repository } from "typeorm";
 import { BadRequestException, Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import moment from 'moment'
+import * as moment from 'moment';
 
 import { User } from "src/entities/user/user.entity";
 import { Plan } from "src/entities/payment/plan.entity";
@@ -119,13 +119,14 @@ export class StripeService {
 
   async cancelSubscription(body, req) {
     let deletedSubscription
-
+    
     try {
       deletedSubscription = await stripe.subscriptions.del(
         body.subscriptionId
       );
     } catch (error) {
       const code = { error: 'ERROR_CARD', detail: error.code }
+      
       throw new BadRequestException(code)
     }
 
