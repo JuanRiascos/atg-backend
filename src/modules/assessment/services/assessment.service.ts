@@ -40,6 +40,7 @@ export class AssessmentService {
         .leftJoin('trys.client', 'client', 'client.id = :clientId', { clientId })
         .addOrderBy('question.order', 'ASC')
         .addOrderBy('questions.order', 'ASC')
+        .orderBy('assessment.title', 'ASC')
         .getMany()
 
       assessments.map(item => {
@@ -194,7 +195,7 @@ export class AssessmentService {
         answers
       })
 
-      if(finalQuestion) {
+      if (finalQuestion) {
         tryAssessment.status = StateTry.Finished
         await this.tryRepository.save(tryAssessment)
       }
