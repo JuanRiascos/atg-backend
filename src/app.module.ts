@@ -48,7 +48,7 @@ import { ScheduleModule } from '@nestjs/schedule';
     VideoModule,
     AssessmentModule,
     PaymentModule,
-    ScheduleModule.forRoot(),
+    ScheduleModule.forRoot()
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -5,9 +5,6 @@ import { Repository } from 'typeorm';
 import * as moment from 'moment';
 import { Subscription } from 'src/entities/payment/subscription.entity';
 import { StateSubscription } from 'src/entities/@enums/index.enum';
-
-const throat = require('throat');
-
 @Injectable()
 export class ValidateSuscription {
   private readonly logger = new Logger(ValidateSuscription.name);
@@ -17,9 +14,10 @@ export class ValidateSuscription {
   ) { }
 
   //2:30 am Colombia = 30 7 * * *
-  @Cron('16 19 * * *')
+  @Cron('30 7 * * *')
   async handler() {
     const subscriptions = await this.subscriptionRepository.find({
+      relations: ['user'],
       where: { stateSubscription: StateSubscription.Canceled }
     })
 

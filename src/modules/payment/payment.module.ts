@@ -18,8 +18,7 @@ import { ValidateSuscription } from './validateSuscription/validateSuscription.c
       Plan,
       User,
       Client
-    ]),
-    /* TypeOrmModule.forFeature([Subscription], 'payment') */
+    ])
   ],
   controllers: [PaymentController],
   providers: [
