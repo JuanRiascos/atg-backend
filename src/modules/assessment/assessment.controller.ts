@@ -10,6 +10,7 @@ import { QuestionDto } from './dto/question.dto';
 import { AnswerDto } from './dto/answer.dto';
 import { AnswerService } from './services/answer.service';
 import { RolesGuard } from 'src/@common/guards/roles.guard';
+import { SaveResponseDto } from './dto/save-response.dto';
 
 @Controller('assessment')
 export class AssessmentController {
@@ -179,6 +180,18 @@ export class AssessmentController {
   @Roles(roles.ADMIN)
   async updateOrderQuestions(@Body() body): Promise<ResponseError | ResponseSuccess> {
     const response: any = await this.questionService.updateOrderQuestions(body)
+
+    if (response.error)
+      throw new BadRequestException(response)
+
+    return { success: 'OK', payload: response }
+  }
+
+  @Post('/save-response')
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Roles(roles.CLIENT)
+  async saveResponse(@Req() req, @Body() body: SaveResponseDto): Promise<ResponseError | ResponseSuccess> {
+    const response: any = await this.assessmentService.saveResponse(req.user.atgAppClientId, body)
 
     if (response.error)
       throw new BadRequestException(response)

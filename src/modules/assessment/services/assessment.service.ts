@@ -1,18 +1,24 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { StateTry } from 'src/entities/@enums/index.enum';
+import { Answer } from 'src/entities/academy/answer.entity';
 import { AssessmentClientTry } from 'src/entities/academy/assessment-client-try.entity';
 import { Assessment } from 'src/entities/academy/assessment.entity';
+import { ClientQuestion } from 'src/entities/academy/client-question.entity';
 import { Question } from 'src/entities/academy/question.entity';
 import { Repository } from 'typeorm';
 import { AssessmentDto } from '../dto/assessment.dto';
+import { SaveResponseDto } from '../dto/save-response.dto';
 
 @Injectable()
 export class AssessmentService {
 
   constructor(
     @InjectRepository(Assessment) private readonly assessmentRepository: Repository<Assessment>,
-    @InjectRepository(AssessmentClientTry) private readonly tryRepository: Repository<AssessmentClientTry>
+    @InjectRepository(AssessmentClientTry) private readonly tryRepository: Repository<AssessmentClientTry>,
+    @InjectRepository(ClientQuestion) private readonly responseRepository: Repository<ClientQuestion>,
+    @InjectRepository(Question) private readonly questionRepository: Repository<Question>,
+    @InjectRepository(Answer) private readonly answerRepository: Repository<Answer>
   ) { }
 
   async calulcateStatusAndProgress(assessmentId: number, clientId) {
@@ -63,12 +69,18 @@ export class AssessmentService {
     try {
       assessment = await this.assessmentRepository.createQueryBuilder('assessment')
         .addSelect(['course.title', 'course.color'])
+        .addSelect([
+          'question.id', 'question.description', 'question.multiple',
+          'answersR.id', 'answersR.description',
+          'answersR.correct'
+        ])
         .innerJoin('assessment.course', 'course')
         .leftJoinAndSelect('assessment.questions', 'questions')
         .leftJoinAndSelect('questions.answers', 'answers')
         .leftJoinAndSelect('assessment.trys', 'trys')
         .leftJoinAndSelect('trys.responses', 'responses')
         .leftJoin('responses.question', 'question')
+        .leftJoin('responses.answers', 'answersR')
         .leftJoin('trys.client', 'client', 'client.id = :clientId', { clientId })
         .where('assessment.id = :assessmentId', { assessmentId })
         .addOrderBy('questions.order', 'ASC')
@@ -148,5 +160,43 @@ export class AssessmentService {
     }
 
     return { message: 'started assessment' }
+  }
+
+  async saveResponse(clientId: number, body: SaveResponseDto) {
+    const { assessmentId, questionId, tryId, responses } = body
+
+    try {
+      let tryAssessment = await this.tryRepository.createQueryBuilder('try')
+        .innerJoin('try.assessment', 'assessment', 'assessment.id = :assessmentId', { assessmentId })
+        .where('try.id = :tryId', { tryId })
+        .getOne()
+
+      let question = await this.questionRepository.findOne(questionId)
+
+      if (!question.multiple && responses.length > 1)
+        return { error: 'NOT_MANY_RESPONSES' }
+
+      let response = await this.responseRepository.createQueryBuilder('response')
+        .innerJoin('response.client', 'client', 'client.id = :clientId', { clientId })
+        .innerJoin('response.try', 'try', 'try.id = :tryId', { tryId })
+        .innerJoin('response.question', 'question', 'question.id = :questionId', { questionId })
+        .getOne()
+
+      if (response)
+        return { error: 'ALREADY_EXIST_RESPONSE' }
+
+      let answers = await this.answerRepository.findByIds(responses)
+
+      await this.responseRepository.save({
+        client: { id: clientId },
+        question: { id: questionId },
+        try: tryAssessment,
+        answers
+      })
+    } catch (error) {
+      return { error }
+    }
+
+    return { message: 'save response' }
   }
 }

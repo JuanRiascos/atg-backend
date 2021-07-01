@@ -1,4 +1,4 @@
-import { Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 import { Client } from "../client/client.entity";
 import { Answer } from "./answer.entity";
 import { AssessmentClientTry } from "./assessment-client-try.entity";
@@ -18,9 +18,9 @@ export class ClientQuestion {
   @JoinColumn({ name: 'fk_question' })
   question: Question
 
-  @ManyToOne(() => Answer, answer => answer.clientQuestion)
-  @JoinColumn({ name: 'fk_answer' })
-  answer: Answer
+  @ManyToMany(() => Answer, answer => answer.clientQuestion)
+  @JoinTable()
+  answers: Answer[]
 
   @ManyToOne(() => AssessmentClientTry, tryClient => tryClient.responses)
   @JoinColumn({ name: 'fk_try' })

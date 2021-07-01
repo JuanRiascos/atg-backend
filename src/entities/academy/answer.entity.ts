@@ -1,4 +1,4 @@
-import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinColumn, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { ClientQuestion } from "./client-question.entity";
 import { Question } from "./question.entity";
 
@@ -21,6 +21,6 @@ export class Answer {
   @JoinColumn({ name: 'fk_question' })
   question: Question
 
-  @OneToMany(() => ClientQuestion, clientQuestion => clientQuestion.answer)
+  @ManyToMany(() => ClientQuestion, clientQuestion => clientQuestion.answers)
   clientQuestion: ClientQuestion[]
 }
