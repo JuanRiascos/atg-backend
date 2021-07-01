@@ -15,24 +15,41 @@ export class AssessmentService {
     @InjectRepository(AssessmentClientTry) private readonly tryRepository: Repository<AssessmentClientTry>
   ) { }
 
+  async calulcateStatusAndProgress(assessmentId: number, clientId) {
+
+  }
+
   async getAssessments(clientId: number) {
     let assessments
     try {
       assessments = await this.assessmentRepository.createQueryBuilder('assessment')
         .select(['assessment.id', 'assessment.title', 'assessment.free'])
         .addSelect(['course.title', 'course.color'])
+        .addSelect(['questions.id'])
         .innerJoin('assessment.course', 'course')
+        .innerJoin('assessment.questions', 'questions')
         .leftJoinAndSelect('assessment.trys', 'trys')
+        .leftJoinAndSelect('trys.responses', 'responses')
+        .leftJoin('responses.question', 'question')
         .leftJoin('trys.client', 'client', 'client.id = :clientId', { clientId })
+        .addOrderBy('question.order', 'ASC')
+        .addOrderBy('questions.order', 'ASC')
         .getMany()
 
       assessments.map(item => {
-        if (item.trys.length === 0)
+        if (item.trys.length === 0) {
           item['status'] = 'none'
+          item['progress'] = 0
+        }
         else {
           item['status'] = item.trys[0].status
+          let responses = item.trys[0].responses.length
+          let questions = item.questions.length
+          item['progress'] = (responses / questions) * 100
         }
+        delete item.questions
       })
+
     } catch (error) {
       return { error }
     }
