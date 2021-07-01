@@ -49,10 +49,13 @@ export class AssessmentService {
         .leftJoinAndSelect('assessment.questions', 'questions')
         .leftJoinAndSelect('questions.answers', 'answers')
         .leftJoinAndSelect('assessment.trys', 'trys')
+        .leftJoinAndSelect('trys.responses', 'responses')
+        .leftJoinAndSelect('responses.questions', 'questionsR')
         .leftJoin('trys.client', 'client', 'client.id = :clientId', { clientId })
         .where('assessment.id = :assessmentId', { assessmentId })
         .addOrderBy('questions.order', 'ASC')
         .addOrderBy('answers.order', 'ASC')
+        .addOrderBy('questionsR.order', 'ASC')
         .getOne()
 
       if (assessment.trys.length === 0)
