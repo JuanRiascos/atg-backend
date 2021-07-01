@@ -10,14 +10,12 @@ export class AssessmentDto {
   title: string
 
   @IsString()
-  @Length(10, 300)
   description: string
 
   @IsNumber()
   duration: number
 
   @IsString()
-  @Length(10, 300)
   instructions: string
 
   @IsOptional()
