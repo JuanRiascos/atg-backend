@@ -14,7 +14,7 @@ export class ValidateSuscription {
   ) { }
 
   //2:30 am Colombia = 30 7 * * *
-  @Cron('36 19 * * *')
+  @Cron('30 7 * * *')
   async handler() {
     const subscriptions = await this.subscriptionRepository.find({
       where: { stateSubscription: StateSubscription.Canceled }
