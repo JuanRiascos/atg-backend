@@ -21,6 +21,7 @@ import { CaseModule } from './modules/case/case.module';
 import { VideoModule } from './modules/video/video.module';
 import { AssessmentModule } from './modules/assessment/assessment.module';
 import { PaymentModule } from './modules/payment/payment.module';
+import { ScheduleModule } from '@nestjs/schedule';
 
 @Module({
   imports: [
@@ -46,7 +47,8 @@ import { PaymentModule } from './modules/payment/payment.module';
     CaseModule,
     VideoModule,
     AssessmentModule,
-    PaymentModule
+    PaymentModule,
+    ScheduleModule.forRoot(),
   ],
   controllers: [AppController],
   providers: [AppService],
