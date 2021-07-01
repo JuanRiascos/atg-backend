@@ -14,10 +14,9 @@ export class ValidateSuscription {
   ) { }
 
   //2:30 am Colombia = 30 7 * * *
-  @Cron('30 7 * * *')
+  @Cron('36 19 * * *')
   async handler() {
     const subscriptions = await this.subscriptionRepository.find({
-      relations: ['user'],
       where: { stateSubscription: StateSubscription.Canceled }
     })
 
@@ -27,6 +26,7 @@ export class ValidateSuscription {
         const periodEnd: any = moment(subscription.subscriptionEndDate)
 
         console.log("periodEnd:", periodEnd);
+        console.log("isAfter:", moment().isAfter(periodEnd));
         
 
         if (moment().isAfter(periodEnd))
