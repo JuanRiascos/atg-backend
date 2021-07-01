@@ -163,7 +163,7 @@ export class AssessmentService {
   }
 
   async saveResponse(clientId: number, body: SaveResponseDto) {
-    const { assessmentId, questionId, tryId, responses } = body
+    const { assessmentId, questionId, tryId, responses, finalQuestion } = body
 
     try {
       let tryAssessment = await this.tryRepository.createQueryBuilder('try')
@@ -193,6 +193,11 @@ export class AssessmentService {
         try: tryAssessment,
         answers
       })
+
+      if(finalQuestion) {
+        tryAssessment.status = StateTry.Finished
+        await this.tryRepository.save(tryAssessment)
+      }
     } catch (error) {
       return { error }
     }

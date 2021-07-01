@@ -1,4 +1,4 @@
-import { IsArray, IsNumber, IsOptional } from "class-validator";
+import { IsArray, IsNumber, IsOptional, IsBoolean } from "class-validator";
 
 export class SaveResponseDto {
 
@@ -14,4 +14,8 @@ export class SaveResponseDto {
 
   @IsArray()
   responses: any
+
+  @IsBoolean()
+  @IsOptional()
+  finalQuestion: boolean
 }
