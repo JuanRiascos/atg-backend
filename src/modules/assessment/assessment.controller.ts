@@ -43,6 +43,19 @@ export class AssessmentController {
     return { success: 'OK', payload: response }
   }
 
+  @Get('/start-assessment')
+  @UseGuards(AuthGuard('jwt'))
+  @Roles(roles.ADMIN)
+  async startAssessment(@Query() query, @Req() req): Promise<ResponseError | ResponseSuccess> {
+    const response: any = await this.assessmentService.startAssessment(query.assessmentId, req.user.atgAppClientId)
+
+    if (response.error)
+      throw new BadRequestException(response)
+
+    return { success: 'OK', payload: response }
+  }
+
+
 
   @Post('/create')
   @UseGuards(AuthGuard('jwt'))

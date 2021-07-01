@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { AssessmentClientTry } from 'src/entities/academy/assessment-client-try.entity';
 import { Assessment } from 'src/entities/academy/assessment.entity';
 import { Question } from 'src/entities/academy/question.entity';
 import { Repository } from 'typeorm';
@@ -10,13 +11,14 @@ export class AssessmentService {
 
   constructor(
     @InjectRepository(Assessment) private readonly assessmentRepository: Repository<Assessment>,
-    @InjectRepository(Question) private readonly questionRepository: Repository<Question>
+    @InjectRepository(AssessmentClientTry) private readonly tryRepository: Repository<AssessmentClientTry>
   ) { }
 
   async getAssessments(clientId: number) {
     let assessments
     try {
       assessments = await this.assessmentRepository.createQueryBuilder('assessment')
+        .select(['assessment.id', 'assessment.title', 'assessment.free'])
         .addSelect(['course.title', 'course.color'])
         .innerJoin('assessment.course', 'course')
         .leftJoinAndSelect('assessment.trys', 'trys')
@@ -88,17 +90,6 @@ export class AssessmentService {
         free,
       })
 
-      /* let cont = 1
-      for (const item of questions) {
-        await this.questionRepository.save({
-          assessment,
-          description: item.description,
-          order: cont,
-        })
-
-        cont++
-      } */
-
     } catch (error) {
       return { error }
     }
@@ -113,5 +104,18 @@ export class AssessmentService {
       return { error }
     }
     return { message: 'Assessment deleted succesfully' }
+  }
+
+  async startAssessment(assessmentId: number, clientId: number) {
+    try {
+      await this.tryRepository.save({
+        assessment: { id: assessmentId },
+        client: { id: clientId }
+      })
+    } catch (error) {
+      return { error }
+    }
+
+    return { message: 'started assessment' }
   }
 }
