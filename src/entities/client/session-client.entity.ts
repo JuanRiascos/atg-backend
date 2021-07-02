@@ -1,6 +1,7 @@
-import { Column, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 import { Client } from "./client.entity";
 
+@Entity('session-client', { schema: 'client' })
 export class SessionClient {
 
   @PrimaryGeneratedColumn({ type: 'bigint' })
@@ -12,7 +13,7 @@ export class SessionClient {
 
   @Column('time', { nullable: true })
   startTime: Date
-  
+
   @Column('time', { nullable: true })
   endTime: Date
 }
