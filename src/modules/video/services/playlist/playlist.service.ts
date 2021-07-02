@@ -34,11 +34,17 @@ export class PlaylistService {
 
   async getVideoPlayListByClient(clientId: number, courseId?: number) {
     let query = await this.videoRepository.createQueryBuilder('video')
-      .addSelect(['client.id', "course.id"])
+      .addSelect(['client.id'])
       .innerJoin('video.clients', 'client', 'client.id = :clientId', { clientId })
 
     if (courseId)
-      await query.innerJoin('video.course', 'course', 'course.id = :courseId', { courseId })
+      await query.innerJoinAndSelect('video.course', 'course', 'course.id = :courseId', { courseId })
+        .leftJoinAndSelect('course.extraReps', 'extraReps')
+        .leftJoinAndSelect('course.caseStudies', 'caseStudies')
+    else
+      await query.leftJoinAndSelect('video.course', 'course')
+        .leftJoinAndSelect('course.extraReps', 'extraReps')
+        .leftJoinAndSelect('course.caseStudies', 'caseStudies')
 
     const videos = await query.orderBy("video.id", "ASC")
       .getMany()
