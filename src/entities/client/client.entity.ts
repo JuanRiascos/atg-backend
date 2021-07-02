@@ -12,6 +12,7 @@ import { States } from "../@enums/index.enum";
 import { AssessmentClientTry } from "../academy/assessment-client-try.entity";
 import { ClientQuestion } from "../academy/client-question.entity";
 import { Interest } from "../academy/interest.entity";
+import { Video } from "../academy/video.entity";
 import { Subscription } from "../payment/subscription.entity";
 import { User } from "../user/user.entity";
 import { Favorite } from "./favorite.entity";
@@ -66,4 +67,8 @@ export class Client {
 
   @OneToMany(() => Subscription, subscription => subscription.client)
   subscriptions: Subscription[];
+
+  @ManyToMany(type => Video, video => video.clients)
+  videos: Video[];
+
 }

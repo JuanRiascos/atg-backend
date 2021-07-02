@@ -16,7 +16,6 @@ import { UserPermission } from "./user-permission.entity";
 import { States } from "../@enums/index.enum";
 import { NotificationUser } from "../notification/notification-user.entity";
 import { Client } from "../client/client.entity";
-import { Video } from "../academy/video.entity";
 @Entity("user", { schema: 'user' })
 @Unique(["email"])
 export class User {
@@ -56,8 +55,5 @@ export class User {
 
   @OneToMany(() => NotificationUser, notifcationUser => notifcationUser.user)
   notifications: Notification[]
-
-  @ManyToMany(type => Video, video => video.users)
-  videos: Video[];
 
 }
