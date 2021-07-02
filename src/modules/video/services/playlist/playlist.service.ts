@@ -11,7 +11,8 @@ export class PlaylistService {
   constructor(
     @InjectRepository(Video) private readonly videoRepository: Repository<Video>,
     @InjectRepository(Client) private readonly clientRepository: Repository<Client>
-  ) { }
+  ) {
+  }
 
   async changeVideoPlayList(clientId: number, videoId: number) {
 
@@ -31,12 +32,15 @@ export class PlaylistService {
     return { success: 'OK' }
   }
 
-  async getVideoPlayListByClient(clientId: number, courseId: number) {
-    const videos = await this.videoRepository.createQueryBuilder('video')
-      .addSelect(['client.id'])
-      .leftJoin('video.clients', 'client', 'client.id = :clientId', { clientId })
-      .innerJoin('video.course', 'course', 'course.id = :courseId', { courseId })
-      .orderBy("video.id", "ASC")
+  async getVideoPlayListByClient(clientId: number, courseId?: number) {
+    let query = await this.videoRepository.createQueryBuilder('video')
+      .addSelect(['client.id', "course.id"])
+      .innerJoin('video.clients', 'client', 'client.id = :clientId', { clientId })
+
+    if (courseId)
+      await query.innerJoin('video.course', 'course', 'course.id = :courseId', { courseId })
+
+    const videos = await query.orderBy("video.id", "ASC")
       .getMany()
 
     return videos

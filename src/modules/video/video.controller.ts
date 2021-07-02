@@ -1,4 +1,19 @@
-import { BadRequestException, Body, Controller, Delete, Get, Param, ParseIntPipe, Post, Put, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
+import {
+  BadRequestException,
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  ParseIntPipe,
+  Post,
+  Put,
+  Query,
+  Req,
+  UploadedFile,
+  UseGuards,
+  UseInterceptors
+} from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { Roles as roles } from 'src/@common/constants/role.constant';
@@ -6,13 +21,15 @@ import { Roles } from 'src/@common/decorators/roles.decorator';
 import { RolesGuard } from 'src/@common/guards/roles.guard';
 import { ResponseError, ResponseSuccess } from 'src/@common/interfaces/response';
 import multer from 'src/@common/multer/multer';
+import { PlaylistService } from './services/playlist/playlist.service';
 import { VideoService } from './video.service';
 
 @Controller('video')
 export class VideoController {
 
   constructor(
-    private readonly videoService: VideoService
+    private readonly videoService: VideoService,
+    private readonly playlistService: PlaylistService
   ) { }
 
   @Get('/all/:courseId')
@@ -74,6 +91,29 @@ export class VideoController {
     if (response.error)
       throw new BadRequestException(response)
 
+    return { success: 'OK', payload: response }
+  }
+
+  @Get('/playlist')
+  @UseGuards(AuthGuard('jwt'))
+  async getVideoPlayListByClient(
+    @Req() req,
+    @Query('courseId') courseId: number
+
+  ): Promise<ResponseError | ResponseSuccess> {
+    const response = await this.playlistService.getVideoPlayListByClient(req?.user?.atgAppClientId, courseId)
+
+    return { success: 'OK', payload: response }
+  }
+
+  @Put('/change-video-playlist/:id')
+  @UseGuards(AuthGuard('jwt'))
+  async changeVideoPlayList(
+    @Req() req,
+    @Param('id', ParseIntPipe) id: number
+    
+  ): Promise<ResponseError | ResponseSuccess> {
+    const response = await this.playlistService.changeVideoPlayList(req?.user?.atgAppClientId, id)
     return { success: 'OK', payload: response }
   }
 
