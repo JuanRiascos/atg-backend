@@ -2,10 +2,13 @@ import {
   Column,
   Entity,
   JoinColumn,
+  JoinTable,
+  ManyToMany,
   ManyToOne,
   OneToOne,
   PrimaryGeneratedColumn
 } from "typeorm";
+import { User } from "../user/user.entity";
 import { Assessment } from "./assessment.entity";
 import { Course } from "./course.entity";
 @Entity('video', { schema: 'academy' })
@@ -47,4 +50,8 @@ export class Video {
 
   @OneToOne(() => Assessment, assessment => assessment.video)
   assessment: Assessment
+
+  @ManyToMany(type => User, user => user.videos)
+  @JoinTable({ name: 'playlist' })
+  users: User[];
 }
