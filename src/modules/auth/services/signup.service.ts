@@ -66,7 +66,7 @@ export class SignUpService {
 
       await entityManager.save(this.clientRepository.create({
         user,
-        state: States.Pending
+        state: States.Active
       }))
 
     });

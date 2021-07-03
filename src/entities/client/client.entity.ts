@@ -17,6 +17,7 @@ import { Subscription } from "../payment/subscription.entity";
 import { User } from "../user/user.entity";
 import { Favorite } from "./favorite.entity";
 import { PaymentHistory } from "./payment-history.entity";
+import { SessionClient } from "./session-client.entity";
 import { StatusNotification } from "./status-notification.entity";
 
 @Entity("client", { schema: 'client' })
@@ -70,5 +71,8 @@ export class Client {
 
   @ManyToMany(type => Video, video => video.clients)
   videos: Video[];
+
+  @OneToMany(() => SessionClient, session => session.client)
+  sessions: SessionClient[]
 
 }
