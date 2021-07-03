@@ -22,7 +22,7 @@ export class PersonService {
   async getPerson(id: number) {
     const userValidate = await this.userRepository.createQueryBuilder('user')
       .select(['user.id', 'user.email'])
-      .addSelect(['client.city'])
+      .addSelect(['client.city', 'client.id'])
       .innerJoinAndSelect('user.person', 'person')
       .leftJoin('user.client', 'client')
       .leftJoinAndSelect(
@@ -41,12 +41,16 @@ export class PersonService {
     if (!userValidate)
       return { error: 'USER_INACTIVE', message: 'El usuario se encuentra inactivo.' }
 
-    delete userValidate.person.id
+    const atgAppClientId = userValidate?.client?.id
+
+    delete userValidate?.person?.id
+    delete userValidate?.client?.id
 
     const response = {
-      email: userValidate.email,
-      ...userValidate.person,
-      ...userValidate.client,
+      email: userValidate?.email,
+      ...userValidate?.person,
+      ...userValidate?.client,
+      atgAppClientId,
       stateSubscription: userValidate?.client?.subscriptions?.length ?
         StateSubscription.Active
         :

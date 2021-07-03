@@ -1,4 +1,4 @@
-import { BadRequestException, Body, Controller, Delete, Get, NotFoundException, Param, ParseIntPipe, Post, Put, Query, UploadedFile, UploadedFiles, UseGuards, UseInterceptors } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Delete, Get, NotFoundException, Param, ParseIntPipe, Post, Put, Query, Req, UploadedFile, UploadedFiles, UseGuards, UseInterceptors } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { ResponseError, ResponseSuccess } from 'src/@common/interfaces/response';
 import { FindService } from './services/find.service';
@@ -30,8 +30,12 @@ export class CourseController {
 
   @Get()
   @UseGuards(AuthGuard('jwt'))
-  async getCourse(@Query('courseId') courseId: number): Promise<ResponseError | ResponseSuccess> {
-    const response: any = await this.findService.getCourse(courseId)
+  async getCourse(
+    @Query('courseId') courseId: number,
+    @Req() req
+
+  ): Promise<ResponseError | ResponseSuccess> {
+    const response: any = await this.findService.getCourse(courseId, req?.user?.atgAppClientId)
 
     if (response.error)
       throw new NotFoundException(response)

@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpService, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
@@ -10,7 +10,8 @@ export class PlaylistService {
 
   constructor(
     @InjectRepository(Video) private readonly videoRepository: Repository<Video>,
-    @InjectRepository(Client) private readonly clientRepository: Repository<Client>
+    @InjectRepository(Client) private readonly clientRepository: Repository<Client>,
+    private readonly httpService: HttpService
   ) {
   }
 
@@ -48,6 +49,19 @@ export class PlaylistService {
 
     const videos = await query.orderBy("video.id", "ASC")
       .getMany()
+
+    for (const video of videos) {
+      if (video.url) {
+        const response = await this.httpService.get(
+          `https://player.vimeo.com/video/${video?.url?.replace("https://vimeo.com/", "")}/config`
+        ).toPromise()
+
+        const data = await response.data
+        let urlVimeo = data?.request?.files?.hls?.cdns?.akfire_interconnect_quic?.url
+
+        video['urlVimeo'] = urlVimeo || video?.url
+      }
+    }
 
     return videos
   }

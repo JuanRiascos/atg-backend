@@ -26,7 +26,7 @@ export class FindService {
     return courses
   }
 
-  async getCourse(courseId: number) {
+  async getCourse(courseId: number, clientId: number) {
     let course
     try {
       course = await this.courseRepository.createQueryBuilder('course')
@@ -37,6 +37,7 @@ export class FindService {
         .leftJoinAndSelect('assessments.questions', 'questions')
         .leftJoinAndSelect('questions.answers', 'answers')
         .leftJoinAndSelect('course.videos', 'videos')
+        .leftJoinAndSelect('videos.clients', 'client', 'client.id = :clientId', { clientId })
         .leftJoinAndSelect('course.caseStudies', 'caseStudies')
         .where('course.id = :courseId', { courseId })
         .addOrderBy('caseStudies.order', 'ASC')

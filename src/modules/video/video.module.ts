@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { HttpModule, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { Client } from 'src/entities/client/client.entity';
@@ -8,7 +8,7 @@ import { VideoController } from './video.controller';
 import { VideoService } from './video.service';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Video, Client])],
+  imports: [TypeOrmModule.forFeature([Video, Client]), HttpModule],
   controllers: [VideoController],
   providers: [VideoService, PlaylistService]
 })
