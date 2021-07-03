@@ -71,15 +71,13 @@ export class ClientController {
   @Get('/init-session')
   @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Roles(roles.CLIENT)
-  async initSessionClient(@Req() req, @Query() query)/* : Promise<ResponseError | ResponseSuccess>  */{
-    console.log(req.user)
-    console.log(query)
-    /* const response: any = await this.sessionService.initSession(req?.user?.atgAppClientId)
+  async initSessionClient(@Req() req, @Query() query): Promise<ResponseError | ResponseSuccess> {
+    const response: any = await this.sessionService.initSession(req?.user?.atgAppClientId)
 
     if (response.error)
       throw new BadRequestException(response)
 
-    return { success: 'OK', payload: response } */
+    return { success: 'OK', payload: response }
   }
 
   @Get('/finish-session')
