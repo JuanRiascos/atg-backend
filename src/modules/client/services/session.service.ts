@@ -16,7 +16,7 @@ export class SessionService {
     try {
       session = await this.sessionRepository.save({
         client: { id: clientId },
-        startTime: moment().format('HH:mm:ss')
+        startTime: new Date()
       })
     } catch (error) {
       return { error }
@@ -28,7 +28,7 @@ export class SessionService {
   async finishSession(clientId: number, sessionId: number) {
     try {
       await this.sessionRepository.update(sessionId, {
-        endTime: moment().format('HH:mm:ss')
+        endTime: new Date()
       })
     } catch (error) {
       return { error }
