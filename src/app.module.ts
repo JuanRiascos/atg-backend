@@ -22,13 +22,14 @@ import { VideoModule } from './modules/video/video.module';
 import { AssessmentModule } from './modules/assessment/assessment.module';
 import { PaymentModule } from './modules/payment/payment.module';
 import { ScheduleModule } from '@nestjs/schedule';
+import stripeConfig from './@common/config/stripe.config';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
       envFilePath: ['.env'],
-      load: [appConfig, gcsConfig, sendgridConfig, typeormConfig, jwtConfig]
+      load: [appConfig, gcsConfig, sendgridConfig, typeormConfig, jwtConfig, stripeConfig]
     }),
     TypeOrmModule.forRootAsync({
       inject: [ConfigService],

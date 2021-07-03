@@ -8,17 +8,24 @@ import { Plan } from "src/entities/payment/plan.entity";
 import { Client } from "src/entities/client/client.entity";
 import { Subscription } from "src/entities/payment/subscription.entity";
 import { StateSubscription } from "src/entities/@enums/index.enum";
-const stripe = require('stripe')('sk_test_51Iz5zpF7UQ2vcSsa6tNrNcJ5klDLBcWIv6yCD8YgAm5R9X5YXA3Q1h0ln9Pk8k9YR2UcegkGPKEn9nQ7hTkEGewB00YM0UalJ0');
+import { ConfigService } from "@nestjs/config";
 
+let stripe
 @Injectable()
 export class StripeService {
+
+  private readonly config: any
 
   constructor(
     @InjectRepository(Plan) private readonly planRepository: Repository<Plan>,
     @InjectRepository(User) private readonly userRepository: Repository<User>,
     @InjectRepository(Client) private readonly clientRepository: Repository<Client>,
-    @InjectRepository(Subscription) private readonly subscriptionRepository: Repository<Subscription>
-  ) { }
+    @InjectRepository(Subscription) private readonly subscriptionRepository: Repository<Subscription>,
+    private readonly configService: ConfigService,
+    ) { 
+      this.config = configService.get('stripe')
+      stripe = require('stripe')(this.config.sk)
+  }
 
   async verifyCard(req, body) {
 
