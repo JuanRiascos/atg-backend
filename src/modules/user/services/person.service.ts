@@ -48,6 +48,7 @@ export class PersonService {
 
     const response = {
       email: userValidate?.email,
+      tokenExpo: userValidate?.tokenExpo,
       ...userValidate?.person,
       ...userValidate?.client,
       atgAppClientId,
