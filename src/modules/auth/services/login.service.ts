@@ -8,6 +8,7 @@ import { Roles } from "src/@common/constants/role.constant";
 import { User } from "src/entities/user/user.entity";
 import { States } from "src/entities/@enums/index.enum";
 
+
 @Injectable()
 export class LoginService {
   constructor(
@@ -16,13 +17,14 @@ export class LoginService {
   ) { }
 
   async login(body: LoginDto) {
-    const { email, password, social } = body
+    const { email, password } = body
 
     const query = this.userRepository.createQueryBuilder('user')
       .select(['user.id', 'user.email', 'user.state'])
+      .innerJoin('user.roles', 'roles')
+      .innerJoin('roles.role', 'role', 'role.key = :role', { role: Roles.CLIENT })
       .where('user.email = :email', { email })
-    if (!social)
-      query.andWhere('user.password = :password', { password })
+      .andWhere('user.password = :password', { password })
 
     const user = await query.getOne()
 
@@ -35,7 +37,7 @@ export class LoginService {
   }
 
   async loginAdmin(body: LoginDto) {
-    const { email, password, social } = body
+    const { email, password } = body
 
     const user = await this.userRepository.createQueryBuilder('user')
       .select(['user.id', 'user.email', 'user.state'])

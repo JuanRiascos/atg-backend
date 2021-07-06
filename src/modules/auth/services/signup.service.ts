@@ -34,7 +34,6 @@ export class SignUpService {
       lastname,
       name,
       password,
-      phone,
     } = body
 
     const isUser = await this.userRepository.createQueryBuilder('user')
@@ -54,7 +53,6 @@ export class SignUpService {
       await entityManager.save(this.personRepository.create({
         name,
         lastname,
-        phone,
         user
       }));
 
@@ -80,7 +78,6 @@ export class SignUpService {
       lastname,
       email,
       password,
-      phone,
       superAdmin
     } = body
 
@@ -103,7 +100,6 @@ export class SignUpService {
       await entityManager.save(this.personRepository.create({
         name,
         lastname,
-        phone,
         user
       }));
 

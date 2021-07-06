@@ -47,17 +47,14 @@ export class AuthController {
     if (response.error)
       throw new BadRequestException(response);
 
-
-    this.eventEmitter.emit(Events.Signup, { user: response })
-
     return { success: 'OK', payload: await this.jwtService.sign({ ...response }) }
   }
 
   @Post('/login')
   async login(@Body() body: LoginDto): Promise<ResponseError | ResponseSuccess> {
     body.email = body.email.toLowerCase()
-    if (body.password)
-      body.password = this.cryptoService.encrypt(body.password);
+    body.password = this.cryptoService.encrypt(body.password);
+
     const response: any = await this.loginService.login(body);
 
     if (response.error)
