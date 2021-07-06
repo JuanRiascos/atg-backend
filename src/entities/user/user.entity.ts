@@ -35,6 +35,9 @@ export class User {
   @Column("character varying", { nullable: true, length: 100 })
   code: string;
 
+  @Column("character varying", { name: 'token_expo', nullable: true })
+  tokenExpo: string;
+
   @CreateDateColumn({ type: "timestamp", name: "created_at" })
   createdAt: Date;
 
