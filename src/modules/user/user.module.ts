@@ -15,6 +15,7 @@ import { Ocupation } from 'src/entities/user/ocupation.entity';
 import { OcupationService } from './services/ocupation.service';
 import { Sport } from 'src/entities/user/sport.entity';
 import { SportService } from './services/sport.service';
+import { ExpoService } from './services/expo.service';
 
 @Module({
   imports: [
@@ -35,7 +36,8 @@ import { SportService } from './services/sport.service';
     FindService,
     ManageService,
     OcupationService,
-    SportService
+    SportService,
+    ExpoService
   ],
   exports: [PermissionsService]
 })

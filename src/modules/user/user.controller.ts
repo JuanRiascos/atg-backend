@@ -12,7 +12,8 @@ import {
   UseInterceptors,
   UploadedFile,
   NotFoundException,
-  ParseIntPipe
+  ParseIntPipe,
+  Post
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 
@@ -31,6 +32,7 @@ import multer from 'src/@common/multer/multer';
 import { OcupationService } from './services/ocupation.service';
 import { SportService } from './services/sport.service';
 import { RolesGuard } from 'src/@common/guards/roles.guard';
+import { ExpoService } from './services/expo.service';
 
 @Controller('user')
 export class UserController {
@@ -41,6 +43,7 @@ export class UserController {
     private readonly manageService: ManageService,
     private readonly ocupationService: OcupationService,
     private readonly sportService: SportService,
+    private readonly expoService: ExpoService,
   ) { }
 
   @Get('/get-permissions')
@@ -140,6 +143,21 @@ export class UserController {
 
     return { success: 'OK', payload: sports }
 
+  }
+
+  @Post('/token-expo-save')
+  @UseGuards(AuthGuard('jwt'))
+  async saveTokenExpo(@Request() req, @Body() body): Promise<ResponseError | ResponseSuccess> {
+    const response: any = await this.expoService.saveTokenExpo(req.user.id, body);
+
+    if (response.error) {
+      if (response.error === 'USER_INACTIVE')
+        throw new UnauthorizedException(response)
+
+      throw new BadRequestException(response)
+    }
+
+    return { success: 'OK', message: 'Datos actualizados correctamente' }
   }
 
 }
