@@ -10,7 +10,9 @@ import {
 
 import { States } from "../@enums/index.enum";
 import { AssessmentClientTry } from "../academy/assessment-client-try.entity";
+import { CaseStudies } from "../academy/case-studies.entity";
 import { ClientQuestion } from "../academy/client-question.entity";
+import { ExtraReps } from "../academy/extra-reps.entity";
 import { Interest } from "../academy/interest.entity";
 import { Video } from "../academy/video.entity";
 import { Subscription } from "../payment/subscription.entity";
@@ -71,6 +73,12 @@ export class Client {
 
   @ManyToMany(type => Video, video => video.clients)
   videos: Video[];
+
+  @ManyToMany(type => CaseStudies, caseStudies => caseStudies.clients)
+  caseStudies: CaseStudies[];
+
+  @ManyToMany(type => ExtraReps, extraReps => extraReps.clients)
+  extraReps: ExtraReps[];
 
   @OneToMany(() => SessionClient, session => session.client)
   sessions: SessionClient[]
