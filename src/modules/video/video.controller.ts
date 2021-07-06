@@ -117,4 +117,16 @@ export class VideoController {
     return { success: 'OK', payload: response }
   }
 
+  @Get('/playlist-search')
+  @UseGuards(AuthGuard('jwt'))
+  async getVideoPlayListByClientSearch(
+    @Req() req,
+    @Query('searchTerm') searchTerm: string
+
+  ): Promise<ResponseError | ResponseSuccess> {
+    const response = await this.playlistService.getVideoPlayListByClientSearch(req?.user?.atgAppClientId, searchTerm)
+
+    return { success: 'OK', payload: response }
+  }
+
 }

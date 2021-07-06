@@ -66,4 +66,32 @@ export class PlaylistService {
     return videos
   }
 
+  async getVideoPlayListByClientSearch(clientId: number, searchTerm: string) {
+    const videos = await this.videoRepository.createQueryBuilder('video')
+      .addSelect(['client.id'])
+      .innerJoin('video.clients', 'client', 'client.id = :clientId', { clientId })
+      .leftJoinAndSelect('video.course', 'course')
+      .leftJoinAndSelect('course.extraReps', 'extraReps')
+      .leftJoinAndSelect('course.caseStudies', 'caseStudies')
+      .where('video.title ILIKE :searchTerm', { searchTerm: `%${searchTerm}%` })
+      .orderBy("video.id", "ASC")
+      .getMany()
+
+
+    for (const video of videos) {
+      if (video.url) {
+        const response = await this.httpService.get(
+          `https://player.vimeo.com/video/${video?.url?.replace("https://vimeo.com/", "")}/config`
+        ).toPromise()
+
+        const data = await response.data
+        let urlVimeo = data?.request?.files?.hls?.cdns?.akfire_interconnect_quic?.url
+
+        video['urlVimeo'] = urlVimeo || video?.url
+      }
+    }
+
+    return videos
+  }
+
 }
