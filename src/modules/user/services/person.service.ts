@@ -21,7 +21,7 @@ export class PersonService {
 
   async getPerson(id: number) {
     const userValidate = await this.userRepository.createQueryBuilder('user')
-      .select(['user.id', 'user.email'])
+      .select(['user.id', 'user.email', 'user.tokenExpo'])
       .addSelect(['client.city', 'client.id'])
       .innerJoinAndSelect('user.person', 'person')
       .leftJoin('user.client', 'client')
