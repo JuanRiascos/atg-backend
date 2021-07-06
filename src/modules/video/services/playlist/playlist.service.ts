@@ -119,8 +119,6 @@ export class PlaylistService {
       .addSelect(['client.id'])
       .innerJoin('video.clients', 'client', 'client.id = :clientId', { clientId })
       .leftJoinAndSelect('video.course', 'course')
-      .leftJoinAndSelect('course.extraReps', 'extraReps')
-      .leftJoinAndSelect('course.caseStudies', 'caseStudies')
       .where('video.title ILIKE :searchTerm', { searchTerm: `%${searchTerm}%` })
       .orderBy("video.id", "ASC")
       .getMany()
