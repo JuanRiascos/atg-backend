@@ -14,18 +14,8 @@ export class SignupDto {
   @IsEmail()
   email: string;
 
-  @IsString()
-  @IsOptional()
-  @Length(9, 15)
-  phone: string;
-
   @Length(3, 30)
   password: string;
-
-  @IsString()
-  @IsEnum(Roles)
-  @IsOptional()
-  role: string
 
   @IsBoolean()
   @IsOptional()

@@ -9,8 +9,4 @@ export class LoginDto {
   @IsOptional()
   password: string;
 
-  @IsString()
-  @IsOptional()
-  social: string
-
 }
