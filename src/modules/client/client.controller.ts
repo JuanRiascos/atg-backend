@@ -94,7 +94,7 @@ export class ClientController {
 
   @Get('/average-session-time')
   @UseGuards(AuthGuard('jwt'), RolesGuard)
-  @Roles(roles.CLIENT)
+  @Roles(roles.ADMIN)
   async averageSessionTime(): Promise<ResponseError | ResponseSuccess> {
     const response: any = await this.sessionService.averageSessionTime()
 
