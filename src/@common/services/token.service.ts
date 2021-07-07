@@ -14,10 +14,10 @@ export class TokenService {
     private readonly permissionsService: PermissionsService
   ) { }
 
-  serializeToken = async (email) => {
+  serializeToken = async (email: string) => {
     const user = await this.userRepository.createQueryBuilder('user')
       .select(['user.id', 'user.email'])
-      .innerJoinAndSelect('user.person', 'person')
+      .leftJoinAndSelect('user.person', 'person')
       .leftJoinAndSelect('user.client', 'client')
       .where('user.email = :email AND user.state = :state', { email, state: States.Active })
       .getOne()

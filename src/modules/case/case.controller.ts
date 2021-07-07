@@ -15,6 +15,18 @@ export class CaseController {
     private readonly caseService: CaseService
   ) { }
 
+  @Get('/:caseId')
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Roles(roles.CLIENT)
+  async getCase(@Req() req, @Param('caseId', ParseIntPipe) caseId: number): Promise<ResponseError | ResponseSuccess> {
+    const response: any = await this.caseService.getCase(caseId, req?.user?.atgAppClientId)
+
+    if (response.error)
+      throw new BadRequestException(response)
+
+    return { success: 'OK', payload: response }
+  }
+
   @Get('/all/:courseId')
   async getCasesCourse(@Param('courseId', ParseIntPipe) courseId: number): Promise<ResponseError | ResponseSuccess> {
     const response: any = await this.caseService.getCases(courseId)
@@ -24,6 +36,7 @@ export class CaseController {
 
     return { success: 'OK', payload: response }
   }
+
 
   @Get('/top')
   @UseGuards(AuthGuard('jwt'), RolesGuard)
