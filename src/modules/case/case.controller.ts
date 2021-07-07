@@ -1,4 +1,4 @@
-import { BadRequestException, Body, Controller, Delete, Get, Param, ParseIntPipe, Post, Put, Req, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Delete, Get, Param, ParseIntPipe, Post, Put, Query, Req, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { Roles as roles } from 'src/@common/constants/role.constant';
@@ -15,10 +15,10 @@ export class CaseController {
     private readonly caseService: CaseService
   ) { }
 
-  @Get('/:caseId')
+  @Get()
   @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Roles(roles.CLIENT)
-  async getCase(@Req() req, @Param('caseId', ParseIntPipe) caseId: number): Promise<ResponseError | ResponseSuccess> {
+  async getCase(@Req() req, @Query('caseId') caseId: number,): Promise<ResponseError | ResponseSuccess> {
     const response: any = await this.caseService.getCase(caseId, req?.user?.atgAppClientId)
 
     if (response.error)
