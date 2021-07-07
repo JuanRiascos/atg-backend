@@ -153,4 +153,26 @@ export class VideoController {
     return { success: 'OK', payload: response }
   }
 
+  @Put('/change-case-studie-playlist/:id')
+  @UseGuards(AuthGuard('jwt'))
+  async changeCaseStudiesPlayList(
+    @Req() req,
+    @Param('id', ParseIntPipe) id: number
+    
+  ): Promise<ResponseError | ResponseSuccess> {
+    const response = await this.playlistService.changeCaseStudiesPlayList(req?.user?.atgAppClientId, id)
+    return { success: 'OK', payload: response }
+  }
+
+  @Put('/change-extra-rep-playlist/:id')
+  @UseGuards(AuthGuard('jwt'))
+  async changeExtraRepsPlayList(
+    @Req() req,
+    @Param('id', ParseIntPipe) id: number
+    
+  ): Promise<ResponseError | ResponseSuccess> {
+    const response = await this.playlistService.changeExtraRepsPlayList(req?.user?.atgAppClientId, id)
+    return { success: 'OK', payload: response }
+  }
+
 }
