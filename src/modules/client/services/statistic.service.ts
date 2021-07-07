@@ -55,17 +55,18 @@ export class StatisticService {
     let aux = true
     let init = initDate
 
+    let quantity = 0
     while (aux) {
       if (moment(init).get('month') == moment(finishDate).get('month')) {
         aux = false
       }
 
-      let quantity = await this.clientRepository.createQueryBuilder('client')
+      quantity = await this.clientRepository.createQueryBuilder('client')
         .leftJoin('client.user', 'user')
         .where(`user.created_at BETWEEN 
           '${moment(init).startOf('month').format(moment.HTML5_FMT.DATETIME_LOCAL_SECONDS)}' AND 
           '${moment(init).endOf('month').format(moment.HTML5_FMT.DATETIME_LOCAL_SECONDS)}'`)
-        .getCount()
+        .getCount() + quantity
 
       result.push({
         date: moment(init).format('MMM/YYYY'),
