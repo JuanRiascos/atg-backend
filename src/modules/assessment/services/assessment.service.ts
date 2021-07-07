@@ -43,7 +43,7 @@ export class AssessmentService {
         .orderBy('assessment.title', 'ASC')
         .getMany()
 
-      assessments.map(item => {
+      for (const item of assessments) {
         if (item.trys.length === 0) {
           item['status'] = 'none'
           item['progress'] = 0
@@ -56,7 +56,7 @@ export class AssessmentService {
         }
         delete item.questions
         delete item?.trys
-      })
+      }
 
     } catch (error) {
       return { error }
