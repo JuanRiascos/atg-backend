@@ -3,6 +3,7 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { States, StateSubscription } from "src/entities/@enums/index.enum";
 import { Client } from "src/entities/client/client.entity";
 import { Repository } from "typeorm";
+import moment = require('moment');
 
 @Injectable()
 export class StatisticService {
@@ -45,5 +46,35 @@ export class StatisticService {
     }
 
     return clients
+  }
+
+  async getClientsByDate(query: any) {
+    const { initDate, finishDate } = query
+
+    let result = []
+    let aux = true
+    let init = initDate
+
+    while (aux) {
+      if (moment(init).get('month') == moment(finishDate).get('month')) {
+        aux = false
+      }
+
+      let quantity = await this.clientRepository.createQueryBuilder('client')
+        .leftJoin('client.user', 'user')
+        .where(`user.created_at BETWEEN 
+          '${moment(init).startOf('month').format(moment.HTML5_FMT.DATETIME_LOCAL_SECONDS)}' AND 
+          '${moment(init).endOf('month').format(moment.HTML5_FMT.DATETIME_LOCAL_SECONDS)}'`)
+        .getCount()
+
+      result.push({
+        date: moment(init).format('MMM/YYYY'),
+        quantity
+      })
+
+      init = moment(init).add(1, 'month')
+    }
+
+    return result
   }
 }
