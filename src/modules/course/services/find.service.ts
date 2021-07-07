@@ -39,6 +39,8 @@ export class FindService {
         .leftJoinAndSelect('course.videos', 'videos')
         .leftJoinAndSelect('videos.clients', 'client', 'client.id = :clientId', { clientId })
         .leftJoinAndSelect('course.caseStudies', 'caseStudies')
+        .leftJoinAndSelect('caseStudies.clients', 'clientCaseStudies', 'clientCaseStudies.id = :clientId', { clientId })
+        .leftJoinAndSelect('extraReps.clients', 'clientExtraReps', 'clientExtraReps.id = :clientId', { clientId })
         .where('course.id = :courseId', { courseId })
         .addOrderBy('caseStudies.order', 'ASC')
         .addOrderBy('extraReps.order', 'ASC')

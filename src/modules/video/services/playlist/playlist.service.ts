@@ -55,11 +55,11 @@ export class PlaylistService {
     return { success: 'OK' }
   }
 
-  async changeExtraRepsPlayList(clientId: number, caseStudieId: number) {
+  async changeExtraRepsPlayList(clientId: number, extraRepId: number) {
 
     let client = await this.clientRepository.findOne(clientId)
 
-    let extraRep = await this.extraRepsRepository.findOne(caseStudieId, {
+    let extraRep = await this.extraRepsRepository.findOne(extraRepId, {
       relations: ['clients']
     })
 
