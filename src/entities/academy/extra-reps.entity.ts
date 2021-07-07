@@ -1,7 +1,8 @@
-import { Column, Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { TypesExtraReps } from "../@enums/index.enum";
 import { Client } from "../client/client.entity";
 import { Course } from "./course.entity";
+import { ViewExtraReps } from "./views-extra-reps.entity";
 
 @Entity('extra_reps', { schema: 'academy' })
 export class ExtraReps {
@@ -31,5 +32,8 @@ export class ExtraReps {
   @ManyToMany(type => Client, client => client.extraReps)
   @JoinTable({ name: 'playlist_extra_reps' })
   clients: Client[];
+
+  @OneToMany(() => ViewExtraReps, view => view.extraRep)
+  views: ViewExtraReps[]
 
 }

@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Video } from 'src/entities/academy/video.entity';
+import { ViewVideos } from 'src/entities/academy/views-videos.entity';
 import { Repository } from 'typeorm';
 import { VideoDto } from './dto/video.dto';
 
@@ -8,7 +9,8 @@ import { VideoDto } from './dto/video.dto';
 export class VideoService {
 
   constructor(
-    @InjectRepository(Video) private readonly videoRepository: Repository<Video>
+    @InjectRepository(Video) private readonly videoRepository: Repository<Video>,
+    @InjectRepository(ViewVideos) private readonly viewRepository: Repository<ViewVideos>
   ) { }
 
   async getVideosCourse(courseId: number) {
@@ -102,5 +104,38 @@ export class VideoService {
     return response
   }
 
+  async getTopVideos() {
+    const videos = await this.videoRepository.createQueryBuilder('video')
+      .select(['video.title'])
+      .addSelect('count(view.id)', 'quantity')
+      .innerJoin('video.views', 'view')
+      .orderBy("quantity", "DESC")
+      .groupBy('video.id')
+      .limit(5)
+      .getRawMany()
+
+    return videos
+  }
+
+  async addViewVideo(clientId: number, body: any) {
+    const { videoId } = body
+
+    try {
+      let exist = await this.viewRepository.createQueryBuilder('view')
+        .innerJoin('view.client', 'client', 'client.id = :clientId', { clientId })
+        .innerJoin('view.video', 'video', 'video.id = :videoId', { videoId })
+        .getOne()
+
+      await this.viewRepository.save({
+        first: exist ? false : true,
+        client: { id: clientId },
+        video: { id: videoId }
+      })
+    } catch (error) {
+      return { error }
+    }
+
+    return { message: 'view add' }
+  }
 
 }

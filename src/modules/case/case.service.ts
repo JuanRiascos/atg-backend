@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CaseStudies } from 'src/entities/academy/case-studies.entity';
+import { ViewCaseStudies } from 'src/entities/academy/views-case-studies.entity';
 import { Repository } from 'typeorm';
 import { CaseDto } from './dto/case.dto';
 
@@ -8,7 +9,8 @@ import { CaseDto } from './dto/case.dto';
 export class CaseService {
 
   constructor(
-    @InjectRepository(CaseStudies) private readonly caseRepository: Repository<CaseStudies>
+    @InjectRepository(CaseStudies) private readonly caseRepository: Repository<CaseStudies>,
+    @InjectRepository(ViewCaseStudies) private readonly viewRepository: Repository<ViewCaseStudies>
   ) { }
 
   async getCases(courseId: number) {
@@ -98,4 +100,37 @@ export class CaseService {
     return response
   }
 
+  async getTopCases() {
+    const cases = await this.caseRepository.createQueryBuilder('case')
+      .select(['case.title'])
+      .addSelect('count(view.id)', 'quantity')
+      .innerJoin('case.views', 'view')
+      .orderBy("quantity", "DESC")
+      .groupBy('case.id')
+      .limit(5)
+      .getRawMany()
+
+    return cases
+  }
+
+  async addViewCase(clientId: number, body: any) {
+    const { caseId } = body
+
+    try {
+      let exist = await this.viewRepository.createQueryBuilder('view')
+        .innerJoin('view.client', 'client', 'client.id = :clientId', { clientId })
+        .innerJoin('view.caseStudy', 'caseStudy', 'caseStudy.id = :caseId', { caseId })
+        .getOne()
+
+      await this.viewRepository.save({
+        first: exist ? false : true,
+        client: { id: clientId },
+        caseStudy: { id: caseId }
+      })
+    } catch (error) {
+      return { error }
+    }
+
+    return { message: 'view add' }
+  }
 }

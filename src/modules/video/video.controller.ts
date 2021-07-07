@@ -42,6 +42,30 @@ export class VideoController {
     return { success: 'OK', payload: response }
   }
 
+  @Get('/top')
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Roles(roles.ADMIN)
+  async getTop(): Promise<ResponseError | ResponseSuccess> {
+    const response: any = await this.videoService.getTopVideos()
+
+    if (response.error)
+      throw new BadRequestException(response)
+
+    return { success: 'OK', payload: response }
+  }
+
+  @Post('/add-view')
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Roles(roles.CLIENT)
+  async addView(@Req() req, @Body() body: any): Promise<ResponseError | ResponseSuccess> {
+    const response: any = await this.videoService.addViewVideo(req?.user?.atgAppClientId, body)
+
+    if (response.error)
+      throw new BadRequestException(response)
+
+    return { success: 'OK', payload: response }
+  }
+
   @Post()
   @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Roles(roles.ADMIN)
