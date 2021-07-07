@@ -5,6 +5,7 @@ import {
   JoinTable,
   ManyToMany,
   ManyToOne,
+  OneToMany,
   OneToOne,
   PrimaryGeneratedColumn
 } from "typeorm";
@@ -12,6 +13,7 @@ import { Client } from "../client/client.entity";
 import { User } from "../user/user.entity";
 import { Assessment } from "./assessment.entity";
 import { Course } from "./course.entity";
+import { ViewVideos } from "./views-videos.entity";
 @Entity('video', { schema: 'academy' })
 export class Video {
 
@@ -55,4 +57,7 @@ export class Video {
   @ManyToMany(type => Client, client => client.videos)
   @JoinTable({ name: 'playlist' })
   clients: Client[];
+
+  @OneToMany(() => ViewVideos, view => view.video)
+  views: ViewVideos[]
 }

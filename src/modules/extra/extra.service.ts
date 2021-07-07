@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ExtraReps } from 'src/entities/academy/extra-reps.entity';
+import { ViewExtraReps } from 'src/entities/academy/views-extra-reps.entity';
 import { Repository } from 'typeorm';
 import { ExtraDto } from './dto/extra.dto';
 
@@ -8,7 +9,8 @@ import { ExtraDto } from './dto/extra.dto';
 export class ExtraService {
 
   constructor(
-    @InjectRepository(ExtraReps) private readonly extraRepsRepository: Repository<ExtraReps>
+    @InjectRepository(ExtraReps) private readonly extraRepsRepository: Repository<ExtraReps>,
+    @InjectRepository(ViewExtraReps) private readonly viewRepository: Repository<ViewExtraReps>
   ) { }
 
   async getExtraReps(courseId: number) {
@@ -97,5 +99,39 @@ export class ExtraService {
       .getMany()
 
     return response
+  }
+
+  async getTopExtra() {
+    const extras = await this.extraRepsRepository.createQueryBuilder('extra')
+      .select(['extra.title'])
+      .addSelect('count(view.id)', 'quantity')
+      .innerJoin('extra.views', 'view')
+      .orderBy("quantity", "DESC")
+      .groupBy('extra.id')
+      .limit(5)
+      .getRawMany()
+
+    return extras
+  }
+
+  async addViewExtra(clientId: number, body: any) {
+    const { extraId } = body
+
+    try {
+      let exist = await this.viewRepository.createQueryBuilder('view')
+        .innerJoin('view.client', 'client', 'client.id = :clientId', { clientId })
+        .innerJoin('view.extraRep', 'extraRep', 'extraRep.id = :extraId', { extraId })
+        .getOne()
+
+      await this.viewRepository.save({
+        first: exist ? false : true,
+        client: { id: clientId },
+        extraRep: { id: extraId }
+      })
+    } catch (error) {
+      return { error }
+    }
+
+    return { message: 'view add' }
   }
 }

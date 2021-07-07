@@ -15,6 +15,9 @@ import { ClientQuestion } from "../academy/client-question.entity";
 import { ExtraReps } from "../academy/extra-reps.entity";
 import { Interest } from "../academy/interest.entity";
 import { Video } from "../academy/video.entity";
+import { ViewCaseStudies } from "../academy/views-case-studies.entity";
+import { ViewExtraReps } from "../academy/views-extra-reps.entity";
+import { ViewVideos } from "../academy/views-videos.entity";
 import { Subscription } from "../payment/subscription.entity";
 import { User } from "../user/user.entity";
 import { Favorite } from "./favorite.entity";
@@ -83,4 +86,12 @@ export class Client {
   @OneToMany(() => SessionClient, session => session.client)
   sessions: SessionClient[]
 
+  @OneToMany(() => ViewCaseStudies, view => view.client)
+  viewsCaseStudies: ViewCaseStudies[]
+
+  @OneToMany(() => ViewExtraReps, view => view.client)
+  viewsExtraReps: ViewExtraReps[]
+
+  @OneToMany(() => ViewVideos, view => view.client)
+  viewsVideos: ViewVideos[]
 }

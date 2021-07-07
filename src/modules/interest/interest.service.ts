@@ -96,4 +96,18 @@ export class InterestService {
 
     return deleted
   }
+
+
+  async getTopInterest() {
+    const interests = await this.interestRepository.createQueryBuilder('interest')
+      .select(['interest.title'])
+      .addSelect('count(client.id)', 'quantity')
+      .innerJoin('interest.clients', 'client')
+      .orderBy("quantity", "DESC")
+      .groupBy('interest.id')
+      .limit(5)
+      .getRawMany()
+
+    return interests
+  }
 }
