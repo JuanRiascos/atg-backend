@@ -37,6 +37,42 @@ export class PlaylistService {
     return { success: 'OK' }
   }
 
+  async changeCaseStudiesPlayList(clientId: number, caseStudieId: number) {
+
+    let client = await this.clientRepository.findOne(clientId)
+
+    let caseStudie = await this.caseStudiesRepository.findOne(caseStudieId, {
+      relations: ['clients']
+    })
+
+    if (caseStudie?.clients?.some((client) => client.id == clientId))
+      caseStudie.clients = caseStudie?.clients?.filter((client) => client.id !== clientId)
+    else
+      caseStudie.clients = [...caseStudie?.clients, client]
+
+    await this.caseStudiesRepository.save(caseStudie)
+
+    return { success: 'OK' }
+  }
+
+  async changeExtraRepsPlayList(clientId: number, caseStudieId: number) {
+
+    let client = await this.clientRepository.findOne(clientId)
+
+    let extraRep = await this.extraRepsRepository.findOne(caseStudieId, {
+      relations: ['clients']
+    })
+
+    if (extraRep?.clients?.some((client) => client.id == clientId))
+      extraRep.clients = extraRep?.clients?.filter((client) => client.id !== clientId)
+    else
+      extraRep.clients = [...extraRep?.clients, client]
+
+    await this.extraRepsRepository.save(extraRep)
+
+    return { success: 'OK' }
+  }
+
   async getVideoPlayListByClient(clientId: number, courseId?: number) {
     const videos = await this.videosPlayList(clientId, courseId)
     const caseStudies = await this.caseStudiesPlayList(clientId, courseId)
