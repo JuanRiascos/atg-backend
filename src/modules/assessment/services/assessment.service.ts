@@ -34,28 +34,30 @@ export class AssessmentService {
         .addSelect(['questions.id'])
         .innerJoin('assessment.course', 'course')
         .innerJoin('assessment.questions', 'questions')
-        .leftJoinAndSelect('assessment.trys', 'trys')
-        .leftJoinAndSelect('trys.responses', 'responses')
-        .leftJoin('responses.question', 'question')
-        .leftJoin('trys.client', 'client', 'client.id = :clientId', { clientId })
-        .addOrderBy('question.order', 'ASC')
         .addOrderBy('questions.order', 'ASC')
         .orderBy('assessment.title', 'ASC')
         .getMany()
 
       for (const item of assessments) {
-        if (item.trys.length === 0) {
+        let trys = await this.tryRepository.createQueryBuilder('try')
+          .innerJoin('try.assessment', 'assessment', 'assessment.id = :assessmentId', { assessmentId: item.id })
+          .innerJoin('try.client', 'client', 'client.id = :clientId', { clientId })
+          .leftJoinAndSelect('try.responses', 'responses')
+          .leftJoin('responses.question', 'question')
+          .addOrderBy('question.order', 'ASC')
+          .getMany()
+
+        if (trys?.length === 0) {
           item['status'] = 'none'
           item['progress'] = 0
         }
         else {
-          item['status'] = item.trys[0].status
-          let responses = item.trys[0].responses.length
+          item['status'] = trys[0].status
+          let responses = trys[0].responses.length
           let questions = item.questions.length
           item['progress'] = (responses / questions) * 100
         }
         delete item.questions
-        delete item?.trys
       }
 
     } catch (error) {
