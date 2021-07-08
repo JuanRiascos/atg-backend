@@ -6,7 +6,7 @@ const sgMail = require('@sendgrid/mail');
 export const Templates = {
   VERIFY_FORGOT_PASSWORD: {
     id: 'd-96a37c427acb47c787d9e3bf2cd9362e',
-    subject: { es: 'Recuperar contraseña' }
+    subject: { es: 'Restore Password' }
   },
   SIGNUP_SUCCESS: {
     id: 'd-9e35b5f2cb404bdfa118d9f19ceec2cd',

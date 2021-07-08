@@ -100,10 +100,7 @@ export class AuthController {
     const response: any = await this.passwordService.forgotPassword(body.email);
 
     if (response.success) {
-      const user = response.payload;
-
-      this.eventEmitter.emit(Events.ForgotPassword, { user })
-
+      //enviar correo
       return { success: 'OK' }
     } else
       throw new BadRequestException(response);
