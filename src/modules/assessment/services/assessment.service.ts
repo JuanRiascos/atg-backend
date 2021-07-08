@@ -72,29 +72,34 @@ export class AssessmentService {
     try {
       assessment = await this.assessmentRepository.createQueryBuilder('assessment')
         .addSelect(['course.title', 'course.color'])
-        .addSelect([
-          'question.id', 'question.description', 'question.multiple',
-          'answersR.id', 'answersR.description',
-          'answersR.correct'
-        ])
         .innerJoin('assessment.course', 'course')
         .leftJoinAndSelect('assessment.questions', 'questions')
         .leftJoinAndSelect('questions.answers', 'answers')
-        .leftJoinAndSelect('assessment.trys', 'trys')
-        .leftJoinAndSelect('trys.responses', 'responses')
-        .leftJoin('responses.question', 'question')
-        .leftJoin('responses.answers', 'answersR')
-        .leftJoin('trys.client', 'client', 'client.id = :clientId', { clientId })
         .where('assessment.id = :assessmentId', { assessmentId })
         .addOrderBy('questions.order', 'ASC')
         .addOrderBy('answers.order', 'ASC')
-        .addOrderBy('question.order', 'ASC')
         .getOne()
 
-      if (assessment.trys.length === 0)
+      let trys = await this.tryRepository.createQueryBuilder('try')
+        .addSelect([
+          'question.id', 'question.description', 'question.multiple',
+          'answers.id', 'answers.description',
+          'answers.correct'
+        ])
+        .innerJoin('try.assessment', 'assessment', 'assessment.id = :assessmentId', { assessmentId })
+        .innerJoin('try.client', 'client', 'client.id = :clientId', { clientId })
+        .leftJoinAndSelect('try.responses', 'responses')
+        .leftJoin('responses.question', 'question')
+        .leftJoin('responses.answers', 'answers')
+        .addOrderBy('question.order', 'ASC')
+        .getMany()
+
+      assessment['trys'] = trys
+
+      if (trys.length === 0)
         assessment['status'] = 'none'
       else {
-        assessment['status'] = assessment.trys[0].status
+        assessment['status'] = trys[0].status
       }
     } catch (error) {
       return { error }
