@@ -1,6 +1,7 @@
-import { Column, Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { Client } from "../client/client.entity";
 import { Course } from "./course.entity";
+import { ViewCaseStudies } from "./views-case-studies.entity";
 
 @Entity('case_studies', { schema: 'academy' })
 export class CaseStudies {
@@ -27,4 +28,7 @@ export class CaseStudies {
   @ManyToMany(type => Client, client => client.caseStudies)
   @JoinTable({ name: 'playlist_case_studies' })
   clients: Client[];
+
+  @OneToMany(() => ViewCaseStudies, view => view.caseStudy)
+  views: ViewCaseStudies[]
 }

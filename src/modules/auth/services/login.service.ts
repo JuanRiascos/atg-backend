@@ -27,7 +27,7 @@ export class LoginService {
       .andWhere('user.password = :password', { password })
 
     const user = await query.getOne()
-
+    
     if (!user)
       return { error: "USER_NOT_EXIST", message: "Tu correo electronico o contraseña no son válidos." }
     else if (user.state === States.Inactive)

@@ -94,7 +94,7 @@ export class ClientController {
 
   @Get('/average-session-time')
   @UseGuards(AuthGuard('jwt'), RolesGuard)
-  @Roles(roles.CLIENT)
+  @Roles(roles.ADMIN)
   async averageSessionTime(): Promise<ResponseError | ResponseSuccess> {
     const response: any = await this.sessionService.averageSessionTime()
 
@@ -104,7 +104,16 @@ export class ClientController {
     return { success: 'OK', payload: response }
   }
 
+  @Get('/clients-by-date')
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Roles(roles.ADMIN)
+  async getclientsByDate(@Query() query): Promise<ResponseError | ResponseSuccess> {
+    const response: any = await this.statisticService.getClientsByDate(query)
 
+    if (response.error)
+      throw new BadRequestException(response)
 
+    return { success: 'OK', payload: response }
+  }
 
 }

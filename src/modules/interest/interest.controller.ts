@@ -37,6 +37,18 @@ export class InterestController {
     return { success: 'OK', payload: response }
   }
 
+  @Get('/top')
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Roles(roles.ADMIN)
+  async getTop(): Promise<ResponseError | ResponseSuccess> {
+    const response: any = await this.interestService.getTopInterest()
+
+    if (response.error)
+      throw new BadRequestException(response)
+
+    return { success: 'OK', payload: response }
+  }
+
   @Post()
   @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Roles(roles.ADMIN)

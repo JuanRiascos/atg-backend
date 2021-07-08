@@ -4,12 +4,16 @@ import { Repository } from 'typeorm';
 
 import { Video } from 'src/entities/academy/video.entity';
 import { Client } from 'src/entities/client/client.entity';
+import { ExtraReps } from 'src/entities/academy/extra-reps.entity';
+import { CaseStudies } from 'src/entities/academy/case-studies.entity';
 
 @Injectable()
 export class PlaylistService {
 
   constructor(
     @InjectRepository(Video) private readonly videoRepository: Repository<Video>,
+    @InjectRepository(ExtraReps) private readonly extraRepsRepository: Repository<ExtraReps>,
+    @InjectRepository(CaseStudies) private readonly caseStudiesRepository: Repository<CaseStudies>,
     @InjectRepository(Client) private readonly clientRepository: Repository<Client>,
     private readonly httpService: HttpService
   ) {
@@ -33,19 +37,70 @@ export class PlaylistService {
     return { success: 'OK' }
   }
 
+  async changeCaseStudiesPlayList(clientId: number, caseStudieId: number) {
+
+    let client = await this.clientRepository.findOne(clientId)
+
+    let caseStudie = await this.caseStudiesRepository.findOne(caseStudieId, {
+      relations: ['clients']
+    })
+
+    if (caseStudie?.clients?.some((client) => client.id == clientId))
+      caseStudie.clients = caseStudie?.clients?.filter((client) => client.id !== clientId)
+    else
+      caseStudie.clients = [...caseStudie?.clients, client]
+
+    await this.caseStudiesRepository.save(caseStudie)
+
+    return { success: 'OK' }
+  }
+
+  async changeExtraRepsPlayList(clientId: number, extraRepId: number) {
+
+    let client = await this.clientRepository.findOne(clientId)
+
+    let extraRep = await this.extraRepsRepository.findOne(extraRepId, {
+      relations: ['clients']
+    })
+
+    if (extraRep?.clients?.some((client) => client.id == clientId))
+      extraRep.clients = extraRep?.clients?.filter((client) => client.id !== clientId)
+    else
+      extraRep.clients = [...extraRep?.clients, client]
+
+    await this.extraRepsRepository.save(extraRep)
+
+    return { success: 'OK' }
+  }
+
   async getVideoPlayListByClient(clientId: number, courseId?: number) {
+    const videos = await this.videosPlayList(clientId, courseId)
+    const caseStudies = await this.caseStudiesPlayList(clientId, courseId)
+    const extraReps = await this.extraRepsPlayList(clientId, courseId)
+
+    return { videos, caseStudies, extraReps }
+  }
+
+  async getVideoPlayListByClientSearch(clientId: number, searchTerm: string) {
+    const videos = await this.videosPlayList(clientId, undefined, searchTerm)
+    const caseStudies = await this.caseStudiesPlayList(clientId, undefined, searchTerm)
+    const extraReps = await this.extraRepsPlayList(clientId, undefined, searchTerm)
+
+    return { videos, caseStudies, extraReps }
+  }
+
+  async videosPlayList(clientId: number, courseId?: number, searchTerm?: string) {
     let query = await this.videoRepository.createQueryBuilder('video')
       .addSelect(['client.id'])
       .innerJoin('video.clients', 'client', 'client.id = :clientId', { clientId })
 
     if (courseId)
       await query.innerJoinAndSelect('video.course', 'course', 'course.id = :courseId', { courseId })
-        .leftJoinAndSelect('course.extraReps', 'extraReps')
-        .leftJoinAndSelect('course.caseStudies', 'caseStudies')
     else
       await query.leftJoinAndSelect('video.course', 'course')
-        .leftJoinAndSelect('course.extraReps', 'extraReps')
-        .leftJoinAndSelect('course.caseStudies', 'caseStudies')
+
+    if (searchTerm)
+      await query.where('video.title ILIKE :searchTerm', { searchTerm: `%${searchTerm}%` })
 
     const videos = await query.orderBy("video.id", "ASC")
       .getMany()
@@ -66,32 +121,42 @@ export class PlaylistService {
     return videos
   }
 
-  async getVideoPlayListByClientSearch(clientId: number, searchTerm: string) {
-    const videos = await this.videoRepository.createQueryBuilder('video')
+  async caseStudiesPlayList(clientId: number, courseId?: number, searchTerm?: string) {
+    let query = await this.caseStudiesRepository.createQueryBuilder('caseStudies')
       .addSelect(['client.id'])
-      .innerJoin('video.clients', 'client', 'client.id = :clientId', { clientId })
-      .leftJoinAndSelect('video.course', 'course')
-      .leftJoinAndSelect('course.extraReps', 'extraReps')
-      .leftJoinAndSelect('course.caseStudies', 'caseStudies')
-      .where('video.title ILIKE :searchTerm', { searchTerm: `%${searchTerm}%` })
-      .orderBy("video.id", "ASC")
+      .innerJoin('caseStudies.clients', 'client', 'client.id = :clientId', { clientId })
+
+    if (courseId)
+      await query.innerJoinAndSelect('caseStudies.course', 'course', 'course.id = :courseId', { courseId })
+    else
+      await query.leftJoinAndSelect('caseStudies.course', 'course')
+
+    if (searchTerm)
+      await query.where('caseStudies.title ILIKE :searchTerm', { searchTerm: `%${searchTerm}%` })
+
+    const caseStudies = await query.orderBy("caseStudies.id", "ASC")
       .getMany()
 
+    return caseStudies
+  }
 
-    for (const video of videos) {
-      if (video.url) {
-        const response = await this.httpService.get(
-          `https://player.vimeo.com/video/${video?.url?.replace("https://vimeo.com/", "")}/config`
-        ).toPromise()
+  async extraRepsPlayList(clientId: number, courseId?: number, searchTerm?: string) {
+    let query = await this.extraRepsRepository.createQueryBuilder('extraReps')
+      .addSelect(['client.id'])
+      .innerJoin('extraReps.clients', 'client', 'client.id = :clientId', { clientId })
 
-        const data = await response.data
-        let urlVimeo = data?.request?.files?.hls?.cdns?.akfire_interconnect_quic?.url
+    if (courseId)
+      await query.innerJoinAndSelect('extraReps.course', 'course', 'course.id = :courseId', { courseId })
+    else
+      await query.leftJoinAndSelect('extraReps.course', 'course')
 
-        video['urlVimeo'] = urlVimeo || video?.url
-      }
-    }
+    if (searchTerm)
+      await query.where('extraReps.title ILIKE :searchTerm', { searchTerm: `%${searchTerm}%` })
 
-    return videos
+    const extraReps = await query.orderBy("extraReps.id", "ASC")
+      .getMany()
+
+    return extraReps
   }
 
 }
