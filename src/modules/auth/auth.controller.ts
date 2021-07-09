@@ -114,7 +114,7 @@ export class AuthController {
 
     if (response.success) {
       await this.sendgridService.sendEmail(body.email, Templates.VERIFY_FORGOT_PASSWORD, { 
-        redirect: this.hostServer + '/auth/redirect-app?url=' + body.url 
+        redirect: this.hostServer + '/auth/redirect-app?url=' + body.url + '?code=' + response.payload.code
       })
       return { success: 'OK' }
     } else
