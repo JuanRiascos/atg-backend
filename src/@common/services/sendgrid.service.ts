@@ -37,9 +37,13 @@ export class SendgridService {
       sgMail.send(msg).then(async data => {
         if (data[0] && data[0].statusCode === 202)
           resolve({ success: 'OK', ...data })
-        else
+        else {
+          console.log('Sendgrid error', data);
           resolve({ success: 'ERROR', ...data })
+        }
       }).catch(err => {
+        console.log('Sendgrid error', err);
+        
         resolve({ error: 'ERROR', ...err })
       });
     })
