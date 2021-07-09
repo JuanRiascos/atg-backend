@@ -38,11 +38,11 @@ export class SendgridService {
         if (data[0] && data[0].statusCode === 202)
           resolve({ success: 'OK', ...data })
         else {
-          console.log('Sendgrid error', data);
+          console.log('Sendgrid error', data.response.body);
           resolve({ success: 'ERROR', ...data })
         }
       }).catch(err => {
-        console.log('Sendgrid error', err);
+        console.log('Sendgrid 2 error', err.response.body);
         
         resolve({ error: 'ERROR', ...err })
       });
