@@ -52,10 +52,14 @@ export class AssessmentService {
           item['progress'] = 0
         }
         else {
-          item['status'] = trys[0].status
-          let responses = trys[0].responses.length
+          let responses = trys[trys.length - 1].responses.length
           let questions = item.questions.length
-          item['progress'] = (responses / questions) * 100
+          let progress = (responses / questions) * 100
+          item['progress'] = progress
+          if (progress == 100)
+            item['status'] = 'finished'
+          else
+            item['status'] = 'started'
         }
         delete item.questions
       }
@@ -99,7 +103,13 @@ export class AssessmentService {
       if (trys.length === 0)
         assessment['status'] = 'none'
       else {
-        assessment['status'] = trys[0].status
+        let responses = trys[trys.length - 1].responses.length
+        let questions = assessment.questions.length
+        let progress = (responses / questions) * 100
+        if (progress == 100)
+          assessment['status'] = 'finished'
+        else
+          assessment['status'] = 'started'
       }
     } catch (error) {
       return { error }
@@ -160,8 +170,7 @@ export class AssessmentService {
     try {
       await this.tryRepository.save({
         assessment: { id: assessmentId },
-        client: { id: clientId },
-        status: StateTry.Started
+        client: { id: clientId }
       })
     } catch (error) {
       return { error }
@@ -202,10 +211,7 @@ export class AssessmentService {
         answers
       })
 
-      if (finalQuestion) {
-        tryAssessment.status = StateTry.Finished
-        await this.tryRepository.save(tryAssessment)
-      }
+      await this.tryRepository.save(tryAssessment)
     } catch (error) {
       return { error }
     }
