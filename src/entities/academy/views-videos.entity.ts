@@ -8,7 +8,7 @@ export class ViewVideos {
   @PrimaryGeneratedColumn({ type: 'bigint' })
   id: number
 
-  @Column('boolean', { nullable: true })
+  @Column('boolean', { nullable: true, default: false })
   first: boolean
 
   @CreateDateColumn({ type: "timestamp" })

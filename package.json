@@ -44,7 +44,8 @@
     "rimraf": "^3.0.2",
     "rxjs": "^6.6.3",
     "stripe": "^8.157.0",
-    "typeorm": "^0.2.34"
+    "typeorm": "^0.2.34",
+    "xlsx": "^0.17.0"
   },
   "devDependencies": {
     "@nestjs/cli": "^7.5.1",

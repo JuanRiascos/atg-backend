@@ -1,4 +1,4 @@
-import { BadRequestException, Body, Controller, Delete, Get, NotFoundException, Param, ParseIntPipe, Post, Put, Query, UseGuards } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Delete, Get, NotFoundException, Param, ParseIntPipe, Post, Put, Query, Req, Res, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { Roles } from 'src/@common/decorators/roles.decorator';
 import { ResponseError, ResponseSuccess } from 'src/@common/interfaces/response';
@@ -6,12 +6,15 @@ import { Roles as roles } from '../../@common/constants/role.constant'
 import { InterestService } from './interest.service';
 import { InterestDto } from './dto/interest.dto';
 import { RolesGuard } from 'src/@common/guards/roles.guard';
+import { Response } from 'express'
+import { ConfigService } from '@nestjs/config';
 
 @Controller('interest')
 export class InterestController {
 
   constructor(
-    private readonly interestService: InterestService
+    private readonly interestService: InterestService,
+    private readonly configService: ConfigService
   ) { }
 
   @Get()
@@ -25,6 +28,15 @@ export class InterestController {
       throw new NotFoundException(response)
 
     return { success: 'OK', payload: response }
+  }
+
+  @Get('/report-data')
+  async getReportData(@Res() res: Response, @Query() query) {
+    if (!query.token)
+      res.status(401)
+
+    const response: any = await this.interestService.getReportData()
+    res.status(200).download(response.fileName, response.fileName)
   }
 
   @Get('/principals')

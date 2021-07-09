@@ -1,6 +1,6 @@
-import { BadRequestException, Controller, Get, Param, ParseIntPipe, Put, Query, Req, UseGuards } from '@nestjs/common';
+import { BadRequestException, Controller, Get, Param, ParseIntPipe, Put, Query, Req, Res, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import { response } from 'express';
+import { Response, response } from 'express';
 import { Roles as roles } from 'src/@common/constants/role.constant';
 import { Roles } from 'src/@common/decorators/roles.decorator';
 import { RolesGuard } from 'src/@common/guards/roles.guard';
@@ -114,6 +114,24 @@ export class ClientController {
       throw new BadRequestException(response)
 
     return { success: 'OK', payload: response }
+  }
+
+  @Get('/report-data')
+  async getReportData(@Res() res: Response, @Query() query) {
+    if (!query.token)
+      res.status(401)
+
+    const response: any = await this.statisticService.getReportData()
+    res.status(200).download(response.fileName, response.fileName)
+  }
+
+  @Get('/content-view')
+  async contentView(@Res() res: Response, @Query() query) {
+    if (!query.token)
+      res.status(401)
+
+    const response: any = await this.statisticService.getContenView()
+    res.status(200).download(response.fileName, response.fileName)
   }
 
 }
