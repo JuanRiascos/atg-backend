@@ -78,8 +78,6 @@ export class AuthController {
     if (response.error)
       throw new BadRequestException(response);
 
-    this.eventEmitter.emit(Events.SignupAdmin, { user: response })
-
     return { success: 'OK', payload: await this.jwtService.sign({ ...response }) }
   }
 

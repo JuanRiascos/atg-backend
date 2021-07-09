@@ -82,13 +82,6 @@ export class PersonService {
 
       if (update.affected !== 1)
         return { error: 'ERROR_UPDATE', message: 'Ocurrio un problema al actualizar los datos.' }
-
-      await this.sendgridService.sendEmail(
-        body.email,
-        Templates.SIGNUP_SUCCESS,
-        {
-          clientName: body.name + ' ' + body.lastname
-        })
     }
 
     const updateClient = await this.clientRepository.update(user?.client?.id, { city: body.city })
