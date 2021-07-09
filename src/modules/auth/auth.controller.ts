@@ -32,8 +32,6 @@ import { Templates } from '../../@common/services/sendgrid.service'
 
 @Controller('auth')
 export class AuthController {
-  
-  public hostServer
 
   constructor(
     @Inject('CryptoService') private readonly cryptoService,
@@ -44,8 +42,6 @@ export class AuthController {
     private readonly passwordService: PasswordService,
     private readonly configService: ConfigService,
   ) {
-    let config = configService.get('app')
-    this.hostServer = config.hostServer + '/' + config.prefix
   }
 
   @Post('/signup')
@@ -113,8 +109,12 @@ export class AuthController {
     const response: any = await this.passwordService.forgotPassword(body.email);
 
     if (response.success) {
+      let config = this.configService.get('app')
+      let hostServer = config.hostServer + '/' + config.prefix
+      console.log('hostServer', hostServer);
+      
       await this.sendgridService.sendEmail(body.email, Templates.VERIFY_FORGOT_PASSWORD, { 
-        redirect: this.hostServer + '/auth/redirect-app?url=' + body.url + '?code=' + response.payload.code
+        redirect: hostServer + '/auth/redirect-app?url=' + body.url + '?code=' + response.payload.code
       })
       return { success: 'OK' }
     } else
