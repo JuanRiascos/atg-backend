@@ -21,7 +21,7 @@ export class SendgridService {
   }
 
   sendEmail(to: any, template: any, substitutions: any) {
-    console.log('Correo enviado a: ', to);
+    console.log('Correo enviado a: ', to, substitutions);
 
     return new Promise((resolve, reject) => {
       const msg = {
