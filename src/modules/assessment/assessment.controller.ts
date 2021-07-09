@@ -199,5 +199,15 @@ export class AssessmentController {
     return { success: 'OK', payload: response }
   }
 
+  @Get('/get-result')
+  @UseGuards(AuthGuard('jwt'))
+  async getResult(@Req() req, @Query() query): Promise<ResponseError | ResponseSuccess> {
+    const response = await this.assessmentService.getResult(query.assessmentId, req.user?.atgAppClientId)
+
+    if (response.error)
+      throw new BadRequestException(response)
+
+    return { success: 'OK', payload: response }
+  }
 
 }

@@ -218,4 +218,70 @@ export class AssessmentService {
 
     return { message: 'save response' }
   }
+
+  async getResult(assessmentId: number, clientId: number) {
+    try {
+      let assessment = await this.assessmentRepository.createQueryBuilder('assessment')
+        .select('assessment.id')
+        .leftJoinAndSelect('assessment.questions', 'questions')
+        .leftJoinAndSelect('questions.answers', 'answers')
+        .where('assessment.id = :assessmentId', { assessmentId })
+        .addOrderBy('questions.order', 'ASC')
+        .addOrderBy('answers.order', 'ASC')
+        .getOne()
+
+      let trys = await this.tryRepository.createQueryBuilder('try')
+        .addSelect([
+          'question.id', 'question.description', 'question.multiple',
+          'answers.id', 'answers.description',
+          'answers.correct'
+        ])
+        .innerJoin('try.assessment', 'assessment', 'assessment.id = :assessmentId', { assessmentId })
+        .innerJoin('try.client', 'client', 'client.id = :clientId', { clientId })
+        .leftJoinAndSelect('try.responses', 'responses')
+        .leftJoin('responses.question', 'question')
+        .leftJoin('responses.answers', 'answers')
+        .addOrderBy('question.order', 'ASC')
+        .addOrderBy('answers.order', 'ASC')
+        .getMany()
+
+      let lastTry = trys[trys.length - 1]
+
+      let totalValue = 0
+      for (const question of assessment.questions) {
+        let corrects = question.answers.filter(item => item.correct)
+        let value
+        if (!question.multiple)
+          value = 100
+        else {
+          value = (100 / corrects.length)
+        }
+
+        for (const response of corrects) {
+          let exist = lastTry.responses.find(item => item.question.id === question.id)
+            .answers.find(item => item.id === response.id)
+
+          if (exist)
+            totalValue += value
+        }
+      }
+
+      let percentageTotal = totalValue / assessment.questions.length
+      let status
+
+      if (percentageTotal > 50) {
+        status = 'approved'
+      } else {
+        status = 'reproved'
+      }
+
+      return {
+        percentageTotal,
+        status
+      }
+
+    } catch (error) {
+      return { error }
+    }
+  }
 }
