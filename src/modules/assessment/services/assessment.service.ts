@@ -21,10 +21,6 @@ export class AssessmentService {
     @InjectRepository(Answer) private readonly answerRepository: Repository<Answer>
   ) { }
 
-  async calulcateStatusAndProgress(assessmentId: number, clientId) {
-
-  }
-
   async getAssessments(clientId: number) {
     let assessments
     try {
@@ -44,6 +40,7 @@ export class AssessmentService {
           .innerJoin('try.client', 'client', 'client.id = :clientId', { clientId })
           .leftJoinAndSelect('try.responses', 'responses')
           .leftJoin('responses.question', 'question')
+          .orderBy('try.id', 'ASC')
           .addOrderBy('question.order', 'ASC')
           .getMany()
 
@@ -95,6 +92,7 @@ export class AssessmentService {
         .leftJoinAndSelect('try.responses', 'responses')
         .leftJoin('responses.question', 'question')
         .leftJoin('responses.answers', 'answers')
+        .orderBy('try.id', 'ASC')
         .addOrderBy('question.order', 'ASC')
         .getMany()
 
@@ -241,6 +239,7 @@ export class AssessmentService {
         .leftJoinAndSelect('try.responses', 'responses')
         .leftJoin('responses.question', 'question')
         .leftJoin('responses.answers', 'answers')
+        .orderBy('try.id', 'ASC')
         .addOrderBy('question.order', 'ASC')
         .addOrderBy('answers.order', 'ASC')
         .getMany()
