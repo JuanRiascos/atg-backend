@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Interest } from 'src/entities/academy/interest.entity';
 import { Repository } from 'typeorm';
 import { InterestDto } from './dto/interest.dto';
+import * as XLSX from 'xlsx';
 
 @Injectable()
 export class InterestService {
@@ -109,5 +110,33 @@ export class InterestService {
       .getRawMany()
 
     return interests
+  }
+
+  async getReportData() {
+    const interests = await this.interestRepository.createQueryBuilder('interest')
+      .select(['interest.title'])
+      .addSelect(['parent.title'])
+      .addSelect('count(client.id)', 'quantity')
+      .leftJoin('interest.clients', 'client')
+      .innerJoin('interest.parent', 'parent')
+      .orderBy("quantity", "DESC")
+      .groupBy('interest.id')
+      .addGroupBy('parent.id')
+      .getRawMany()
+
+    let fileName = 'top-interests.xlsx'
+
+    let data = interests.map(interest => {
+      return [interest.parent_title, interest.interest_title, interest.quantity]
+    })
+
+    var ws: XLSX.WorkSheet = XLSX.utils.aoa_to_sheet([
+      ['Main', 'Interest', 'Number of Selections'],
+      ...data
+    ]);
+    var wb: XLSX.WorkBook = { Sheets: { 'Interests': ws }, SheetNames: ['Interests'] };
+    var file = XLSX.writeFile(wb, fileName, { bookType: 'xlsx' })
+
+    return { file, fileName }
   }
 }

@@ -18,13 +18,8 @@ export class PasswordService {
 
   async forgotPassword(email: string) {
     let user: any = await this.userRepository.createQueryBuilder('user')
-      .innerJoinAndSelect('user.person', 'person')
-      .innerJoinAndSelect('user.roles', 'roles')
-      .innerJoinAndSelect('roles.role', 'role')
       .where('user.email = :email', { email })
       .getOne()
-
-    user.roles = user.roles.map(item => item.role.key)
 
     if (!user)
       return { error: 'USER_NOT_EXIST', message: 'El usuario no existe' }

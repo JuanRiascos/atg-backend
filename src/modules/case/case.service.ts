@@ -13,6 +13,21 @@ export class CaseService {
     @InjectRepository(ViewCaseStudies) private readonly viewRepository: Repository<ViewCaseStudies>
   ) { }
 
+  async getCase(caseId: number, clientId: number) {
+    let caseStudy
+    try {
+      caseStudy = await this.caseRepository.createQueryBuilder('case')
+        .innerJoinAndSelect('case.course', 'course')
+        .leftJoinAndSelect('case.clients', 'client', 'client.id = :clientId', { clientId })
+        .where('case.id = :caseId', { caseId })
+        .getOne()
+    } catch (error) {
+      return { error }
+    }
+
+    return caseStudy
+  }
+
   async getCases(courseId: number) {
     let cases
     try {

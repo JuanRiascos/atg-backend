@@ -1,4 +1,4 @@
-import { BadRequestException, Body, Controller, Delete, Get, Param, ParseIntPipe, Post, Put, Req, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Delete, Get, Param, ParseIntPipe, Post, Put, Query, Req, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { Roles } from 'src/@common/decorators/roles.decorator';
@@ -14,6 +14,19 @@ export class ExtraController {
   constructor(
     private readonly extraService: ExtraService
   ) { }
+
+  @Get()
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Roles(roles.CLIENT)
+  async getExtraRep(@Req() req, @Query('extraId') extraId: number): Promise<ResponseError | ResponseSuccess> {
+    const response: any = await this.extraService.getExtraRep(extraId, req?.user?.atgAppClientId)
+
+    if (response.error)
+      throw new BadRequestException(response)
+
+    return { success: 'OK', payload: response }
+  }
+
 
   @Get('/all/:courseId')
   async getExtraRepsCourse(@Param('courseId', ParseIntPipe) courseId: number): Promise<ResponseError | ResponseSuccess> {

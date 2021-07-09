@@ -5,7 +5,9 @@ import {
   Inject,
   BadRequestException,
   UseGuards,
-  Req
+  Req,
+  Get,
+  Res
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { EventEmitter2 } from '@nestjs/event-emitter'
@@ -76,8 +78,6 @@ export class AuthController {
     if (response.error)
       throw new BadRequestException(response);
 
-    this.eventEmitter.emit(Events.SignupAdmin, { user: response })
-
     return { success: 'OK', payload: await this.jwtService.sign({ ...response }) }
   }
 
@@ -94,16 +94,18 @@ export class AuthController {
     return { success: 'OK', payload: await this.jwtService.sign({ ...response }) }
   }
 
+  @Get('redirect-app')
+  redirect(@Res() res) {
+    return res.redirect('exp://192.168.1.11:19000/--/reset-password');
+  }
+
   @Post('/forgot-password')
   async requestForgotPassword(@Body() body: EmailDto): Promise<ResponseError | ResponseSuccess> {
     body.email = body.email.toLowerCase()
     const response: any = await this.passwordService.forgotPassword(body.email);
 
     if (response.success) {
-      const user = response.payload;
-
-      this.eventEmitter.emit(Events.ForgotPassword, { user })
-
+      //enviar correo
       return { success: 'OK' }
     } else
       throw new BadRequestException(response);

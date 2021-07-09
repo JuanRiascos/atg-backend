@@ -13,6 +13,22 @@ export class ExtraService {
     @InjectRepository(ViewExtraReps) private readonly viewRepository: Repository<ViewExtraReps>
   ) { }
 
+  async getExtraRep(extraId: number, clientId: number) {
+    let extra
+    try {
+      extra = await this.extraRepsRepository.createQueryBuilder('extra')
+        .innerJoinAndSelect('extra.course', 'course')
+        .leftJoinAndSelect('extra.clients', 'client', 'client.id = :clientId', { clientId })
+        .where('extra.id = :extraId', { extraId })
+        .getOne()
+    } catch (error) {
+      return { error }
+    }
+
+    return extra
+  }
+
+
   async getExtraReps(courseId: number) {
     let extraReps
     try {
