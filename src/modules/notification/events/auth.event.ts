@@ -24,17 +24,6 @@ export class AuthEvent extends AbstractEvent {
       }
     })
 
-    await this.notificationService.sendNotification({
-      type: notification.type,
-      data: {
-        email: user.email,
-        template: Templates.SIGNUP_SUCCESS,
-        payload: notification.payload,
-        userId: user.id,
-        notificationId: notification.id
-      }
-    })
-
   }
 
   @OnEvent(Events.Signup)
@@ -52,17 +41,6 @@ export class AuthEvent extends AbstractEvent {
         email: user.email,
         name: user.person?.name,
         lastname: user.person?.lastname
-      }
-    })
-
-    await this.notificationService.sendNotification({
-      type: notification.type,
-      data: {
-        email: user.email,
-        template: Templates.SIGNUP_SUCCESS,
-        payload: notification.payload,
-        userId: user.id,
-        notificationId: notification.id
       }
     })
   }
