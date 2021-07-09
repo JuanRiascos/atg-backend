@@ -23,6 +23,7 @@ import { AssessmentModule } from './modules/assessment/assessment.module';
 import { PaymentModule } from './modules/payment/payment.module';
 import { ScheduleModule } from '@nestjs/schedule';
 import stripeConfig from './@common/config/stripe.config';
+import { UtilsModule } from './modules/utils/utils.module';
 
 @Module({
   imports: [
@@ -49,6 +50,7 @@ import stripeConfig from './@common/config/stripe.config';
     VideoModule,
     AssessmentModule,
     PaymentModule,
+    UtilsModule,
     ScheduleModule.forRoot()
   ],
   controllers: [AppController],
