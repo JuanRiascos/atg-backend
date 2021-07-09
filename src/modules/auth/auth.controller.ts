@@ -5,7 +5,9 @@ import {
   Inject,
   BadRequestException,
   UseGuards,
-  Req
+  Req,
+  Get,
+  Res
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { EventEmitter2 } from '@nestjs/event-emitter'
@@ -92,6 +94,11 @@ export class AuthController {
       throw new BadRequestException(response);
 
     return { success: 'OK', payload: await this.jwtService.sign({ ...response }) }
+  }
+
+  @Get('redirect-app')
+  redirect(@Res() res) {
+    return res.redirect('atg-mobile://redirect-password');
   }
 
   @Post('/forgot-password')
