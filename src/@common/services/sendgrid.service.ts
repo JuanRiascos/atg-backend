@@ -21,12 +21,12 @@ export class SendgridService {
   }
 
   sendEmail(to: any, template: any, substitutions: any) {
-    console.log('Correo enviado a: ', to);
+    console.log('Correo enviado a: ', to, substitutions);
 
     return new Promise((resolve, reject) => {
       const msg = {
         to,
-        from: this.config.fromEmail || 'noreply@email.com',
+        from: this.config.fromEmail || 'yeisom40@gmail.com',
         templateId: template.id,
         dynamic_template_data: {
           ...substitutions,
@@ -37,9 +37,13 @@ export class SendgridService {
       sgMail.send(msg).then(async data => {
         if (data[0] && data[0].statusCode === 202)
           resolve({ success: 'OK', ...data })
-        else
+        else {
+          console.log('Sendgrid error', data.response.body);
           resolve({ success: 'ERROR', ...data })
+        }
       }).catch(err => {
+        console.log('Sendgrid 2 error', err.response.body);
+        
         resolve({ error: 'ERROR', ...err })
       });
     })

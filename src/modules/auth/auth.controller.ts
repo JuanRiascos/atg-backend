@@ -7,11 +7,13 @@ import {
   UseGuards,
   Req,
   Get,
-  Res
+  Res,
+  Query
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { EventEmitter2 } from '@nestjs/event-emitter'
 import { AuthGuard } from '@nestjs/passport';
+import { ConfigService } from '@nestjs/config';
+
 import { SignUpService } from './services/signup.service';
 import { LoginService } from './services/login.service';
 import { PasswordService } from './services/password.service'
@@ -24,21 +26,27 @@ import { Roles } from 'src/@common/decorators/roles.decorator';
 import { Roles as roles } from '../../@common/constants/role.constant'
 import { Permissions } from 'src/@common/decorators/permissions.decorator';
 import { Permissions as permissions } from '../../@common/constants/permission.constant'
-import { Events } from 'src/entities/@enums/index.enum';
 import { NewPassworAuthenticatedDto } from './dto/new-password-authenticated.dto';
 import { RolesGuard } from 'src/@common/guards/roles.guard';
+import { Templates } from '../../@common/services/sendgrid.service'
 
 @Controller('auth')
 export class AuthController {
+  
+  public hostServer
 
   constructor(
     @Inject('CryptoService') private readonly cryptoService,
+    @Inject('SendgridService') private readonly sendgridService,
     private readonly jwtService: JwtService,
     private readonly signupService: SignUpService,
     private readonly loginService: LoginService,
     private readonly passwordService: PasswordService,
-    private readonly eventEmitter: EventEmitter2
-  ) { }
+    private readonly configService: ConfigService,
+  ) {
+    let config = configService.get('app')
+    this.hostServer = config.hostServer + '/' + config.prefix
+  }
 
   @Post('/signup')
   async signup(@Body() body: SignupDto): Promise<ResponseError | ResponseSuccess> {
@@ -95,8 +103,8 @@ export class AuthController {
   }
 
   @Get('redirect-app')
-  redirect(@Res() res) {
-    return res.redirect('exp://192.168.1.11:19000/--/reset-password');
+  redirect(@Res() res, @Query('url') urlExpo) {
+    return res.redirect(urlExpo);
   }
 
   @Post('/forgot-password')
@@ -105,7 +113,9 @@ export class AuthController {
     const response: any = await this.passwordService.forgotPassword(body.email);
 
     if (response.success) {
-      //enviar correo
+      await this.sendgridService.sendEmail(body.email, Templates.VERIFY_FORGOT_PASSWORD, { 
+        redirect: this.hostServer + '/auth/redirect-app?url=' + body.url + '?code=' + response.payload.code
+      })
       return { success: 'OK' }
     } else
       throw new BadRequestException(response);
