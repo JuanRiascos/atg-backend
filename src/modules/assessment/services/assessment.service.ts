@@ -267,9 +267,8 @@ export class AssessmentService {
       }
 
       let percentageTotal = totalValue / assessment.questions.length
-      percentageTotal.toPrecision(3)
-      let status
 
+      let status
       if (percentageTotal > 50) {
         status = 'approved'
       } else {
@@ -277,7 +276,7 @@ export class AssessmentService {
       }
 
       return {
-        percentageTotal,
+        percentageTotal: percentageTotal.toPrecision(3),
         status
       }
 
