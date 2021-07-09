@@ -98,7 +98,7 @@ export class AuthController {
 
   @Get('redirect-app')
   redirect(@Res() res) {
-    return res.redirect('atg-mobile://redirect-password');
+    return res.redirect('exp://192.168.1.11:19000/--/redirect-password');
   }
 
   @Post('/forgot-password')
