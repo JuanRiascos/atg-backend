@@ -18,7 +18,7 @@ import { SignUpService } from './services/signup.service';
 import { LoginService } from './services/login.service';
 import { PasswordService } from './services/password.service'
 import { SignupDto } from './dto/signup.dto';
-import { LoginDto } from './dto/login.dto';
+import { LoginDto, LoginSocialDto } from './dto/login.dto';
 import { EmailDto } from './dto/email.dto';
 import { NewPasswordDto } from './dto/new-password.dto';
 import { ResponseError, ResponseSuccess } from 'src/@common/interfaces/response';
@@ -66,6 +66,18 @@ export class AuthController {
     body.password = this.cryptoService.encrypt(body.password);
 
     const response: any = await this.loginService.login(body);
+
+    if (response.error)
+      throw new BadRequestException(response);
+
+    return { success: 'OK', payload: await this.jwtService.sign({ ...response }) }
+  }
+
+  @Post('/login-social')
+  async loginSocialMedia(@Body() body: LoginSocialDto): Promise<ResponseError | ResponseSuccess> {
+    body.email = body.email.toLowerCase()
+
+    const response: any = await this.loginService.loginSocialMedia(body);
 
     if (response.error)
       throw new BadRequestException(response);
