@@ -67,7 +67,10 @@ export class LoginService {
 
     if(!user){
       await getManager().transaction(async entityManager => {
-        const user = await entityManager.save(this.userRepository.create({ email: body.email }))
+        const user = await entityManager.save(this.userRepository.create({ 
+          email: body.email,
+          socialMedia: body.media
+        }))
   
         await entityManager.save(this.personRepository.create({ 
           name: body.name, 
