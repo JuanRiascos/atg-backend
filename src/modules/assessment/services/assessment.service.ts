@@ -9,6 +9,8 @@ import { Question } from 'src/entities/academy/question.entity';
 import { Repository } from 'typeorm';
 import { AssessmentDto } from '../dto/assessment.dto';
 import { SaveResponseDto } from '../dto/save-response.dto';
+import * as XLSX from 'xlsx';
+import { response } from 'express';
 
 @Injectable()
 export class AssessmentService {
@@ -20,10 +22,6 @@ export class AssessmentService {
     @InjectRepository(Question) private readonly questionRepository: Repository<Question>,
     @InjectRepository(Answer) private readonly answerRepository: Repository<Answer>
   ) { }
-
-  async calulcateStatusAndProgress(assessmentId: number, clientId) {
-
-  }
 
   async getAssessments(clientId: number) {
     let assessments
@@ -44,6 +42,7 @@ export class AssessmentService {
           .innerJoin('try.client', 'client', 'client.id = :clientId', { clientId })
           .leftJoinAndSelect('try.responses', 'responses')
           .leftJoin('responses.question', 'question')
+          .orderBy('try.id', 'ASC')
           .addOrderBy('question.order', 'ASC')
           .getMany()
 
@@ -52,10 +51,14 @@ export class AssessmentService {
           item['progress'] = 0
         }
         else {
-          item['status'] = trys[0].status
-          let responses = trys[0].responses.length
+          let responses = trys[trys.length - 1].responses.length
           let questions = item.questions.length
-          item['progress'] = (responses / questions) * 100
+          let progress = (responses / questions) * 100
+          item['progress'] = progress
+          if (progress == 100)
+            item['status'] = 'finished'
+          else
+            item['status'] = 'started'
         }
         delete item.questions
       }
@@ -91,6 +94,7 @@ export class AssessmentService {
         .leftJoinAndSelect('try.responses', 'responses')
         .leftJoin('responses.question', 'question')
         .leftJoin('responses.answers', 'answers')
+        .orderBy('try.id', 'ASC')
         .addOrderBy('question.order', 'ASC')
         .getMany()
 
@@ -99,7 +103,13 @@ export class AssessmentService {
       if (trys.length === 0)
         assessment['status'] = 'none'
       else {
-        assessment['status'] = trys[0].status
+        let responses = trys[trys.length - 1].responses.length
+        let questions = assessment.questions.length
+        let progress = (responses / questions) * 100
+        if (progress == 100)
+          assessment['status'] = 'finished'
+        else
+          assessment['status'] = 'started'
       }
     } catch (error) {
       return { error }
@@ -160,8 +170,7 @@ export class AssessmentService {
     try {
       await this.tryRepository.save({
         assessment: { id: assessmentId },
-        client: { id: clientId },
-        status: StateTry.Started
+        client: { id: clientId }
       })
     } catch (error) {
       return { error }
@@ -202,14 +211,208 @@ export class AssessmentService {
         answers
       })
 
-      if (finalQuestion) {
-        tryAssessment.status = StateTry.Finished
-        await this.tryRepository.save(tryAssessment)
-      }
+      await this.tryRepository.save(tryAssessment)
     } catch (error) {
       return { error }
     }
 
     return { message: 'save response' }
+  }
+
+  async getResult(assessmentId: number, clientId: number) {
+    try {
+      let assessment = await this.assessmentRepository.createQueryBuilder('assessment')
+        .select('assessment.id')
+        .leftJoinAndSelect('assessment.questions', 'questions')
+        .leftJoinAndSelect('questions.answers', 'answers')
+        .where('assessment.id = :assessmentId', { assessmentId })
+        .addOrderBy('questions.order', 'ASC')
+        .addOrderBy('answers.order', 'ASC')
+        .getOne()
+
+      let trys = await this.tryRepository.createQueryBuilder('try')
+        .addSelect([
+          'question.id', 'question.description', 'question.multiple',
+          'answers.id', 'answers.description',
+          'answers.correct'
+        ])
+        .innerJoin('try.assessment', 'assessment', 'assessment.id = :assessmentId', { assessmentId })
+        .innerJoin('try.client', 'client', 'client.id = :clientId', { clientId })
+        .leftJoinAndSelect('try.responses', 'responses')
+        .leftJoin('responses.question', 'question')
+        .leftJoin('responses.answers', 'answers')
+        .orderBy('try.id', 'ASC')
+        .addOrderBy('question.order', 'ASC')
+        .addOrderBy('answers.order', 'ASC')
+        .getMany()
+
+      let lastTry = trys[trys.length - 1]
+
+      let totalValue = 0
+      for (const question of assessment.questions) {
+        let corrects = question.answers.filter(item => item.correct)
+        let value
+        if (!question.multiple)
+          value = 100
+        else {
+          value = (100 / corrects.length)
+        }
+
+        for (const response of corrects) {
+          let exist = lastTry.responses.find(item => item.question.id === question.id)
+            .answers.find(item => item.id === response.id)
+
+          if (exist)
+            totalValue += value
+        }
+      }
+
+      let percentageTotal = totalValue / assessment.questions.length
+
+      let status
+      if (percentageTotal > 50) {
+        status = 'approved'
+      } else {
+        status = 'reproved'
+      }
+
+      return {
+        percentageTotal: percentageTotal.toPrecision(3),
+        status
+      }
+
+    } catch (error) {
+      return { error }
+    }
+  }
+
+  async getReportData() {
+    const assessments = await this.assessmentRepository.createQueryBuilder('assessment')
+      .select(['assessment.id', 'assessment.title'])
+      .addSelect(['course.id', 'course.title'])
+      .addSelect(['question.id', 'question.description'])
+      .addSelect(['answer.id', 'answer.description'])
+      .innerJoin('assessment.course', 'course')
+      .innerJoin('assessment.questions', 'question')
+      .innerJoin('question.answers', 'answer')
+      .orderBy('assessment.title', 'ASC')
+      .addOrderBy('question.order', 'ASC')
+      .addOrderBy('answer.order', 'ASC')
+      .getMany()
+
+
+    let fileName = 'assessments-report.xlsx'
+
+    var wb: XLSX.WorkBook = { Sheets: {}, SheetNames: [] }
+
+    for (const assessment of assessments) {
+      let columns = ['Number', 'Question']
+      let maxAnswers = Math.max(...assessment.questions.map(item => item.answers.length))
+      let arrayAnswers = []
+      for (let index = 0; index < maxAnswers; index++) {
+        arrayAnswers.push(`Answer ${index + 1}`, `Percentage Answer ${index + 1}`)
+      }
+      columns = columns.concat(arrayAnswers)
+
+      let data = []
+      let index = 0
+      for (const question of assessment.questions) {
+        const quantityResponseQuestion = await this.responseRepository.createQueryBuilder('response')
+          .innerJoin('response.question', 'question',
+            'question.id = :questionId', { questionId: question.id })
+          .getCount()
+
+        let answersData = []
+
+        for (const answer of question.answers) {
+          let quantityResponse = await this.responseRepository.createQueryBuilder('response')
+            .addSelect('answer.description')
+            .innerJoin('response.question', 'question',
+              'question.id = :questionId', { questionId: question.id })
+            .innerJoin('response.answers', 'answer',
+              'answer.id = :answerId', { answerId: answer.id })
+            .getCount()
+
+          let percentage = quantityResponseQuestion === 0 ? '0%'
+            : ((quantityResponse / quantityResponseQuestion) * 100).toPrecision(3) + "%"
+
+          answersData.push(answer.description, percentage)
+        }
+
+        data.push([(index + 1), question.description, ...answersData])
+        index = index + 1
+      }
+
+      var ws: XLSX.WorkSheet = XLSX.utils.aoa_to_sheet([
+        columns,
+        ...data
+      ]);
+
+      wb.Sheets[`${assessment.title}`] = ws
+      wb.SheetNames.push(`${assessment.title}`)
+    }
+
+    var file = XLSX.writeFile(wb, fileName, { bookType: 'xlsx' })
+
+    return { file, fileName }
+  }
+
+  async getReportTest() {
+    const assessments = await this.assessmentRepository.createQueryBuilder('assessment')
+      .select(['assessment.id', 'assessment.title'])
+      .addSelect(['course.id', 'course.title'])
+      .addSelect(['question.id', 'question.description'])
+      .addSelect(['answer.id', 'answer.description'])
+      .innerJoin('assessment.course', 'course')
+      .innerJoin('assessment.questions', 'question')
+      .innerJoin('question.answers', 'answer')
+      .orderBy('assessment.title', 'ASC')
+      .addOrderBy('question.order', 'ASC')
+      .addOrderBy('answer.order', 'ASC')
+      .getMany()
+
+    let response = []
+
+    for (const assessment of assessments) {
+
+      let data = {
+        assessment: assessment.title,
+        questions: []
+      }
+
+      for (const question of assessment.questions) {
+
+        const quantityResponseQuestion = await this.responseRepository.createQueryBuilder('response')
+          .innerJoin('response.question', 'question',
+            'question.id = :questionId', { questionId: question.id })
+          .getCount()
+
+        let answersData = []
+
+        for (const answer of question.answers) {
+          let quantityResponse = await this.responseRepository.createQueryBuilder('response')
+            .addSelect('answer.description')
+            .innerJoin('response.question', 'question',
+              'question.id = :questionId', { questionId: question.id })
+            .innerJoin('response.answers', 'answer',
+              'answer.id = :answerId', { answerId: answer.id })
+            .getCount()
+
+          answersData.push({
+            answer: answer.description,
+            percentage: ((quantityResponse / quantityResponseQuestion) * 100).toPrecision(3)
+          })
+        }
+
+        data.questions.push({
+          question: question.description,
+          answers: answersData
+        })
+      }
+
+      response.push(data)
+    }
+
+    return response
   }
 }

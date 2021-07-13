@@ -51,9 +51,9 @@ export class SessionService {
       let endTime = moment(item.endTime, 'HH:mm:ss')
       let startTime = moment(item.startTime, 'HH:mm:ss')
 
-      let diff = (+endTime.diff(startTime, 'seconds').toPrecision(4))
+      let diff = +Math.abs(moment.duration(endTime.diff(startTime)).as('seconds')).toPrecision(4)
       add += diff
-      times.push(diff)
+      times.push({ id: item.id, diff })
     }
 
     average = add / times.length

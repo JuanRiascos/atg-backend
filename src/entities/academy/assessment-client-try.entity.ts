@@ -10,9 +10,6 @@ export class AssessmentClientTry {
   @PrimaryGeneratedColumn({ type: 'bigint' })
   id: number
 
-  @Column('enum', { enum: StateTry, nullable: true })
-  status: StateTry
-
   @ManyToOne(() => Assessment, assessment => assessment.trys)
   @JoinColumn({ name: 'fk_assessment' })
   assessment: Assessment

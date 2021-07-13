@@ -11,9 +11,9 @@ export class SessionClient {
   @JoinColumn({ name: 'fk_client' })
   client: Client
 
-  @Column('time', { nullable: true })
+  @Column('timestamp', { nullable: true })
   startTime: Date
 
-  @Column('time', { nullable: true })
+  @Column('timestamp', { nullable: true })
   endTime: Date
 }

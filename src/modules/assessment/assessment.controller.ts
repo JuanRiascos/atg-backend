@@ -1,4 +1,4 @@
-import { BadRequestException, Body, Controller, Delete, Get, Param, ParseIntPipe, Post, Put, Query, Req, UseGuards } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Delete, Get, Param, ParseIntPipe, Post, Put, Query, Req, Res, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { Roles as roles } from 'src/@common/constants/role.constant';
 import { Roles } from 'src/@common/decorators/roles.decorator';
@@ -11,6 +11,9 @@ import { AnswerDto } from './dto/answer.dto';
 import { AnswerService } from './services/answer.service';
 import { RolesGuard } from 'src/@common/guards/roles.guard';
 import { SaveResponseDto } from './dto/save-response.dto';
+import { Response } from 'express';
+import { JwtService } from '@nestjs/jwt';
+import { TokenDto } from './dto/token.dto';
 
 @Controller('assessment')
 export class AssessmentController {
@@ -18,7 +21,8 @@ export class AssessmentController {
   constructor(
     private readonly assessmentService: AssessmentService,
     private readonly questionService: QuestionService,
-    private readonly answerService: AnswerService
+    private readonly answerService: AnswerService,
+    private readonly jwtService: JwtService
   ) { }
 
   @Get('/all')
@@ -199,5 +203,25 @@ export class AssessmentController {
     return { success: 'OK', payload: response }
   }
 
+  @Get('/get-result')
+  @UseGuards(AuthGuard('jwt'))
+  async getResult(@Req() req, @Query() query): Promise<ResponseError | ResponseSuccess> {
+    const response = await this.assessmentService.getResult(query.assessmentId, req.user?.atgAppClientId)
+
+    if (response.error)
+      throw new BadRequestException(response)
+
+    return { success: 'OK', payload: response }
+  }
+
+  @Get('/report-data')
+  async getReportData(@Res() res: Response, @Query() query: TokenDto) {
+    const verify = this.jwtService.decode(query.token)
+    if (!verify)
+      return res.sendStatus(401)
+
+    const response: any = await this.assessmentService.getReportData()
+    return res.status(200).download(response.fileName, response.fileName)
+  }
 
 }

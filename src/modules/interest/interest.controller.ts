@@ -8,13 +8,16 @@ import { InterestDto } from './dto/interest.dto';
 import { RolesGuard } from 'src/@common/guards/roles.guard';
 import { Response } from 'express'
 import { ConfigService } from '@nestjs/config';
+import { TokenDto } from './dto/token.dto';
+import { JwtService } from '@nestjs/jwt';
 
 @Controller('interest')
 export class InterestController {
 
   constructor(
     private readonly interestService: InterestService,
-    private readonly configService: ConfigService
+    private readonly configService: ConfigService,
+    private readonly jwtService: JwtService
   ) { }
 
   @Get()
@@ -31,12 +34,13 @@ export class InterestController {
   }
 
   @Get('/report-data')
-  async getReportData(@Res() res: Response, @Query() query) {
-    if (!query.token)
-      res.status(401)
+  async getReportData(@Res() res: Response, @Query() query: TokenDto) {
+    const verify = this.jwtService.decode(query.token)
+    if (!verify)
+      return res.sendStatus(401)
 
     const response: any = await this.interestService.getReportData()
-    res.status(200).download(response.fileName, response.fileName)
+    return res.status(200).download(response.fileName, response.fileName)
   }
 
   @Get('/principals')

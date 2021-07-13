@@ -34,6 +34,7 @@ import { Templates } from '../../@common/services/sendgrid.service'
 export class AuthController {
   
   public hostServer
+  public hostBackoffice
 
   constructor(
     @Inject('CryptoService') private readonly cryptoService,
@@ -46,6 +47,7 @@ export class AuthController {
   ) {
     let config = configService.get('app')
     this.hostServer = config.hostServer + '/' + config.prefix
+    this.hostBackoffice = config.hostAdmin
   }
 
   @Post('/signup')
@@ -132,6 +134,21 @@ export class AuthController {
     } else
       throw new BadRequestException(response);
   }
+
+  @Post('/forgot-password-admin')
+  async requestForgotPasswordAdmin(@Body() body: EmailDto): Promise<ResponseError | ResponseSuccess> {
+    body.email = body.email.toLowerCase()
+    const response: any = await this.passwordService.forgotPassword(body.email);
+
+    if (response.success) {
+      await this.sendgridService.sendEmail(body.email, Templates.VERIFY_FORGOT_PASSWORD, { 
+        redirect: `${this.hostBackoffice}/new-password?code=${response.payload.code}`
+      })
+      return { success: 'OK' }
+    } else
+      throw new BadRequestException(response);
+  }
+
 
   @Post('/new-password')
   async newPassword(@Body() body: NewPasswordDto): Promise<ResponseError | ResponseSuccess> {
