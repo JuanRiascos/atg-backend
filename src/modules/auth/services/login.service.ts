@@ -69,7 +69,11 @@ export class LoginService {
       await getManager().transaction(async entityManager => {
         const user = await entityManager.save(this.userRepository.create({ email: body.email }))
   
-        await entityManager.save(this.personRepository.create({ name: body.name, user }));
+        await entityManager.save(this.personRepository.create({ 
+          name: body.name, 
+          image: body.photo,
+          user 
+        }));
   
         const role = await this.roleRepository.findOne({ where: { key: Roles.CLIENT, state: States.Active } })
 

@@ -23,5 +23,8 @@ export class LoginSocialDto {
   id: string;
 
   @IsString()
+  photo: string;
+
+  @IsString()
   media: string;
 }
