@@ -1,10 +1,12 @@
 import { BadRequestException, Controller, Get, Param, ParseIntPipe, Put, Query, Req, Res, UseGuards } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
 import { AuthGuard } from '@nestjs/passport';
 import { Response, response } from 'express';
 import { Roles as roles } from 'src/@common/constants/role.constant';
 import { Roles } from 'src/@common/decorators/roles.decorator';
 import { RolesGuard } from 'src/@common/guards/roles.guard';
 import { ResponseError, ResponseSuccess } from 'src/@common/interfaces/response';
+import { TokenDto } from './dto/token.dto';
 import { InterestService } from './services/interest.service';
 import { SessionService } from './services/session.service';
 import { StatisticService } from './services/statistic.service';
@@ -15,7 +17,8 @@ export class ClientController {
   constructor(
     private readonly interestService: InterestService,
     private readonly statisticService: StatisticService,
-    private readonly sessionService: SessionService
+    private readonly sessionService: SessionService,
+    private readonly jwtService: JwtService
   ) { }
 
   @Get('/interests')
@@ -126,12 +129,13 @@ export class ClientController {
   }
 
   @Get('/content-view')
-  async contentView(@Res() res: Response, @Query() query) {
-    if (!query.token)
-      res.status(401)
+  async contentView(@Res() res: Response, @Query() query: TokenDto) {
+    const verify = this.jwtService.decode(query.token)
+    if (!verify)
+      return res.sendStatus(401)
 
     const response: any = await this.statisticService.getContenView()
-    res.status(200).download(response.fileName, response.fileName)
+    return res.status(200).download(response.fileName, response.fileName)
   }
 
 }
