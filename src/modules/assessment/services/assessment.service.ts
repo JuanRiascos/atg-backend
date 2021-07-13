@@ -9,6 +9,8 @@ import { Question } from 'src/entities/academy/question.entity';
 import { Repository } from 'typeorm';
 import { AssessmentDto } from '../dto/assessment.dto';
 import { SaveResponseDto } from '../dto/save-response.dto';
+import * as XLSX from 'xlsx';
+import { response } from 'express';
 
 @Injectable()
 export class AssessmentService {
@@ -282,5 +284,135 @@ export class AssessmentService {
     } catch (error) {
       return { error }
     }
+  }
+
+  async getReportData() {
+    const assessments = await this.assessmentRepository.createQueryBuilder('assessment')
+      .select(['assessment.id', 'assessment.title'])
+      .addSelect(['course.id', 'course.title'])
+      .addSelect(['question.id', 'question.description'])
+      .addSelect(['answer.id', 'answer.description'])
+      .innerJoin('assessment.course', 'course')
+      .innerJoin('assessment.questions', 'question')
+      .innerJoin('question.answers', 'answer')
+      .orderBy('assessment.title', 'ASC')
+      .addOrderBy('question.order', 'ASC')
+      .addOrderBy('answer.order', 'ASC')
+      .getMany()
+
+
+    let fileName = 'assessments-report.xlsx'
+
+    var wb: XLSX.WorkBook = { Sheets: {}, SheetNames: [] }
+
+    for (const assessment of assessments) {
+      let columns = ['Number', 'Question']
+      let maxAnswers = Math.max(...assessment.questions.map(item => item.answers.length))
+      let arrayAnswers = []
+      for (let index = 0; index < maxAnswers; index++) {
+        arrayAnswers.push(`Answer ${index + 1}`, `Percentage Answer ${index + 1}`)
+      }
+      columns = columns.concat(arrayAnswers)
+
+      let data = []
+      let index = 0
+      for (const question of assessment.questions) {
+        const quantityResponseQuestion = await this.responseRepository.createQueryBuilder('response')
+          .innerJoin('response.question', 'question',
+            'question.id = :questionId', { questionId: question.id })
+          .getCount()
+
+        let answersData = []
+
+        for (const answer of question.answers) {
+          let quantityResponse = await this.responseRepository.createQueryBuilder('response')
+            .addSelect('answer.description')
+            .innerJoin('response.question', 'question',
+              'question.id = :questionId', { questionId: question.id })
+            .innerJoin('response.answers', 'answer',
+              'answer.id = :answerId', { answerId: answer.id })
+            .getCount()
+
+          let percentage = quantityResponseQuestion === 0 ? '0%'
+            : ((quantityResponse / quantityResponseQuestion) * 100).toPrecision(3) + "%"
+
+          answersData.push(answer.description, percentage)
+        }
+
+        data.push([(index + 1), question.description, ...answersData])
+        index = index + 1
+      }
+
+      var ws: XLSX.WorkSheet = XLSX.utils.aoa_to_sheet([
+        columns,
+        ...data
+      ]);
+
+      wb.Sheets[`${assessment.title}`] = ws
+      wb.SheetNames.push(`${assessment.title}`)
+    }
+
+    var file = XLSX.writeFile(wb, fileName, { bookType: 'xlsx' })
+
+    return { file, fileName }
+  }
+
+  async getReportTest() {
+    const assessments = await this.assessmentRepository.createQueryBuilder('assessment')
+      .select(['assessment.id', 'assessment.title'])
+      .addSelect(['course.id', 'course.title'])
+      .addSelect(['question.id', 'question.description'])
+      .addSelect(['answer.id', 'answer.description'])
+      .innerJoin('assessment.course', 'course')
+      .innerJoin('assessment.questions', 'question')
+      .innerJoin('question.answers', 'answer')
+      .orderBy('assessment.title', 'ASC')
+      .addOrderBy('question.order', 'ASC')
+      .addOrderBy('answer.order', 'ASC')
+      .getMany()
+
+    let response = []
+
+    for (const assessment of assessments) {
+
+      let data = {
+        assessment: assessment.title,
+        questions: []
+      }
+
+      for (const question of assessment.questions) {
+
+        const quantityResponseQuestion = await this.responseRepository.createQueryBuilder('response')
+          .innerJoin('response.question', 'question',
+            'question.id = :questionId', { questionId: question.id })
+          .getCount()
+
+        let answersData = []
+
+        for (const answer of question.answers) {
+          let quantityResponse = await this.responseRepository.createQueryBuilder('response')
+            .addSelect('answer.description')
+            .innerJoin('response.question', 'question',
+              'question.id = :questionId', { questionId: question.id })
+            .innerJoin('response.answers', 'answer',
+              'answer.id = :answerId', { answerId: answer.id })
+            .getCount()
+
+          answersData.push({
+            answer: answer.description,
+            percentage: ((quantityResponse / quantityResponseQuestion) * 100).toPrecision(3)
+          })
+        }
+
+        data.questions.push({
+          question: question.description,
+          answers: answersData
+        })
+      }
+
+      response.push(data)
+    }
+
+    return response
   }
 }
