@@ -26,7 +26,7 @@ export class User {
   @Column("character varying", { length: 200 })
   email: string;
 
-  @Column("character varying", { length: 250 })
+  @Column("character varying", { length: 250, nullable: true  })
   password: string;
 
   @Column("enum", { enum: States, default: States.Active })
