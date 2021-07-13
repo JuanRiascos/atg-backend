@@ -29,9 +29,9 @@ export class LoginService {
     const user = await query.getOne()
     
     if (!user)
-      return { error: "USER_NOT_EXIST", message: "Tu correo electronico o contraseña no son válidos." }
+      return { error: "USER_NOT_EXIST", message: "Your email address or password is not valid." }
     else if (user.state === States.Inactive)
-      return { error: "USER_INACTIVE", message: "Usuario inactivo." }
+      return { error: "USER_INACTIVE", message: "Inactive user" }
 
     return await this.tokenService.serializeToken(user.email);
   }
@@ -48,9 +48,9 @@ export class LoginService {
       .getOne()
 
     if (!user)
-      return { error: "USER_NOT_EXIST", message: "Tu correo electronico o contraseña no son válidos." }
+      return { error: "USER_NOT_EXIST", message: "Your email address or password is not valid." }
     else if (user.state === States.Inactive)
-      return { error: "USER_INACTIVE", message: "Usuario inactivo." }
+      return { error: "USER_INACTIVE", message: "Inactive user" }
 
     return await this.tokenService.serializeToken(user.email);
   }

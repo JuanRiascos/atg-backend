@@ -22,10 +22,10 @@ export class PasswordService {
       .getOne()
 
     if (!user)
-      return { error: 'USER_NOT_EXIST', message: 'El usuario no existe' }
+      return { error: 'USER_NOT_EXIST', message: 'The user does not exist' }
 
     if (user.state === States.Inactive)
-      return { error: 'USER_INACTIVE', message: 'El usuario esta inactivo' }
+      return { error: 'USER_INACTIVE', message: 'Inactive user' }
 
     const checkCode = randomStringGenerator();
     await this.userRepository.update({ id: user.id }, { code: checkCode })
@@ -37,10 +37,10 @@ export class PasswordService {
     const user = await this.userRepository.findOne({ where: { code: body.code } });
 
     if (!user)
-      return { error: 'CODE_ERROR', message: 'El código no coincide con ningún usuario.' }
+      return { error: 'CODE_ERROR', message: 'The code does not match any user' }
 
     if (user.state === States.Inactive)
-      return { error: 'USER_INACTIVE', message: 'El usuario esta inactivo.' }
+      return { error: 'USER_INACTIVE', message: 'Inactive user' }
 
     body.password = this.cryptoService.encrypt(body.password);
     await this.userRepository.update({ id: user.id }, { password: body.password, code: null })
@@ -59,10 +59,10 @@ export class PasswordService {
     });
 
     if (!user)
-      return { error: "PASSWORD_CURRENT_NOT_COINCIDENCE", message: "No hay coincidencia con la contraseña actual" }
+      return { error: "PASSWORD_CURRENT_NOT_COINCIDENCE", message: "No match with current password" }
 
     if (user.state === States.Inactive)
-      return { error: 'USER_INACTIVE', message: 'El usuario esta inactivo.' }
+      return { error: 'USER_INACTIVE', message: 'Inactive user' }
 
     body.password = this.cryptoService.encrypt(body.password);
     await this.userRepository.update({ id: user.id }, { password: body.password, code: null })
@@ -80,10 +80,10 @@ export class PasswordService {
       .getOne()
 
     if (!user)
-      return { error: 'USER_INACTIVE', message: 'El usuario no existe.' }
+      return { error: 'USER_INACTIVE', message: 'The user does not exist' }
 
     if (user.state === States.Inactive)
-      return { error: 'USER_INACTIVE', message: 'El usuario esta inactivo.' }
+      return { error: 'USER_INACTIVE', message: 'Inactive user' }
 
     body.password = this.cryptoService.encrypt(body.password);
     await this.userRepository.update({ id: user.id }, { password: body.password })
