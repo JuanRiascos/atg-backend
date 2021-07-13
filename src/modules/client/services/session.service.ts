@@ -51,8 +51,7 @@ export class SessionService {
       let endTime = moment(item.endTime, 'HH:mm:ss')
       let startTime = moment(item.startTime, 'HH:mm:ss')
 
-      /* let diff = Math.abs(+startTime.diff(endTime, 'seconds').toPrecision(4)) */
-      let diff = moment.duration(endTime.diff(startTime)).as('seconds')
+      let diff = +Math.abs(moment.duration(endTime.diff(startTime)).as('seconds')).toPrecision(4)
       add += diff
       times.push({ id: item.id, diff })
     }
@@ -62,6 +61,6 @@ export class SessionService {
     let minutesAverage = Math.floor((average / 60))
     var secondsAverage = Math.round(average % 60)
 
-    return { minutesAverage, secondsAverage, times }
+    return { minutesAverage, secondsAverage }
   }
 }
