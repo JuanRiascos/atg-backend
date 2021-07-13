@@ -26,7 +26,7 @@ export class User {
   @Column("character varying", { length: 200 })
   email: string;
 
-  @Column("character varying", { length: 250 })
+  @Column("character varying", { length: 250, nullable: true  })
   password: string;
 
   @Column("enum", { enum: States, default: States.Active })
@@ -37,6 +37,9 @@ export class User {
 
   @Column("character varying", { name: 'token_expo', nullable: true })
   tokenExpo: string;
+
+  @Column("character varying", { name: 'social_media', nullable: true })
+  socialMedia: string;
 
   @CreateDateColumn({ type: "timestamp", name: "created_at" })
   createdAt: Date;

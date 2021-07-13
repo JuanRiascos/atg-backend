@@ -10,3 +10,21 @@ export class LoginDto {
   password: string;
 
 }
+
+export class LoginSocialDto {
+
+  @IsEmail()
+  email: string;
+
+  @Length(3, 30)
+  name: string;
+
+  @IsString()
+  id: string;
+
+  @IsString()
+  photo: string;
+
+  @IsString()
+  media: string;
+}
