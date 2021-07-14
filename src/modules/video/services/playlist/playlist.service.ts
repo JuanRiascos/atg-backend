@@ -107,11 +107,16 @@ export class PlaylistService {
 
     for (const video of videos) {
       if (video.url) {
-        const response = await this.httpService.get(
-          `https://player.vimeo.com/video/${video?.url?.replace("https://vimeo.com/", "")}/config`
-        ).toPromise()
+        let response
+        try {
+          response = await this.httpService.get(
+            `https://player.vimeo.com/video/${video?.url?.replace("https://vimeo.com/", "")}/config`
+          ).toPromise()
+        } catch (error) {
 
-        const data = await response.data
+        }
+
+        const data = await response?.data
         let urlVimeo = data?.request?.files?.hls?.cdns?.akfire_interconnect_quic?.url
 
         video['urlVimeo'] = urlVimeo || video?.url
