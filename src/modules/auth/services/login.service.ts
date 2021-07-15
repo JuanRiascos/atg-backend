@@ -64,7 +64,6 @@ export class LoginService {
 
   async loginSocialMedia(body: LoginSocialDto){
     const user = await this.userRepository.findOne({ email: body.email })
-console.log(user);
 
     if(!user){
       await getManager().transaction(async entityManager => {
