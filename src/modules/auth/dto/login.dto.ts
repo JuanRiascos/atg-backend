@@ -19,6 +19,10 @@ export class LoginSocialDto {
   @Length(3, 30)
   name: string;
 
+  @IsOptional()
+  @Length(0, 30)
+  lastname: string;
+
   @IsString()
   id: string;
 

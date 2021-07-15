@@ -74,6 +74,7 @@ export class LoginService {
   
         await entityManager.save(this.personRepository.create({ 
           name: body.name, 
+          lastname: body.lastname, 
           image: body.photo,
           user 
         }));
