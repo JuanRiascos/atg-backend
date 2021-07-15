@@ -41,7 +41,7 @@ export class SignUpService {
       .getOne()
 
     if (isUser)
-      return { error: 'EMAIL_IN_USE', message: 'Ese correo electronico ya está siendo utilizado.' }
+      return { error: 'EMAIL_IN_USE', message: 'This email address is already in use' }
 
     await getManager().transaction(async entityManager => {
 
@@ -88,7 +88,7 @@ export class SignUpService {
       .getOne()
 
     if (isUser)
-      return { error: 'EMAIL_IN_USE', message: 'Ese correo electronico ya está siendo utilizado.' }
+      return { error: 'EMAIL_IN_USE', message: 'This email address is already in use' }
 
     await getManager().transaction(async entityManager => {
 
