@@ -26,7 +26,7 @@ export class SendgridService {
     return new Promise((resolve, reject) => {
       const msg = {
         to,
-        from: this.config.fromEmail || 'yeisom40@gmail.com',
+        from: this.config.fromEmail || 'noreply@athletetechgroup.com',
         templateId: template.id,
         dynamic_template_data: {
           ...substitutions,
