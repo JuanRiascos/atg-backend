@@ -92,6 +92,9 @@ export class LoginService {
     if (user.state === States.Inactive)
       return { error: "USER_INACTIVE", message: "Usuario inactivo." }
 
+    if(!user.socialMedia)
+      return { error: "USER_EXIST", message: "User already exists." }
+
     return await this.tokenService.serializeToken(user.email);
   }
 }
