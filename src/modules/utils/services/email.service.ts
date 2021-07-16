@@ -10,12 +10,9 @@ export class EmailService {
   ) { }
 
   async sendEmail(user, body) {
-
-    console.log("body:", body);
     
-
     await this.sendgridService.sendEmail(
-      "darian7cc@gmail.com",
+      "info@athletetechgroup.com",
       Templates.FEEDBACK,
       { ...body, email: user?.email }
     )
