@@ -16,6 +16,7 @@ import { OcupationService } from './services/ocupation.service';
 import { Sport } from 'src/entities/user/sport.entity';
 import { SportService } from './services/sport.service';
 import { ExpoService } from './services/expo.service';
+import { ViewVideos } from 'src/entities/academy/views-videos.entity';
 
 @Module({
   imports: [
@@ -26,7 +27,8 @@ import { ExpoService } from './services/expo.service';
       Ocupation,
       Sport,
       UserRole,
-      UserPermission
+      UserPermission,
+      ViewVideos
     ])
   ],
   controllers: [UserController],
