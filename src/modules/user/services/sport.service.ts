@@ -11,8 +11,10 @@ export class SportService {
   ) { }
 
   async getSports(q) {
+    q = q.toUpperCase()
+    
     const sports = await this.sportRepository.createQueryBuilder('sport')
-      .where('sport.name ILIKE :name', { name: '%' + q + '%' })
+      .where('UPPER(sport.name) ILIKE :name', { name: '%' + q + '%' })
       .orderBy("sport.id", "ASC")
       .limit(10)
       .getMany()
