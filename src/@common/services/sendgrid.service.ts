@@ -9,7 +9,7 @@ export const Templates = {
     subject: { es: 'Restore Password' }
   },
   FEEDBACK: {
-    id: 'd-e5d9f40a85f0446ab46b9cf1f03169c2',
+    id: 'd-ec995cd46e5245d9b7c807ff6da15740',
     subject: { es: 'Feedback' }
   }
 };
