@@ -61,7 +61,7 @@ export class UserController {
   @Get('/get-person')
   @UseGuards(AuthGuard('jwt'))
   async getPerson(@Request() req): Promise<ResponseError | ResponseSuccess> {
-    const response: any = await this.personService.getPerson(req.user.id);
+    const response: any = await this.personService.getPerson(req.user.id, req.user?.atgAppClientId);
 
     if (response.error)
       throw new UnauthorizedException(response)

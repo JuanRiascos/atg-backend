@@ -9,6 +9,7 @@ import { User } from "src/entities/user/user.entity";
 import { Person } from "src/entities/user/person.entity";
 import { States, StateSubscription } from "src/entities/@enums/index.enum";
 import { Client } from "src/entities/client/client.entity";
+import { ViewVideos } from "src/entities/academy/views-videos.entity";
 
 @Injectable()
 export class PersonService {
@@ -16,10 +17,11 @@ export class PersonService {
     @InjectRepository(User) private readonly userRepository: Repository<User>,
     @InjectRepository(Person) private readonly personRepository: Repository<Person>,
     @InjectRepository(Client) private readonly clientRepository: Repository<Client>,
+    @InjectRepository(ViewVideos) private readonly viewRepository: Repository<ViewVideos>,
     private readonly sendgridService: SendgridService,
   ) { }
 
-  async getPerson(id: number) {
+  async getPerson(id: number, clientId: number) {
     const userValidate = await this.userRepository.createQueryBuilder('user')
       .select(['user.id', 'user.email', 'user.tokenExpo'])
       .addSelect(['client.city', 'client.id'])
@@ -41,6 +43,15 @@ export class PersonService {
     if (!userValidate)
       return { error: 'USER_INACTIVE', message: 'El usuario se encuentra inactivo.' }
 
+    let watched = 0
+    if (clientId) {
+      watched = await this.viewRepository.createQueryBuilder('view')
+        .innerJoin('view.client', 'client', 'client.id = :clientId', { clientId })
+        .where('view.first = true')
+        .getCount()
+    }
+
+
     const atgAppClientId = userValidate?.client?.id
 
     delete userValidate?.person?.id
@@ -52,6 +63,7 @@ export class PersonService {
       ...userValidate?.person,
       ...userValidate?.client,
       atgAppClientId,
+      watched,
       stateSubscription: userValidate?.client?.subscriptions?.length ?
         StateSubscription.Active
         :

@@ -1,9 +1,14 @@
-import { Controller, Get, Query, Res } from '@nestjs/common';
+import { Body, Controller, Get, Post, Query, Request, Res, UseGuards } from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
+import { EmailService } from './services/email.service';
 import { UtilsService } from './utils.service';
 @Controller('utils')
 export class UtilsController {
 
-  constructor(private readonly utilsService: UtilsService) { }
+  constructor(
+    private readonly utilsService: UtilsService,
+    private readonly emailService: EmailService
+  ) { }
 
   @Get('version')
   async getTypesPayments() {
@@ -16,5 +21,11 @@ export class UtilsController {
     @Query('extraQuery') extraQuery: string
   ) {
     return res.redirect(`${extraQuery}`);
+  }
+
+  @Post('feedback')
+  @UseGuards(AuthGuard('jwt'))
+  async feedback(@Request() req, @Body() body) {
+    return this.emailService.sendEmail(req?.user, body)
   }
 }
