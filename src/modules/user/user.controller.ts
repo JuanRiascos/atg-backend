@@ -13,7 +13,8 @@ import {
   UploadedFile,
   NotFoundException,
   ParseIntPipe,
-  Post
+  Post,
+  Query
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 
@@ -138,8 +139,8 @@ export class UserController {
 
   @Get('/get-sports')
   @UseGuards(AuthGuard('jwt'))
-  async getSports(): Promise<ResponseError | ResponseSuccess> {
-    const sports = await this.sportService.getSports();
+  async getSports(@Query('q') q): Promise<ResponseError | ResponseSuccess> {
+    const sports = await this.sportService.getSports(q);
 
     return { success: 'OK', payload: sports }
 

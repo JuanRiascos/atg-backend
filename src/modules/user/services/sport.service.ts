@@ -10,9 +10,11 @@ export class SportService {
     @InjectRepository(Sport) private readonly sportRepository: Repository<Sport>,
   ) { }
 
-  async getSports() {
+  async getSports(q) {
     const sports = await this.sportRepository.createQueryBuilder('sport')
+      .where('sport.name ILIKE :name', { name: '%' + q + '%' })
       .orderBy("sport.id", "ASC")
+      .limit(10)
       .getMany()
 
     return sports
