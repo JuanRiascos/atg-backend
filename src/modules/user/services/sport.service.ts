@@ -11,8 +11,6 @@ export class SportService {
   ) { }
 
   async getSports(q) {
-    console.log('query', q);
-    
     q = q.toUpperCase()
     
     const sports = await this.sportRepository.createQueryBuilder('sport')
