@@ -4,6 +4,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { UtilsController } from './utils.controller';
 import { UtilsService } from './utils.service';
 import { Versions } from 'src/entities/utils/versions.entity';
+import { EmailService } from './services/email.service';
 
 @Module({
   imports: [
@@ -12,7 +13,7 @@ import { Versions } from 'src/entities/utils/versions.entity';
     ])
   ],
   controllers: [UtilsController],
-  providers: [UtilsService],
+  providers: [UtilsService, EmailService],
   exports: [TypeOrmModule]
 })
 export class UtilsModule {

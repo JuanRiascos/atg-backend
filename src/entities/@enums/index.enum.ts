@@ -18,7 +18,8 @@ export enum TypesNotifications {
 export enum Events {
   SignupAdmin = 'signup_admin',
   Signup = 'signup',
-  ForgotPassword = 'forgot_password'
+  ForgotPassword = 'forgot_password',
+  feedback = 'feedback'
 }
 
 export enum TypesExtraReps {

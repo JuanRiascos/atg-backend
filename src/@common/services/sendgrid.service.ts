@@ -7,6 +7,10 @@ export const Templates = {
   VERIFY_FORGOT_PASSWORD: {
     id: 'd-e5d9f40a85f0446ab46b9cf1f03169c2',
     subject: { es: 'Restore Password' }
+  },
+  FEEDBACK: {
+    id: 'd-e5d9f40a85f0446ab46b9cf1f03169c2',
+    subject: { es: 'Feedback' }
   }
 };
 
@@ -43,7 +47,7 @@ export class SendgridService {
         }
       }).catch(err => {
         console.log('Sendgrid 2 error', err.response.body);
-        
+
         resolve({ error: 'ERROR', ...err })
       });
     })
