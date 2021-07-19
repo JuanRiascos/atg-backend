@@ -98,7 +98,7 @@ export class AssessmentService {
         .addOrderBy('question.order', 'ASC')
         .getMany()
 
-      assessment['trys'] = trys[trys.length - 1]
+      assessment['trys'] = [trys[trys.length - 1]]
 
       if (trys.length === 0)
         assessment['status'] = 'none'
@@ -188,6 +188,7 @@ export class AssessmentService {
   async saveResponse(clientId: number, body: SaveResponseDto) {
     const { assessmentId, questionId, tryId, responses, finalQuestion } = body
 
+    let response
     try {
       let tryAssessment = await this.tryRepository.createQueryBuilder('try')
         .innerJoin('try.assessment', 'assessment', 'assessment.id = :assessmentId', { assessmentId })
@@ -199,7 +200,7 @@ export class AssessmentService {
       if (!question.multiple && responses.length > 1)
         return { error: 'NOT_MANY_RESPONSES' }
 
-      let response = await this.responseRepository.createQueryBuilder('response')
+      response = await this.responseRepository.createQueryBuilder('response')
         .innerJoin('response.client', 'client', 'client.id = :clientId', { clientId })
         .innerJoin('response.try', 'try', 'try.id = :tryId', { tryId })
         .innerJoin('response.question', 'question', 'question.id = :questionId', { questionId })
@@ -210,7 +211,7 @@ export class AssessmentService {
 
       let answers = await this.answerRepository.findByIds(responses)
 
-      await this.responseRepository.save({
+      response = await this.responseRepository.save({
         client: { id: clientId },
         question: { id: questionId },
         try: tryAssessment,
@@ -222,7 +223,7 @@ export class AssessmentService {
       return { error }
     }
 
-    return { message: 'save response' }
+    return response
   }
 
   async getResult(assessmentId: number, clientId: number) {
