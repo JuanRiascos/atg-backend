@@ -42,9 +42,8 @@ export class AssessmentService {
           .innerJoin('try.client', 'client', 'client.id = :clientId', { clientId })
           .leftJoinAndSelect('try.responses', 'responses')
           .leftJoin('responses.question', 'question')
-          .orderBy('try.id', 'DESC')
+          .orderBy('try.id', 'ASC')
           .addOrderBy('question.order', 'ASC')
-          .limit(1)
           .getMany()
 
         if (trys?.length === 0) {
@@ -95,12 +94,11 @@ export class AssessmentService {
         .leftJoinAndSelect('try.responses', 'responses')
         .leftJoin('responses.question', 'question')
         .leftJoin('responses.answers', 'answers')
-        .orderBy('try.id', 'DESC')
+        .orderBy('try.id', 'ASC')
         .addOrderBy('question.order', 'ASC')
-        .limit(1)
         .getMany()
 
-      assessment['trys'] = trys
+      assessment['trys'] = trys[trys.length - 1]
 
       if (trys.length === 0)
         assessment['status'] = 'none'
@@ -249,10 +247,9 @@ export class AssessmentService {
         .leftJoinAndSelect('try.responses', 'responses')
         .leftJoin('responses.question', 'question')
         .leftJoin('responses.answers', 'answers')
-        .orderBy('try.id', 'DESC')
+        .orderBy('try.id', 'ASC')
         .addOrderBy('question.order', 'ASC')
         .addOrderBy('answers.order', 'ASC')
-        .limit(1)
         .getMany()
 
       let lastTry = trys[trys.length - 1]
