@@ -16,4 +16,11 @@ export class ExtraDto {
   @IsBoolean()
   @IsOptional()
   free: boolean
+
+  @IsString()
+  typeDoc: string
+
+  @IsString()
+  @IsOptional()
+  richText: string
 }

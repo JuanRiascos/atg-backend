@@ -43,7 +43,7 @@ export class ExtraService {
   }
 
   async addExtraRep(data: ExtraDto, fileUrl: string) {
-    const { courseId, title, type, free } = data
+    const { courseId, title, type, free, typeDoc, richText } = data
 
     let count = await this.extraRepsRepository.createQueryBuilder('extra')
       .orderBy('extra.order', 'ASC')
@@ -52,11 +52,22 @@ export class ExtraService {
 
     let extra
     try {
+      let data
+      if (typeDoc === 'file')
+        data = {
+          fileUrl
+        }
+      else if (typeDoc === 'richText')
+        data = {
+          richText
+        }
+
       extra = await this.extraRepsRepository.save({
+        ...data,
         title,
-        fileUrl,
         type,
         free,
+        typeDoc,
         order: (count + 1),
         course: { id: courseId }
       })

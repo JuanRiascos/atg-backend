@@ -16,8 +16,14 @@ export class ExtraReps {
   @Column('enum', { enum: TypesExtraReps })
   type: TypesExtraReps
 
+  @Column('enum', { nullable: true, enum: ['file', "richText"] })
+  typeDoc: string
+
   @Column('character varying', { nullable: true })
   fileUrl: string
+
+  @Column('character varying', { nullable: true })
+  richText: string
 
   @Column('boolean', { default: false })
   free: boolean
