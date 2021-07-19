@@ -12,4 +12,11 @@ export class CaseDto {
   @IsBoolean()
   @IsOptional()
   free: boolean
+
+  @IsString()
+  typeDoc: string
+
+  @IsString()
+  @IsOptional()
+  richText: string
 }

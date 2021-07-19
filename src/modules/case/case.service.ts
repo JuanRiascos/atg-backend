@@ -42,7 +42,7 @@ export class CaseService {
   }
 
   async addCase(data: CaseDto, fileUrl: string) {
-    const { courseId, title, free } = data
+    const { courseId, title, free, typeDoc, richText } = data
 
     let count = await this.caseRepository.createQueryBuilder('case')
       .orderBy('case.order', 'ASC')
@@ -51,10 +51,21 @@ export class CaseService {
 
     let caseStudy
     try {
+      let data
+      if (typeDoc === 'file')
+        data = {
+          fileUrl
+        }
+      else if (typeDoc === 'richText')
+        data = {
+          richText
+        }
+
       caseStudy = await this.caseRepository.save({
+        ...data,
         title,
-        fileUrl,
         free,
+        typeDoc,
         order: (count + 1),
         course: { id: courseId }
       })
