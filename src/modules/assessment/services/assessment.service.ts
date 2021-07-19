@@ -44,6 +44,7 @@ export class AssessmentService {
           .leftJoin('responses.question', 'question')
           .orderBy('try.id', 'ASC')
           .addOrderBy('question.order', 'ASC')
+          .limit(1)
           .getMany()
 
         if (trys?.length === 0) {
@@ -96,6 +97,7 @@ export class AssessmentService {
         .leftJoin('responses.answers', 'answers')
         .orderBy('try.id', 'ASC')
         .addOrderBy('question.order', 'ASC')
+        .limit(1)
         .getMany()
 
       assessment['trys'] = trys
@@ -172,8 +174,9 @@ export class AssessmentService {
   }
 
   async startAssessment(assessmentId: number, clientId: number) {
+    let tryAssessment
     try {
-      await this.tryRepository.save({
+      tryAssessment = await this.tryRepository.save({
         assessment: { id: assessmentId },
         client: { id: clientId }
       })
@@ -181,7 +184,7 @@ export class AssessmentService {
       return { error }
     }
 
-    return { message: 'started assessment' }
+    return tryAssessment
   }
 
   async saveResponse(clientId: number, body: SaveResponseDto) {
