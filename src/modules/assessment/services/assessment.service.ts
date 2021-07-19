@@ -111,6 +111,11 @@ export class AssessmentService {
         else
           assessment['status'] = 'started'
       }
+
+      let result = await this.getResult(assessment.id, clientId)
+
+      assessment['result'] = result
+
     } catch (error) {
       return { error }
     }
