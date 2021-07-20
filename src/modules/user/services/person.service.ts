@@ -64,7 +64,7 @@ export class PersonService {
       ...userValidate?.client,
       atgAppClientId,
       watched,
-      stateSubscription: userValidate?.client?.subscriptions?.length ?
+      stateSubscription: userValidate?.client?.subscriptions?.length > 0 ?
         StateSubscription.Active
         :
         StateSubscription.Inactive
