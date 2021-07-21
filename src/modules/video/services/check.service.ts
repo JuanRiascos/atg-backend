@@ -68,8 +68,6 @@ export class CheckService {
   async updateOrderCheck(body: any) {
     const { checks, videoId } = body
 
-    console.log(checks, videoId)
-
     try {
       await Promise.all(checks.map(async (check, index) => {
         await this.checkRepository.update(+check.id, { order: (index + 1) })
