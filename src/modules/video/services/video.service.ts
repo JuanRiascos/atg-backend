@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Video } from 'src/entities/academy/video.entity';
 import { ViewVideos } from 'src/entities/academy/views-videos.entity';
 import { Repository } from 'typeorm';
-import { VideoDto } from './dto/video.dto';
+import { VideoDto } from '../dto/video.dto';
 
 @Injectable()
 export class VideoService {

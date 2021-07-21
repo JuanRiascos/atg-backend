@@ -11,6 +11,7 @@ import {
 import { States } from "../@enums/index.enum";
 import { AssessmentClientTry } from "../academy/assessment-client-try.entity";
 import { CaseStudies } from "../academy/case-studies.entity";
+import { Check } from "../academy/check.entity";
 import { ClientQuestion } from "../academy/client-question.entity";
 import { ExtraReps } from "../academy/extra-reps.entity";
 import { Interest } from "../academy/interest.entity";
@@ -94,4 +95,7 @@ export class Client {
 
   @OneToMany(() => ViewVideos, view => view.client)
   viewsVideos: ViewVideos[]
+
+  @ManyToMany(() => Check, check => check.clients)
+  checks: Check[]
 }

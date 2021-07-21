@@ -105,7 +105,7 @@ export class PlaylistService {
     const videos = await query.orderBy("video.id", "ASC")
       .getMany()
 
-    for (const video of videos) {
+    /* for (const video of videos) {
       if (video.url) {
         let response
         try {
@@ -121,7 +121,7 @@ export class PlaylistService {
 
         video['urlVimeo'] = urlVimeo || video?.url
       }
-    }
+    } */
 
     return videos
   }

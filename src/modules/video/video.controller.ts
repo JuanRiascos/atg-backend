@@ -21,15 +21,18 @@ import { Roles } from 'src/@common/decorators/roles.decorator';
 import { RolesGuard } from 'src/@common/guards/roles.guard';
 import { ResponseError, ResponseSuccess } from 'src/@common/interfaces/response';
 import multer from 'src/@common/multer/multer';
-import { PlaylistService } from './services/playlist/playlist.service';
-import { VideoService } from './video.service';
+import { CheckDto } from './dto/check.dto';
+import { CheckService } from './services/check.service';
+import { PlaylistService } from './services/playlist.service';
+import { VideoService } from './services/video.service';
 
 @Controller('video')
 export class VideoController {
 
   constructor(
     private readonly videoService: VideoService,
-    private readonly playlistService: PlaylistService
+    private readonly playlistService: PlaylistService,
+    private readonly checkService: CheckService
   ) { }
 
   @Get('/all/:courseId')
@@ -172,6 +175,55 @@ export class VideoController {
     
   ): Promise<ResponseError | ResponseSuccess> {
     const response = await this.playlistService.changeExtraRepsPlayList(req?.user?.atgAppClientId, id)
+    return { success: 'OK', payload: response }
+  }
+
+  @Post('/add-check')
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Roles(roles.ADMIN)
+  async addCheck(@Body() body: CheckDto): Promise<ResponseSuccess | ResponseError> {
+    const response: any = await this.checkService.addCheck(body)
+
+    if (response.error)
+      throw new BadRequestException(response)
+
+    return { success: 'OK', payload: response }
+  }
+
+  @Put('/update-check/:checkId')
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Roles(roles.ADMIN)
+  async updateCheck(@Param('checkId', ParseIntPipe) checkId: number, @Body() body: CheckDto): Promise<ResponseError | ResponseSuccess> {
+    const response: any = await this.checkService.updateCheck(checkId, body)
+
+    if (response.error)
+      throw new BadRequestException(response)
+
+    return { success: 'OK', payload: response }
+  }
+
+  @Delete('/delete-check/:checkId')
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Roles(roles.ADMIN)
+  async deleteCheck(@Param('checkId', ParseIntPipe) checkId: number): Promise<ResponseError | ResponseSuccess> {
+    const response: any = await this.checkService.deleteCheck(checkId)
+
+    if (response.error)
+      throw new BadRequestException(response)
+
+    return { success: 'OK', payload: response }
+  }
+
+  @Post('/update-order-checks')
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Roles(roles.ADMIN)
+  async updateOrderChecks(@Body() body: any): Promise<ResponseError | ResponseSuccess> {
+    console.log(body)
+    const response: any = await this.checkService.updateOrderCheck(body)
+
+    if (response.error)
+      throw new BadRequestException(response)
+
     return { success: 'OK', payload: response }
   }
 
