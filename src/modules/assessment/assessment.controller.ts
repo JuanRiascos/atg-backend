@@ -167,7 +167,7 @@ export class AssessmentController {
     return { success: 'OK', payload: response }
   }
 
-  @Put('/update-order-answers')
+  @Post('/update-order-answers')
   @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Roles(roles.ADMIN)
   async updateOrderAnswers(@Body() body): Promise<ResponseError | ResponseSuccess> {
@@ -179,7 +179,7 @@ export class AssessmentController {
     return { success: 'OK', payload: response }
   }
 
-  @Put('/update-order-questions')
+  @Post('/update-order-questions')
   @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Roles(roles.ADMIN)
   async updateOrderQuestions(@Body() body): Promise<ResponseError | ResponseSuccess> {
