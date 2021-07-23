@@ -105,23 +105,30 @@ export class PlaylistService {
     const videos = await query.orderBy("video.id", "ASC")
       .getMany()
 
-    /* for (const video of videos) {
+    for (const video of videos) {
       if (video.url) {
         let response
         try {
           response = await this.httpService.get(
-            `https://player.vimeo.com/video/${video?.url?.replace("https://vimeo.com/", "")}/config`
+            `https://api.vimeo.com/videos/${video?.url?.split('/')[3]?.toString()}`,
+            {
+              headers: {
+                'Authorization': `bearer cfa08e688690c7a6d1297b46e953a795`,
+                'Content-Type': `application/json`,
+                'Accept': `application/vnd.vimeo.*+json;version=3.4`
+              }
+            }
           ).toPromise()
         } catch (error) {
 
         }
 
         const data = await response?.data
-        let urlVimeo = data?.request?.files?.hls?.cdns?.akfire_interconnect_quic?.url
+        let file = data?.files[0]
 
-        video['urlVimeo'] = urlVimeo || video?.url
+        video['file'] = file
       }
-    } */
+    }
 
     return videos
   }

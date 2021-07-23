@@ -64,25 +64,32 @@ export class FindService {
 
     if (!course)
       return { error: 'NOT_FOUND' }
-    /* 
-        for (const video of course?.videos) {
-          if (video.url) {
-            let response
-            try {
-              response = await this.httpService.get(
-                `https://player.vimeo.com/video/${video?.url?.replace("https://vimeo.com/", "")}/config`
-              ).toPromise()
-            } catch (error) {
-    
+
+    for (const video of course?.videos) {
+      if (video.url) {
+        let response
+        try {
+          response = await this.httpService.get(
+            `https://api.vimeo.com/videos/${video?.url?.split('/')[3]?.toString()}`,
+            {
+              headers: {
+                'Authorization': `bearer cfa08e688690c7a6d1297b46e953a795`,
+                'Content-Type': `application/json`,
+                'Accept': `application/vnd.vimeo.*+json;version=3.4`
+              }
             }
-    
-            const data = await response?.data
-            let urlVimeo = data?.request?.files?.hls?.cdns?.akfire_interconnect_quic?.url
-    
-            video['urlVimeo'] = urlVimeo || video?.url
-          }
+          ).toPromise()
+        } catch (error) {
+
         }
-     */
+
+        const data = await response?.data
+        let file = data?.files[0]
+
+        video['file'] = file
+      }
+    }
+
 
     return course
   }
