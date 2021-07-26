@@ -13,6 +13,8 @@ export class StatusNotification {
   @Column('simple-json', { nullable: true })
   notificationFirsTime: any
 
-  @OneToOne(() => Client, client => client.statusNotification)
+  @OneToOne(() => Client, client => client.statusNotification, {
+    onDelete: 'CASCADE', onUpdate: 'CASCADE'
+  })
   client: Client
 }

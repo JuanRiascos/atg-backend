@@ -17,10 +17,16 @@ export class Answer {
   @Column("bigint", { nullable: true })
   order: number;
 
-  @ManyToOne(() => Question, question => question.answers)
+  @ManyToOne(() => Question, question => question.answers, {
+    onDelete: 'CASCADE', onUpdate: 'CASCADE'
+  })
   @JoinColumn({ name: 'fk_question' })
   question: Question
 
-  @ManyToMany(() => ClientQuestion, clientQuestion => clientQuestion.answers)
+  @ManyToMany(
+    () => ClientQuestion, clientQuestion => clientQuestion.answers, {
+      onDelete: 'CASCADE', onUpdate: 'CASCADE'
+    }
+  )
   clientQuestion: ClientQuestion[]
 }

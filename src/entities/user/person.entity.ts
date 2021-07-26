@@ -24,15 +24,21 @@ export class Person {
   @Column('character varying', { nullable: true })
   positionCurrentJob: string
 
-  @OneToOne(type => User, user => user.person)
+  @OneToOne(type => User, user => user.person, {
+    onDelete: 'CASCADE', onUpdate: 'CASCADE'
+  })
   @JoinColumn({ name: 'fk_user' })
   user: User;
 
-  @ManyToOne(() => Ocupation, ocupation => ocupation.persons)
+  @ManyToOne(() => Ocupation, ocupation => ocupation.persons, {
+    onDelete: 'SET NULL', onUpdate: 'CASCADE'
+  })
   @JoinColumn({ name: 'fk_ocupation' })
   ocupation: Ocupation;
 
-  @ManyToOne(() => Sport, sport => sport.persons)
+  @ManyToOne(() => Sport, sport => sport.persons, {
+    onDelete: 'SET NULL', onUpdate: 'CASCADE'
+  })
   @JoinColumn({ name: 'fk_sport' })
   sport: Sport;
 

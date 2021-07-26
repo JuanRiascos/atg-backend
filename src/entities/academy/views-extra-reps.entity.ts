@@ -14,11 +14,15 @@ export class ViewExtraReps {
   @CreateDateColumn({ type: "timestamp" })
   date: Date
 
-  @ManyToOne(() => ExtraReps, extra => extra.views)
+  @ManyToOne(() => ExtraReps, extra => extra.views, {
+    onDelete: 'CASCADE', onUpdate: 'CASCADE'
+  })
   @JoinColumn({ name: 'fk_extra_reps' })
   extraRep: ExtraReps
 
-  @ManyToOne(() => Client, client => client.viewsExtraReps)
+  @ManyToOne(() => Client, client => client.viewsExtraReps, {
+    onDelete: 'CASCADE', onUpdate: 'CASCADE'
+  })
   @JoinColumn({ name: 'fk_client' })
   client: Client
 

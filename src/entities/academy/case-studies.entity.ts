@@ -27,7 +27,9 @@ export class CaseStudies {
   @Column("bigint", { nullable: true })
   order: number;
 
-  @ManyToOne(() => Course, course => course.caseStudies)
+  @ManyToOne(() => Course, course => course.caseStudies, {
+    onDelete: 'CASCADE', onUpdate: 'CASCADE'
+  })
   @JoinColumn({ name: 'fk_course' })
   course: Course
 

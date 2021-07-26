@@ -14,7 +14,9 @@ export class Favorite {
   @Column('enum', { enum: States })
   state: States
 
-  @ManyToOne(() => Client, client => client.favorites)
+  @ManyToOne(() => Client, client => client.favorites, {
+    onDelete: 'CASCADE', onUpdate: 'CASCADE'
+  })
   @JoinColumn({ name: 'fk_client' })
   client: Client
   

@@ -51,8 +51,7 @@ export class Client {
 
   @OneToOne(
     () => User,
-    user => user.client,
-    { nullable: true, onDelete: 'CASCADE', onUpdate: 'CASCADE' }
+    user => user.client
   )
   @JoinColumn({ name: 'fk_status_notification' })
   statusNotification: StatusNotification;
@@ -63,7 +62,9 @@ export class Client {
   @OneToMany(() => PaymentHistory, paymentHistory => paymentHistory.client)
   payments: PaymentHistory[]
 
-  @ManyToMany(() => Interest, interest => interest.clients)
+  @ManyToMany(() => Interest, interest => interest.clients, {
+    onDelete: 'CASCADE', onUpdate: 'CASCADE'
+  })
   interests: Interest[];
 
   @OneToMany(() => ClientQuestion, clientQuestion => clientQuestion.client)
@@ -75,13 +76,19 @@ export class Client {
   @OneToMany(() => Subscription, subscription => subscription.client)
   subscriptions: Subscription[];
 
-  @ManyToMany(type => Video, video => video.clients)
+  @ManyToMany(type => Video, video => video.clients, {
+    onDelete: 'CASCADE', onUpdate: 'CASCADE'
+  })
   videos: Video[];
 
-  @ManyToMany(type => CaseStudies, caseStudies => caseStudies.clients)
+  @ManyToMany(type => CaseStudies, caseStudies => caseStudies.clients, {
+    onDelete: 'CASCADE', onUpdate: 'CASCADE'
+  })
   caseStudies: CaseStudies[];
 
-  @ManyToMany(type => ExtraReps, extraReps => extraReps.clients)
+  @ManyToMany(type => ExtraReps, extraReps => extraReps.clients, {
+    onDelete: 'CASCADE', onUpdate: 'CASCADE'
+  })
   extraReps: ExtraReps[];
 
   @OneToMany(() => SessionClient, session => session.client)
@@ -96,6 +103,8 @@ export class Client {
   @OneToMany(() => ViewVideos, view => view.client)
   viewsVideos: ViewVideos[]
 
-  @ManyToMany(() => Check, check => check.clients)
+  @ManyToMany(() => Check, check => check.clients, {
+    onDelete: 'CASCADE', onUpdate: 'CASCADE'
+  })
   checks: Check[]
 }

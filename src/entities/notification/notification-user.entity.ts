@@ -24,11 +24,15 @@ export class NotificationUser {
   @Column('bool', { default: false, nullable: true })
   view: boolean
 
-  @ManyToOne(() => User, user => user.notifications)
+  @ManyToOne(() => User, user => user.notifications, {
+    onDelete: 'CASCADE', onUpdate: 'CASCADE'
+  })
   @JoinColumn({ name: 'fk_user' })
   user: User
 
-  @ManyToOne(() => Notification, notification => notification.users)
+  @ManyToOne(() => Notification, notification => notification.users, {
+    onDelete: 'CASCADE', onUpdate: 'CASCADE'
+  })
   @JoinColumn({ name: 'fk_notification' })
   notification: Notification
 }

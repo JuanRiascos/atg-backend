@@ -14,11 +14,15 @@ export class ViewVideos {
   @CreateDateColumn({ type: "timestamp" })
   date: Date
 
-  @ManyToOne(() => Video, video => video.views)
+  @ManyToOne(() => Video, video => video.views, {
+    onDelete: 'CASCADE', onUpdate: 'CASCADE'
+  })
   @JoinColumn({ name: 'fk_video' })
   video: Video
 
-  @ManyToOne(() => Client, client => client.viewsVideos)
+  @ManyToOne(() => Client, client => client.viewsVideos, {
+    onDelete: 'CASCADE', onUpdate: 'CASCADE'
+  })
   @JoinColumn({ name: 'fk_client' })
   client: Client
 
