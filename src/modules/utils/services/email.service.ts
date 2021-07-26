@@ -20,12 +20,14 @@ export class EmailService {
 
   async sendEmailAttachments(user, body) {
 
-    const attachments = [body]
+    const attachments = [body?.file]
 
     await this.sendgridService.sendEmail(
       user?.email,
-      Templates.FEEDBACK,
-      undefined,
+      Templates.RESOURCE_SEND,
+      { 
+        title: body?.resource?.title
+      },
       attachments
     )
 

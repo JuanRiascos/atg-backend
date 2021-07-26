@@ -11,6 +11,10 @@ export const Templates = {
   FEEDBACK: {
     id: 'd-ec995cd46e5245d9b7c807ff6da15740',
     subject: { es: 'Feedback' }
+  },
+  RESOURCE_SEND: {
+    id: 'd-b49c4fe84d1d4d5c8e158c69ef4655be',
+    subject: { es: 'Resource' }
   }
 };
 
