@@ -23,9 +23,9 @@ export class EmailService {
     const attachments = [body]
 
     await this.sendgridService.sendEmail(
-      "darian7cc@gmail.com",
+      user?.email,
       Templates.FEEDBACK,
-      { ...body, email: user?.email },
+      undefined,
       attachments
     )
 
