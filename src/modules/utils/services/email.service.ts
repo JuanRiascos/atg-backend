@@ -1,7 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-const fs = require("fs");
 import { Templates } from 'src/@common/services/sendgrid.service';
-
 @Injectable()
 export class EmailService {
 
