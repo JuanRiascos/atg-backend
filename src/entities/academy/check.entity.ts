@@ -14,7 +14,9 @@ export class Check {
   @Column("bigint", { nullable: true })
   order: number;
 
-  @ManyToOne(() => Video, video => video.checks)
+  @ManyToOne(() => Video, video => video.checks, {
+    onDelete: 'CASCADE', onUpdate: 'CASCADE'
+  })
   @JoinColumn({ name: 'fk_video' })
   video: Video
 

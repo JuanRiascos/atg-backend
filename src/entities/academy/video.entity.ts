@@ -47,12 +47,11 @@ export class Video {
   @Column("bigint", { nullable: true })
   order: number;
 
-  @ManyToOne(() => Course, course => course.videos)
+  @ManyToOne(() => Course, course => course.videos, {
+    onDelete: 'CASCADE', onUpdate: 'CASCADE'
+  })
   @JoinColumn({ name: 'fk_course' })
   course: Course
-
-  @OneToOne(() => Assessment, assessment => assessment.video)
-  assessment: Assessment
 
   @ManyToMany(type => Client, client => client.videos)
   @JoinTable({ name: 'playlist' })

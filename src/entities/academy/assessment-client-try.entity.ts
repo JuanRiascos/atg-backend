@@ -10,11 +10,15 @@ export class AssessmentClientTry {
   @PrimaryGeneratedColumn({ type: 'bigint' })
   id: number
 
-  @ManyToOne(() => Assessment, assessment => assessment.trys)
+  @ManyToOne(() => Assessment, assessment => assessment.trys, {
+    onDelete: 'CASCADE', onUpdate: 'CASCADE'
+  })
   @JoinColumn({ name: 'fk_assessment' })
   assessment: Assessment
 
-  @ManyToOne(() => Client, client => client.trys)
+  @ManyToOne(() => Client, client => client.trys, {
+    onUpdate: 'CASCADE', onDelete: 'CASCADE'
+  })
   @JoinColumn({ name: 'fk_client' })
   client: Client
 

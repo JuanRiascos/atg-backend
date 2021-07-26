@@ -18,7 +18,9 @@ export class Question {
   @Column('boolean', { nullable: true, default: false })
   multiple: boolean
 
-  @ManyToOne(() => Assessment, assessment => assessment.questions)
+  @ManyToOne(() => Assessment, assessment => assessment.questions, {
+    onDelete: 'CASCADE', onUpdate: 'CASCADE'
+  })
   @JoinColumn({ name: 'fk_assessment' })
   assessment: Assessment
 

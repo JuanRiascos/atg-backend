@@ -18,10 +18,10 @@ export class Interest {
   @ManyToOne(() => Interest, interest => interest.childs, { nullable: true, onUpdate: 'CASCADE', onDelete: 'CASCADE' })
   parent: Interest;
 
-  @OneToMany(() => Interest, interest => interest.parent, { nullable: true, onUpdate: 'CASCADE', onDelete: 'CASCADE' })
+  @OneToMany(() => Interest, interest => interest.parent)
   childs: Interest[];
 
   @ManyToMany(() => Client, client => client.interests)
-  @JoinTable()
+  @JoinTable({ name: 'interest_clients_client' })
   clients: Client[];
 }

@@ -25,16 +25,14 @@ export class Assessment {
   @Column('boolean', { default: false })
   free: boolean
 
-  @ManyToOne(() => Course, course => course.assessments)
+  @ManyToOne(() => Course, course => course.assessments, {
+    onDelete: 'CASCADE', onUpdate: 'CASCADE'
+  })
   @JoinColumn({ name: 'fk_course' })
   course: Course
 
   @OneToMany(() => Question, question => question.assessment)
   questions: Question[]
-
-  @OneToOne(() => Video, video => video.assessment)
-  @JoinColumn({ name: 'fk_video' })
-  video: Video
 
   @OneToMany(() => AssessmentClientTry, trys => trys.assessment)
   trys: AssessmentClientTry[]

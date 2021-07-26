@@ -10,19 +10,27 @@ export class ClientQuestion {
   @PrimaryGeneratedColumn({ type: 'bigint' })
   id: number
 
-  @ManyToOne(() => Client, client => client.clientQuestion)
+  @ManyToOne(() => Client, client => client.clientQuestion, {
+    onDelete: 'CASCADE', onUpdate: 'CASCADE'
+  })
   @JoinColumn({ name: 'fk_client' })
   client: Client
 
-  @ManyToOne(() => Question, question => question.clientQuestion)
+  @ManyToOne(() => Question, question => question.clientQuestion, {
+    onDelete: 'CASCADE', onUpdate: 'CASCADE'
+  })
   @JoinColumn({ name: 'fk_question' })
   question: Question
 
-  @ManyToMany(() => Answer, answer => answer.clientQuestion)
-  @JoinTable()
+  @ManyToMany(
+    () => Answer, answer => answer.clientQuestion
+  )
+  @JoinTable({ name: 'client_question_answers_answer' })
   answers: Answer[]
 
-  @ManyToOne(() => AssessmentClientTry, tryClient => tryClient.responses)
+  @ManyToOne(() => AssessmentClientTry, tryClient => tryClient.responses, {
+    onDelete: 'CASCADE', onUpdate: 'CASCADE'
+  })
   @JoinColumn({ name: 'fk_try' })
   try: AssessmentClientTry
 

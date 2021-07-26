@@ -31,7 +31,9 @@ export class ExtraReps {
   @Column("bigint", { nullable: true })
   order: number;
 
-  @ManyToOne(() => Course, course => course.extraReps)
+  @ManyToOne(() => Course, course => course.extraReps, {
+    onUpdate: 'CASCADE', onDelete: 'CASCADE'
+  })
   @JoinColumn({ name: 'fk_course' })
   course: Course
 

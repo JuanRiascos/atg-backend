@@ -16,7 +16,9 @@ export class PaymentHistory {
   @Column('json')
   detail: object
 
-  @ManyToOne(() => Client, client => client.payments)
+  @ManyToOne(() => Client, client => client.payments, {
+    onDelete: 'CASCADE', onUpdate: 'CASCADE'
+  })
   @JoinColumn({ name: 'fk_client' })
   client: Client
 }

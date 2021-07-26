@@ -21,7 +21,9 @@ export class Notification {
   @OneToMany(() => NotificationUser, notificationUser => notificationUser.notification)
   users: NotificationUser[]
 
-  @ManyToOne(() => Event, event => event.notifications)
+  @ManyToOne(() => Event, event => event.notifications, {
+    onDelete: 'SET NULL'
+  })
   @JoinColumn({ name: 'fk_event' })
   event: Event
 

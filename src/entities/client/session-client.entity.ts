@@ -7,7 +7,9 @@ export class SessionClient {
   @PrimaryGeneratedColumn({ type: 'bigint' })
   id: number
 
-  @ManyToOne(() => Client, client => client.sessions)
+  @ManyToOne(() => Client, client => client.sessions, {
+    onDelete: 'SET NULL', onUpdate: 'CASCADE'
+  })
   @JoinColumn({ name: 'fk_client' })
   client: Client
 
