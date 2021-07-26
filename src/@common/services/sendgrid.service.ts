@@ -24,8 +24,8 @@ export class SendgridService {
     sgMail.setApiKey(this.config.apiKey);
   }
 
-  sendEmail(to: any, template: any, substitutions: any) {
-    console.log('Correo enviado a: ', to, substitutions);
+  sendEmail(to: any, template: any, substitutions: any, attachments?) {
+    console.log('Correo enviado a: ', to);
 
     return new Promise((resolve, reject) => {
       const msg = {
@@ -35,12 +35,13 @@ export class SendgridService {
         dynamic_template_data: {
           ...substitutions,
           subject: template?.subject['es']
-        }
+        },
+        attachments
       }
 
       sgMail.send(msg).then(async data => {
         if (data[0] && data[0].statusCode === 202)
-          resolve({ success: 'OK', ...data })
+          resolve({ success: 'OK', email: data?.email })
         else {
           console.log('Sendgrid error', data.response.body);
           resolve({ success: 'ERROR', ...data })

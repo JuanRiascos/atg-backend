@@ -26,6 +26,12 @@ export class UtilsController {
   @Post('feedback')
   @UseGuards(AuthGuard('jwt'))
   async feedback(@Request() req, @Body() body) {
-    return this.emailService.sendEmail(req?.user, body)
+    return this.emailService.sendEmailFeedback(req?.user, body)
+  }
+
+  @Post('send-email-resource')
+  @UseGuards(AuthGuard('jwt'))
+  async sendEmailAttachments(@Request() req, @Body() body) {
+    return this.emailService.sendEmailAttachments(req?.user, body)
   }
 }
