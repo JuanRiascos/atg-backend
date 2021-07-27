@@ -47,6 +47,9 @@ export class User {
   @UpdateDateColumn({ type: "timestamp", name: "updated_at" })
   updatedAt: Date;
 
+  @Column("boolean", { default: true, name: "is_authorize_email" })
+  isAuthorizeEmail;
+
   @OneToOne(() => Person, person => person.user)
   person: Person;
 

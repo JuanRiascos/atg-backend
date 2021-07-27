@@ -21,4 +21,8 @@ export class SignupDto {
   @IsOptional()
   superAdmin: boolean
 
+  @IsBoolean()
+  @IsOptional()
+  isAuthorizeEmail: boolean
+
 }
