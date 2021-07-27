@@ -18,11 +18,15 @@ export class Subscription {
   @Column("timestamp", { name: "subscription_end_date", nullable: true })
   subscriptionEndDate: Date;
 
-  @ManyToOne(() => Client, client => client.subscriptions)
+  @ManyToOne(() => Client, client => client.subscriptions, {
+    onDelete: 'CASCADE', onUpdate: 'CASCADE'
+  })
   @JoinColumn({ name: 'fk_client' })
   client: Client;
 
-  @ManyToOne(() => Plan, plan => plan.subscriptions)
+  @ManyToOne(() => Plan, plan => plan.subscriptions, {
+    onDelete: 'CASCADE', onUpdate: 'CASCADE'
+  })
   @JoinColumn({ name: 'fk_plan' })
   plan: Plan;
 
