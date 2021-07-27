@@ -18,7 +18,7 @@ export default class MulterGoogleCloudStorage {
   private options;
   private path
 
-  constructor( options?: { acl?: string }, path?: string ) {
+  constructor(options?: { acl?: string }, path?: string) {
     options = options || {};
     this.path = path
   }
@@ -58,4 +58,17 @@ export default class MulterGoogleCloudStorage {
 
 export const removeFile = (filename) => {
   bucket.file(filename).delete();
+}
+
+export const listFiles = async () => {
+  const [files] = await bucket.getFiles({
+    prefix: 'documents/'
+  })
+
+  files.shift()
+
+  return files.map(file => ({
+    originalname: file.name.slice(47),
+    path: `https://${bucket.name}.storage.googleapis.com/${file.name}`
+  }))
 }
