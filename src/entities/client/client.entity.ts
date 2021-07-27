@@ -21,7 +21,6 @@ import { ViewExtraReps } from "../academy/views-extra-reps.entity";
 import { ViewVideos } from "../academy/views-videos.entity";
 import { Subscription } from "../payment/subscription.entity";
 import { User } from "../user/user.entity";
-import { Favorite } from "./favorite.entity";
 import { PaymentHistory } from "./payment-history.entity";
 import { SessionClient } from "./session-client.entity";
 import { StatusNotification } from "./status-notification.entity";
@@ -55,9 +54,6 @@ export class Client {
   )
   @JoinColumn({ name: 'fk_status_notification' })
   statusNotification: StatusNotification;
-
-  @OneToMany(() => Favorite, favorite => favorite.client)
-  favorites: Favorite[]
 
   @OneToMany(() => PaymentHistory, paymentHistory => paymentHistory.client)
   payments: PaymentHistory[]
