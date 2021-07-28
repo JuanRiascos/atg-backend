@@ -17,6 +17,10 @@ export class ExtraDto {
   @IsOptional()
   free: boolean
 
+  @IsBoolean()
+  @IsOptional()
+  authorizedSendEmail: boolean
+
   @IsString()
   typeDoc: string
 

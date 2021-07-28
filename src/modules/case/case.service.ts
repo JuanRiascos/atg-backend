@@ -42,7 +42,7 @@ export class CaseService {
   }
 
   async addCase(data: CaseDto, fileUrl: string) {
-    const { courseId, title, free, typeDoc, richText } = data
+    const { courseId, title, free, typeDoc, richText, authorizedSendEmail } = data
 
     let count = await this.caseRepository.createQueryBuilder('case')
       .orderBy('case.order', 'ASC')
@@ -66,6 +66,7 @@ export class CaseService {
         title,
         free,
         typeDoc,
+        authorizedSendEmail,
         order: (count + 1),
         course: { id: courseId }
       })
