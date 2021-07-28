@@ -108,6 +108,9 @@ export class CheckService {
     .where("video.id = :videoId", { videoId })
     .getOne()
     
+    if(!videoChecks)
+      return []
+
     return videoChecks.checks.map(item => {
       return {
         id: item.id, 
