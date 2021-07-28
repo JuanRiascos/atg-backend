@@ -19,8 +19,8 @@ export class CourseController {
 
   @Get('/all')
   @UseGuards(AuthGuard('jwt'))
-  async getCourses(): Promise<ResponseError | ResponseSuccess> {
-    const response: any = await this.findService.getCourses()
+  async getCourses(@Req() req): Promise<ResponseError | ResponseSuccess> {
+    const response: any = await this.findService.getCourses(req?.user?.atgAppClientId)
 
     if (response.error)
       throw new BadRequestException(response)
