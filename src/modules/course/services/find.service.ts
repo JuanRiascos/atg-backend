@@ -11,14 +11,17 @@ export class FindService {
     private readonly httpService: HttpService,
   ) { }
 
-  async getCourses() {
+  async getCourses(clientId: number) {
     let courses
     try {
-      courses = await this.courseRepository.createQueryBuilder('course')
-        .select(['course.id', 'course.title', 'course.subtitle', 'course.cover',
-          'course.color', 'course.image', 'course.iconReps', 'course.iconCases'])
-        .addOrderBy('course.title')
-        .getMany()
+      let query = this.courseRepository.createQueryBuilder('course')
+        .select(['course.id', 'course.title', 'course.cover',
+          'course.color', 'course.image'])
+      if (!clientId)
+        query.addSelect(['course.iconReps', 'course.iconCases', 'course.subtitle'])
+      query.addOrderBy('course.id', 'DESC')
+
+      courses = await query.getMany()
     } catch (error) {
       return { error }
     }
