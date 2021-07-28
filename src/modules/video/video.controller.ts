@@ -69,6 +69,14 @@ export class VideoController {
     return { success: 'OK', payload: response }
   }
 
+  @Get('/qualification')
+  @UseGuards(AuthGuard('jwt'))
+  async getQualification(@Req() req, @Query('videoId') videoId): Promise<ResponseError | ResponseSuccess> {
+    const response = await this.videoService.getQualification(req?.user?.atgAppClientId, videoId)
+      
+    return { success: 'OK', payload: response }
+  }
+
   @Post('/qualification')
   @UseGuards(AuthGuard('jwt'))
   async qualification(@Req() req, @Body() body): Promise<ResponseError | ResponseSuccess> {
@@ -76,7 +84,7 @@ export class VideoController {
 
     if(response.error)
       throw new BadRequestException(response)
-      
+
     return { success: 'OK', payload: response }
   }
 

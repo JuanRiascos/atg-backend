@@ -98,6 +98,13 @@ export class VideoService {
     return { message: 'Video qualification succesfully' }
   }
 
+  async getQualification(clientId, videoId) {
+    return await this.videoQualificationRepository.findOne({
+      client: { id: clientId },
+      video: { id: videoId },
+    })
+  }
+
   async deleteVideo(videoId: number) {
     try {
       await this.videoRepository.delete(videoId)
