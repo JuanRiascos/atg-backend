@@ -2,6 +2,7 @@ import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Check } from "src/entities/academy/check.entity";
 import { Video } from "src/entities/academy/video.entity";
+import { Client } from "src/entities/client/client.entity";
 import { Repository } from "typeorm";
 import { CheckDto } from "../dto/check.dto";
 
@@ -10,7 +11,8 @@ export class CheckService {
 
   constructor(
     @InjectRepository(Check) private readonly checkRepository: Repository<Check>,
-    @InjectRepository(Video) private readonly videoRepository: Repository<Video>
+    @InjectRepository(Video) private readonly videoRepository: Repository<Video>,
+    @InjectRepository(Client) private readonly clientRepository: Repository<Client>,
   ) { }
 
   async addCheck(body: CheckDto) {
@@ -82,5 +84,26 @@ export class CheckService {
       .getMany()
 
     return response
+  }
+
+  async answerClient(clientId, checkId) {
+    try {
+      await this.clientRepository.save({
+        id: clientId,
+        checks: [checkId]
+      })
+      return { success: 'OK' }
+    } catch (error) {
+      return { error }
+    }
+  }
+
+  async getCheckByVideo(videoId, clientId) {
+    return await this.videoRepository.createQueryBuilder("video")
+    .select(['video.id'])
+    .innerJoinAndSelect('video.checks', 'checks')
+    .leftJoin('checks.clients', 'client', 'client.id = :clientId', { clientId })
+    .orderBy('checks.order', 'ASC')
+    .where("video.id = :videoId", { videoId })
   }
 }
