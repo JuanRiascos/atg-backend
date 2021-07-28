@@ -69,6 +69,17 @@ export class VideoController {
     return { success: 'OK', payload: response }
   }
 
+  @Post('/qualification')
+  @UseGuards(AuthGuard('jwt'))
+  async qualification(@Req() req, @Body() body): Promise<ResponseError | ResponseSuccess> {
+    const response = await this.videoService.qualification(req?.user?.atgAppClientId, body.videoId, body.value)
+
+    if(response.error)
+      throw new BadRequestException(response)
+      
+    return { success: 'OK', payload: response }
+  }
+
   @Post()
   @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Roles(roles.ADMIN)

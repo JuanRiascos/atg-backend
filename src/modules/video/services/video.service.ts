@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { VideoQualification } from 'src/entities/academy/video-qualification.entity';
 import { Video } from 'src/entities/academy/video.entity';
 import { ViewVideos } from 'src/entities/academy/views-videos.entity';
 import { Repository } from 'typeorm';
@@ -10,7 +11,8 @@ export class VideoService {
 
   constructor(
     @InjectRepository(Video) private readonly videoRepository: Repository<Video>,
-    @InjectRepository(ViewVideos) private readonly viewRepository: Repository<ViewVideos>
+    @InjectRepository(ViewVideos) private readonly viewRepository: Repository<ViewVideos>,
+    @InjectRepository(VideoQualification) private readonly videoQualificationRepository: Repository<VideoQualification>,
   ) { }
 
   async getVideosCourse(courseId: number) {
@@ -74,6 +76,26 @@ export class VideoService {
     }
 
     return { message: 'updated video' }
+  }
+
+  async qualification(clientId, videoId, value) {
+    try {
+      const qualify = await this.videoQualificationRepository.findOne({
+        client: { id: clientId },
+        video: { id: videoId },
+      })
+      if (qualify)
+        await this.videoQualificationRepository.update(qualify, { value })
+      else
+        await this.videoQualificationRepository.save({
+          client: { id: clientId },
+          video: { id: videoId },
+          value
+        })
+    } catch (error) {
+      return { error }
+    }
+    return { message: 'Video qualification succesfully' }
   }
 
   async deleteVideo(videoId: number) {

@@ -15,6 +15,7 @@ import { Check } from "../academy/check.entity";
 import { ClientQuestion } from "../academy/client-question.entity";
 import { ExtraReps } from "../academy/extra-reps.entity";
 import { Interest } from "../academy/interest.entity";
+import { VideoQualification } from "../academy/video-qualification.entity";
 import { Video } from "../academy/video.entity";
 import { ViewCaseStudies } from "../academy/views-case-studies.entity";
 import { ViewExtraReps } from "../academy/views-extra-reps.entity";
@@ -98,6 +99,9 @@ export class Client {
 
   @OneToMany(() => ViewVideos, view => view.client)
   viewsVideos: ViewVideos[]
+
+  @OneToMany(() => VideoQualification, videoQualification => videoQualification.client)
+  qualifications: VideoQualification[]
 
   @ManyToMany(() => Check, check => check.clients, {
     onDelete: 'CASCADE', onUpdate: 'CASCADE'

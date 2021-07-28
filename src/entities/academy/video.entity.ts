@@ -14,6 +14,7 @@ import { Assessment } from "./assessment.entity";
 import { Course } from "./course.entity";
 import { ViewVideos } from "./views-videos.entity";
 import { Check } from "./check.entity";
+import { VideoQualification } from "./video-qualification.entity";
 @Entity('video', { schema: 'academy' })
 export class Video {
 
@@ -62,4 +63,7 @@ export class Video {
 
   @OneToMany(() => Check, check => check.video)
   checks: Check[]
+
+  @OneToMany(() => VideoQualification, videoQualification => videoQualification.video)
+  qualifications: VideoQualification[]
 }
