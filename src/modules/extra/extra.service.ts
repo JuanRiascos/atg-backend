@@ -43,7 +43,7 @@ export class ExtraService {
   }
 
   async addExtraRep(data: ExtraDto, fileUrl: string) {
-    const { courseId, title, type, free, typeDoc, richText } = data
+    const { courseId, title, type, free, typeDoc, richText, authorizedSendEmail } = data
 
     let count = await this.extraRepsRepository.createQueryBuilder('extra')
       .orderBy('extra.order', 'ASC')
@@ -67,6 +67,7 @@ export class ExtraService {
         title,
         type,
         free,
+        authorizedSendEmail,
         typeDoc,
         order: (count + 1),
         course: { id: courseId }

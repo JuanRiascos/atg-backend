@@ -13,6 +13,10 @@ export class CaseDto {
   @IsOptional()
   free: boolean
 
+  @IsBoolean()
+  @IsOptional()
+  authorizedSendEmail: boolean
+
   @IsString()
   typeDoc: string
 
