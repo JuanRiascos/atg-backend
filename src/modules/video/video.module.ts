@@ -3,6 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { Client } from 'src/entities/client/client.entity';
 import { Video } from 'src/entities/academy/video.entity';
+import { VideoQualification } from 'src/entities/academy/video-qualification.entity';
 import { PlaylistService } from './services/playlist.service';
 import { VideoController } from './video.controller';
 import { VideoService } from './services/video.service';
@@ -20,7 +21,8 @@ import { CheckService } from './services/check.service';
       ExtraReps,
       CaseStudies,
       ViewVideos,
-      Check
+      Check,
+      VideoQualification
     ]),
     HttpModule
   ],
