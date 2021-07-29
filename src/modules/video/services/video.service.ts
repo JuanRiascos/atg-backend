@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpService, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { VideoQualification } from 'src/entities/academy/video-qualification.entity';
 import { Video } from 'src/entities/academy/video.entity';
@@ -13,16 +13,51 @@ export class VideoService {
     @InjectRepository(Video) private readonly videoRepository: Repository<Video>,
     @InjectRepository(ViewVideos) private readonly viewRepository: Repository<ViewVideos>,
     @InjectRepository(VideoQualification) private readonly videoQualificationRepository: Repository<VideoQualification>,
+    private readonly httpService: HttpService,
   ) { }
 
-  async getVideosCourse(courseId: number) {
+  async getLastVideos(clientId: number) {
     let videos
     try {
       videos = await this.videoRepository.createQueryBuilder('video')
-        .innerJoin('video.course', 'course', 'course.id = :courseId', { courseId })
+        .select(['video.id', 'video.title', 'video.subtitle', 'video.description', 'video.duration',
+          'video.image', 'video.url', 'video.free', 'video.order'
+        ])
+        .addSelect(['view.id', 'view.first', 'client.id'])
+        .addSelect(['course.id', 'course.color', 'course.title'])
+        .leftJoin('video.clients', 'client', 'client.id = :clientId', { clientId })
+        .leftJoin('video.views', 'view', 'view.first = true')
+        .innerJoin('video.course', 'course')
+        .orderBy('video.id', 'DESC')
+        .limit(5)
         .getMany()
     } catch (error) {
       return { error }
+    }
+
+    for (const video of videos) {
+      if (video.url) {
+        let response
+        try {
+          response = await this.httpService.get(
+            `https://api.vimeo.com/videos/${video?.url?.split('/')[3]?.toString()}`,
+            {
+              headers: {
+                'Authorization': `bearer cfa08e688690c7a6d1297b46e953a795`,
+                'Content-Type': `application/json`,
+                'Accept': `application/vnd.vimeo.*+json;version=3.4`
+              }
+            }
+          ).toPromise()
+        } catch (error) {
+
+        }
+
+        const data = await response?.data
+        let file = data?.files[0]
+
+        video['file'] = file
+      }
     }
 
     return videos

@@ -106,8 +106,7 @@ export class FindService {
         video['file'] = file
       }
     }
-
-
+    
     return course
   }
 }
