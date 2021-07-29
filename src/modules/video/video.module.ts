@@ -14,7 +14,8 @@ import { ViewVideos } from 'src/entities/academy/views-videos.entity';
 import { Check } from 'src/entities/academy/check.entity';
 import { CheckService } from './services/check.service';
 import { CheckClient } from 'src/entities/academy/check-client.entity';
- 
+import { Playlist } from 'src/entities/academy/playlist.entity';
+
 @Module({
   imports: [
     TypeOrmModule.forFeature([
@@ -25,7 +26,8 @@ import { CheckClient } from 'src/entities/academy/check-client.entity';
       ViewVideos,
       Check,
       VideoQualification,
-      CheckClient
+      CheckClient,
+      Playlist
     ]),
     HttpModule
   ],
