@@ -127,9 +127,10 @@ export class CheckService {
   async getCheckByVideo(videoId, clientId) {
     const videoChecks: any = await this.videoRepository.createQueryBuilder("video")
     .select(['video.id'])
-    .addSelect(['client.id'])
-    .innerJoinAndSelect('video.checks', 'checks')
-    .leftJoin('checks.clients', 'client', 'client.id = :clientId', { clientId })
+    .addSelect(['checks.id', 'checks.description'])
+    .addSelect(['checkClients.id'])
+    .innerJoin('video.checks', 'checks')
+    .leftJoin('checks.clients', 'checkClients', 'checkClients.client.id = :clientId', { clientId })
     .orderBy('checks.order', 'ASC')
     .where("video.id = :videoId", { videoId })
     .getOne()
@@ -141,7 +142,7 @@ export class CheckService {
       return {
         id: item.id, 
         description: item.description,
-        checkClient: item.clients.length > 0
+        checkClient: item.clients?.length > 0
       }
     })
   }

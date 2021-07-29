@@ -19,6 +19,6 @@ export class Check {
   @JoinColumn({ name: 'fk_video' })
   video: Video
 
-  @OneToMany(() => CheckClient, checkClient => checkClient.client)
+  @OneToMany(() => CheckClient, checkClient => checkClient.check)
   clients: CheckClient[]
 }
