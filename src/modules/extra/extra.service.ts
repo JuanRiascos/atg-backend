@@ -17,13 +17,15 @@ export class ExtraService {
     let extra
     try {
       extra = await this.extraRepsRepository.createQueryBuilder('extra')
-        .innerJoinAndSelect('extra.course', 'course')
         .leftJoinAndSelect('extra.clients', 'client', 'client.id = :clientId', { clientId })
         .where('extra.id = :extraId', { extraId })
         .getOne()
     } catch (error) {
       return { error }
     }
+
+    if (!extra)
+      return { error: 'NOT_FOUND' }
 
     return extra
   }

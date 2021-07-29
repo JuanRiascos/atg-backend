@@ -75,12 +75,14 @@ export class AssessmentService {
     try {
       assessment = await this.assessmentRepository.createQueryBuilder('assessment')
         .addSelect(['course.title', 'course.color'])
+        .addSelect(['question.id', 'question.description', 'question.order', 'question.multiple'])
+        .addSelect(['answer.id', 'answer.description', 'answer.correct', 'answer.order'])
         .innerJoin('assessment.course', 'course')
-        .leftJoinAndSelect('assessment.questions', 'questions')
-        .leftJoinAndSelect('questions.answers', 'answers')
+        .leftJoin('assessment.questions', 'question')
+        .leftJoin('question.answers', 'answer')
         .where('assessment.id = :assessmentId', { assessmentId })
-        .addOrderBy('questions.order', 'ASC')
-        .addOrderBy('answers.order', 'ASC')
+        .addOrderBy('question.order', 'ASC')
+        .addOrderBy('answer.order', 'ASC')
         .getOne()
 
       let trys = await this.tryRepository.createQueryBuilder('try')
@@ -230,11 +232,13 @@ export class AssessmentService {
     try {
       let assessment = await this.assessmentRepository.createQueryBuilder('assessment')
         .select('assessment.id')
-        .leftJoinAndSelect('assessment.questions', 'questions')
-        .leftJoinAndSelect('questions.answers', 'answers')
+        .addSelect(['question.id', 'question.description', 'question.order', 'question.multiple'])
+        .addSelect(['answer.id', 'answer.description', 'answer.correct', 'answer.order'])
+        .leftJoin('assessment.questions', 'question')
+        .leftJoin('question.answers', 'answer')
         .where('assessment.id = :assessmentId', { assessmentId })
-        .addOrderBy('questions.order', 'ASC')
-        .addOrderBy('answers.order', 'ASC')
+        .addOrderBy('question.order', 'ASC')
+        .addOrderBy('answer.order', 'ASC')
         .getOne()
 
       let trys = await this.tryRepository.createQueryBuilder('try')
@@ -362,64 +366,5 @@ export class AssessmentService {
     var file = XLSX.writeFile(wb, fileName, { bookType: 'xlsx' })
 
     return { file, fileName }
-  }
-
-  async getReportTest() {
-    const assessments = await this.assessmentRepository.createQueryBuilder('assessment')
-      .select(['assessment.id', 'assessment.title'])
-      .addSelect(['course.id', 'course.title'])
-      .addSelect(['question.id', 'question.description'])
-      .addSelect(['answer.id', 'answer.description'])
-      .innerJoin('assessment.course', 'course')
-      .innerJoin('assessment.questions', 'question')
-      .innerJoin('question.answers', 'answer')
-      .orderBy('assessment.title', 'ASC')
-      .addOrderBy('question.order', 'ASC')
-      .addOrderBy('answer.order', 'ASC')
-      .getMany()
-
-    let response = []
-
-    for (const assessment of assessments) {
-
-      let data = {
-        assessment: assessment.title,
-        questions: []
-      }
-
-      for (const question of assessment.questions) {
-
-        const quantityResponseQuestion = await this.responseRepository.createQueryBuilder('response')
-          .innerJoin('response.question', 'question',
-            'question.id = :questionId', { questionId: question.id })
-          .getCount()
-
-        let answersData = []
-
-        for (const answer of question.answers) {
-          let quantityResponse = await this.responseRepository.createQueryBuilder('response')
-            .addSelect('answer.description')
-            .innerJoin('response.question', 'question',
-              'question.id = :questionId', { questionId: question.id })
-            .innerJoin('response.answers', 'answer',
-              'answer.id = :answerId', { answerId: answer.id })
-            .getCount()
-
-          answersData.push({
-            answer: answer.description,
-            percentage: ((quantityResponse / quantityResponseQuestion) * 100).toPrecision(3)
-          })
-        }
-
-        data.questions.push({
-          question: question.description,
-          answers: answersData
-        })
-      }
-
-      response.push(data)
-    }
-
-    return response
   }
 }

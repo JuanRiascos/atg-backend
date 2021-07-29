@@ -17,13 +17,15 @@ export class CaseService {
     let caseStudy
     try {
       caseStudy = await this.caseRepository.createQueryBuilder('case')
-        .innerJoinAndSelect('case.course', 'course')
         .leftJoinAndSelect('case.clients', 'client', 'client.id = :clientId', { clientId })
         .where('case.id = :caseId', { caseId })
         .getOne()
     } catch (error) {
       return { error }
     }
+
+    if (!caseStudy)
+      return { error: 'NOT_FOUND' }
 
     return caseStudy
   }
