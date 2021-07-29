@@ -96,7 +96,7 @@ export class PlaylistService {
   async videosPlayList(clientId: number, courseId?: number, searchTerm?: string) {
     let query = await this.videoRepository.createQueryBuilder('video')
       .addSelect(['client.id'])
-      .innerJoin('video.playlist', 'playlist', 'playlist.fk_client = :clientId', { clientId })
+      .innerJoin('video.clients', 'client', 'client.id = :clientId', { clientId })
 
     if (courseId)
       await query.innerJoinAndSelect('video.course', 'course', 'course.id = :courseId', { courseId })
