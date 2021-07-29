@@ -75,13 +75,13 @@ export class Client {
   @OneToMany(() => Subscription, subscription => subscription.client)
   subscriptions: Subscription[];
 
-  @OneToMany(() => Playlist, playlist => playlist.client)
-  playlist: Playlist[];
+  /* @OneToMany(() => Playlist, playlist => playlist.client)
+  playlist: Playlist[]; */
 
-  /* @ManyToMany(type => Video, video => video.clients, {
+  @ManyToMany(type => Video, video => video.clients, {
     onDelete: 'CASCADE', onUpdate: 'CASCADE'
   })
-  videos: Video[]; */
+  videos: Video[];
 
   @ManyToMany(type => CaseStudies, caseStudies => caseStudies.clients, {
     onDelete: 'CASCADE', onUpdate: 'CASCADE'

@@ -26,24 +26,19 @@ export class PlaylistService {
 
     let client = await this.clientRepository.findOne(clientId)
 
-    let video = await this.videoRepository.findOne(videoId)
-
-    const videoUserOnPlaylist = await this.playlistRepository.findOne(videoId, {
-      relations: ['client', "video"],
-      where: { video, client }
+    let video = await this.videoRepository.findOne(videoId, {
+      relations: ['clients']
     })
 
-    if (!videoUserOnPlaylist) {
-      await this.playlistRepository.save({ statePlaylist: StatePlaylist.Active, client, video })
-      return { success: 'OK' }
-    }
-
-    if (videoUserOnPlaylist.statePlaylist == StatePlaylist.Active)
-      await this.playlistRepository.update(videoUserOnPlaylist.id, { statePlaylist: StatePlaylist.Inactive })
+    if (video?.clients?.some((client) => client.id == clientId))
+      video.clients = video?.clients?.filter((client) => client.id !== clientId)
     else
-      await this.playlistRepository.update(videoUserOnPlaylist.id, { statePlaylist: StatePlaylist.Active })
+      video.clients = [...video?.clients, client]
+
+    await this.videoRepository.save(video)
 
     return { success: 'OK' }
+  
   }
 
   async changeCaseStudiesPlayList(clientId: number, caseStudieId: number) {

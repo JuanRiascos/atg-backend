@@ -55,12 +55,12 @@ export class Video {
   @JoinColumn({ name: 'fk_course' })
   course: Course
 
-  /* @ManyToMany(type => Client, client => client.videos)
+  @ManyToMany(type => Client, client => client.videos)
   @JoinTable({ name: 'playlist' })
-  clients: Client[]; */
+  clients: Client[];
 
-  @OneToMany(() => Playlist, playlist => playlist.video)
-  playlist: Playlist[];
+  /* @OneToMany(() => Playlist, playlist => playlist.video)
+  playlist: Playlist[]; */
 
   @OneToMany(() => ViewVideos, view => view.video)
   views: ViewVideos[]

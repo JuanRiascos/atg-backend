@@ -2,7 +2,7 @@ import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "t
 import { StatePlaylist } from "../@enums/index.enum";
 import { Client } from "../client/client.entity";
 import { Video } from "./video.entity";
-@Entity('playlist', { schema: 'academy' })
+@Entity('playlistApp', { schema: 'academy' })
 export class Playlist {
 
   @PrimaryGeneratedColumn({ type: 'bigint' })
@@ -11,7 +11,7 @@ export class Playlist {
   @Column('enum', { enum: StatePlaylist, name: "state_playlist", nullable: true })
   statePlaylist: StatePlaylist
 
-  @ManyToOne(() => Client, client => client.playlist, {
+  /* @ManyToOne(() => Client, client => client.playlist, {
     onDelete: 'CASCADE', onUpdate: 'CASCADE', nullable: true
   })
   @JoinColumn({ name: 'fk_client' })
@@ -21,6 +21,6 @@ export class Playlist {
     onDelete: 'CASCADE', onUpdate: 'CASCADE', nullable: true
   })
   @JoinColumn({ name: 'fk_video' })
-  video: Video;
+  video: Video; */
 
 }
