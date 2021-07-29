@@ -36,7 +36,7 @@ export class VideoCheckController {
   @Post('/answer')
   @UseGuards(AuthGuard('jwt'))
   async answerClient(@Req() req, @Body() body): Promise<ResponseError | ResponseSuccess> {
-    const response = await this.checkService.answerClient(req?.user?.atgAppClientId, body.checkId)
+    const response: any = await this.checkService.answerClient(req?.user?.atgAppClientId, body.checkId)
 
     if(response.error)
       throw new BadRequestException(response)

@@ -11,6 +11,7 @@ import {
 import { States } from "../@enums/index.enum";
 import { AssessmentClientTry } from "../academy/assessment-client-try.entity";
 import { CaseStudies } from "../academy/case-studies.entity";
+import { CheckClient } from "../academy/check-client.entity";
 import { Check } from "../academy/check.entity";
 import { ClientQuestion } from "../academy/client-question.entity";
 import { ExtraReps } from "../academy/extra-reps.entity";
@@ -103,8 +104,6 @@ export class Client {
   @OneToMany(() => VideoQualification, videoQualification => videoQualification.client)
   qualifications: VideoQualification[]
 
-  @ManyToMany(() => Check, check => check.clients, {
-    onDelete: 'CASCADE', onUpdate: 'CASCADE'
-  })
-  checks: Check[]
+  @OneToMany(() => CheckClient, checkClient => checkClient.client)
+  checks: CheckClient[]
 }

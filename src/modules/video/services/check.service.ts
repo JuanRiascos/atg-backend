@@ -1,5 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
+import { CheckClient } from "src/entities/academy/check-client.entity";
 import { Check } from "src/entities/academy/check.entity";
 import { Video } from "src/entities/academy/video.entity";
 import { Client } from "src/entities/client/client.entity";
@@ -13,6 +14,7 @@ export class CheckService {
     @InjectRepository(Check) private readonly checkRepository: Repository<Check>,
     @InjectRepository(Video) private readonly videoRepository: Repository<Video>,
     @InjectRepository(Client) private readonly clientRepository: Repository<Client>,
+    @InjectRepository(CheckClient) private readonly checkClientRepository: Repository<CheckClient>,
   ) { }
 
   async addCheck(body: CheckDto) {
@@ -88,11 +90,35 @@ export class CheckService {
 
   async answerClient(clientId, checkId) {
     try {
-      await this.clientRepository.save({
-        id: clientId,
-        checks: [checkId]
+      const check = await this.checkRepository.createQueryBuilder('check')
+      .select(['check.id'])
+      .addSelect(['video.id'])
+      .innerJoin('check.video', 'video')
+      .where('check.id = :checkId', { checkId })
+      .getOne()
+      
+      if(check.video){
+        const findLastAnswer = await this.checkRepository.createQueryBuilder('check')
+        .innerJoin('check.video', 'video')
+        .where('video.id = :videoId', { videoId: check.video.id })
+        .getMany()
+  
+        if(findLastAnswer?.length > 0){
+          for (const lastAnswer of findLastAnswer) {
+            await this.checkClientRepository.delete({
+              client: { id: clientId },
+              check: { id: lastAnswer.id }
+            })
+          }
+        }
+      }
+      
+      await this.checkClientRepository.save({
+        client: { id: clientId },
+        check: { id: checkId }
       })
-      return { success: 'OK' }
+      
+      return 'OK'
     } catch (error) {
       return { error }
     }
