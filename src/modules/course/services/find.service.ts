@@ -16,7 +16,7 @@ export class FindService {
     try {
       let query = this.courseRepository.createQueryBuilder('course')
         .select(['course.id', 'course.title', 'course.cover',
-          'course.color', 'course.image'])
+          'course.color', 'course.image', 'course.icon'])
       if (!clientId)
         query.addSelect(['course.iconReps', 'course.iconCases', 'course.subtitle'])
       query.addOrderBy('course.id', 'DESC')
@@ -34,7 +34,7 @@ export class FindService {
     try {
       let query = this.courseRepository.createQueryBuilder('course')
         .select(['course.id', 'course.title', 'course.subtitle',
-          'course.color', 'course.image', 'course.iconReps', 'course.iconCases'])
+          'course.color', 'course.image', 'course.icon', 'course.iconReps', 'course.iconCases'])
         .addSelect(['extraRep.id', 'extraRep.title', 'extraRep.type', 'extraRep.typeDoc',
           'extraRep.fileUrl', 'extraRep.richText', 'extraRep.free', 'extraRep.order', 'extraRep.authorizedSendEmail'
         ])
@@ -48,7 +48,7 @@ export class FindService {
         .leftJoin('course.extraReps', 'extraRep')
         .leftJoin('course.caseStudies', 'caseStudie')
         .leftJoin('course.videos', 'video')
-        .leftJoinAndSelect('video.checks', 'check')
+        .leftJoin('video.checks', 'check')
       if (!clientId) {
         query.addSelect(['assessment.id', 'assessment.title', 'assessment.description', 'assessment.duration',
           'assessment.instructions', 'assessment.free'
@@ -63,7 +63,6 @@ export class FindService {
         query.leftJoinAndSelect('extraRep.clients', 'clientExtraReps', 'clientExtraReps.id = :clientId', { clientId })
           .leftJoinAndSelect('caseStudie.clients', 'clientCaseStudies', 'clientCaseStudies.id = :clientId', { clientId })
           .leftJoinAndSelect('video.clients', 'client', 'client.id = :clientId', { clientId })
-          .leftJoinAndSelect('check.clients', 'clients', 'client.id = :clientId', { clientId })
       }
       query.where('course.id = :courseId', { courseId })
         .addOrderBy('caseStudie.order', 'ASC')

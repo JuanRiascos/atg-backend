@@ -30,6 +30,9 @@ export class Course {
   image: string
 
   @Column('character varying', { nullable: true })
+  icon: string
+
+  @Column('character varying', { nullable: true })
   iconReps: string
 
   @Column('character varying', { nullable: true })
