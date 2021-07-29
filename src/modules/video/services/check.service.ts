@@ -129,10 +129,13 @@ export class CheckService {
     .select(['video.id'])
     .addSelect(['client.id'])
     .innerJoinAndSelect('video.checks', 'checks')
-    .leftJoin('checks.clients', 'client', 'client.id = :clientId', { clientId })
+    .leftJoin('checks.clients', 'checkClients')
+    .leftJoin('checkClients.client', 'client', 'client.id = :clientId', { clientId })
     .orderBy('checks.order', 'ASC')
     .where("video.id = :videoId", { videoId })
     .getOne()
+    
+    console.log(videoChecks);
     
     if(!videoChecks)
       return []
