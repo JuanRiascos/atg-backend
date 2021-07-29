@@ -48,3 +48,8 @@ export enum StateTry {
   Started = 'started',
   Finished = 'finished'
 }
+
+export enum StatePlaylist {
+  Active = "active",
+  Inactive = "inactive"
+}

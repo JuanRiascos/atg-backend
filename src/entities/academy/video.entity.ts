@@ -14,6 +14,7 @@ import { Assessment } from "./assessment.entity";
 import { Course } from "./course.entity";
 import { ViewVideos } from "./views-videos.entity";
 import { Check } from "./check.entity";
+import { Playlist } from "./playlist.entity";
 @Entity('video', { schema: 'academy' })
 export class Video {
 
@@ -53,9 +54,12 @@ export class Video {
   @JoinColumn({ name: 'fk_course' })
   course: Course
 
-  @ManyToMany(type => Client, client => client.videos)
+  /* @ManyToMany(type => Client, client => client.videos)
   @JoinTable({ name: 'playlist' })
-  clients: Client[];
+  clients: Client[]; */
+
+  @OneToMany(() => Playlist, playlist => playlist.video)
+  playlist: Playlist[];
 
   @OneToMany(() => ViewVideos, view => view.video)
   views: ViewVideos[]

@@ -6,6 +6,8 @@ import { Video } from 'src/entities/academy/video.entity';
 import { Client } from 'src/entities/client/client.entity';
 import { ExtraReps } from 'src/entities/academy/extra-reps.entity';
 import { CaseStudies } from 'src/entities/academy/case-studies.entity';
+import { Playlist } from 'src/entities/academy/playlist.entity';
+import { StatePlaylist } from 'src/entities/@enums/index.enum';
 
 @Injectable()
 export class PlaylistService {
@@ -15,6 +17,7 @@ export class PlaylistService {
     @InjectRepository(ExtraReps) private readonly extraRepsRepository: Repository<ExtraReps>,
     @InjectRepository(CaseStudies) private readonly caseStudiesRepository: Repository<CaseStudies>,
     @InjectRepository(Client) private readonly clientRepository: Repository<Client>,
+    @InjectRepository(Playlist) private readonly playlistRepository: Repository<Playlist>,
     private readonly httpService: HttpService
   ) {
   }
@@ -23,16 +26,22 @@ export class PlaylistService {
 
     let client = await this.clientRepository.findOne(clientId)
 
-    let video = await this.videoRepository.findOne(videoId, {
-      relations: ['clients']
+    let video = await this.videoRepository.findOne(videoId)
+
+    const videoUserOnPlaylist = await this.playlistRepository.findOne(videoId, {
+      relations: ['client', "video"],
+      where: { video, client }
     })
 
-    if (video?.clients?.some((client) => client.id == clientId))
-      video.clients = video?.clients?.filter((client) => client.id !== clientId)
-    else
-      video.clients = [...video?.clients, client]
+    if (!videoUserOnPlaylist) {
+      await this.playlistRepository.save({ statePlaylist: StatePlaylist.Active, client, video })
+      return { success: 'OK' }
+    }
 
-    await this.videoRepository.save(video)
+    if (videoUserOnPlaylist.statePlaylist == StatePlaylist.Active)
+      await this.playlistRepository.update(videoUserOnPlaylist.id, { statePlaylist: StatePlaylist.Inactive })
+    else
+      await this.playlistRepository.update(videoUserOnPlaylist.id, { statePlaylist: StatePlaylist.Active })
 
     return { success: 'OK' }
   }
@@ -92,7 +101,7 @@ export class PlaylistService {
   async videosPlayList(clientId: number, courseId?: number, searchTerm?: string) {
     let query = await this.videoRepository.createQueryBuilder('video')
       .addSelect(['client.id'])
-      .innerJoin('video.clients', 'client', 'client.id = :clientId', { clientId })
+      .innerJoin('video.playlist', 'playlist', 'playlist.fk_client = :clientId', { clientId })
 
     if (courseId)
       await query.innerJoinAndSelect('video.course', 'course', 'course.id = :courseId', { courseId })

@@ -15,6 +15,7 @@ import { Check } from "../academy/check.entity";
 import { ClientQuestion } from "../academy/client-question.entity";
 import { ExtraReps } from "../academy/extra-reps.entity";
 import { Interest } from "../academy/interest.entity";
+import { Playlist } from "../academy/playlist.entity";
 import { Video } from "../academy/video.entity";
 import { ViewCaseStudies } from "../academy/views-case-studies.entity";
 import { ViewExtraReps } from "../academy/views-extra-reps.entity";
@@ -72,10 +73,13 @@ export class Client {
   @OneToMany(() => Subscription, subscription => subscription.client)
   subscriptions: Subscription[];
 
-  @ManyToMany(type => Video, video => video.clients, {
+  @OneToMany(() => Playlist, playlist => playlist.client)
+  playlist: Playlist[];
+
+  /* @ManyToMany(type => Video, video => video.clients, {
     onDelete: 'CASCADE', onUpdate: 'CASCADE'
   })
-  videos: Video[];
+  videos: Video[]; */
 
   @ManyToMany(type => CaseStudies, caseStudies => caseStudies.clients, {
     onDelete: 'CASCADE', onUpdate: 'CASCADE'

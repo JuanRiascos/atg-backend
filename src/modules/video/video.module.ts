@@ -11,6 +11,7 @@ import { CaseStudies } from 'src/entities/academy/case-studies.entity';
 import { ViewVideos } from 'src/entities/academy/views-videos.entity';
 import { Check } from 'src/entities/academy/check.entity';
 import { CheckService } from './services/check.service';
+import { Playlist } from 'src/entities/academy/playlist.entity';
 
 @Module({
   imports: [
@@ -20,7 +21,8 @@ import { CheckService } from './services/check.service';
       ExtraReps,
       CaseStudies,
       ViewVideos,
-      Check
+      Check,
+      Playlist
     ]),
     HttpModule
   ],
