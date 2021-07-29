@@ -47,7 +47,7 @@ export class FindService {
       if (clientId) {
         query.leftJoinAndSelect('extraReps.clients', 'clientExtraReps', 'clientExtraReps.id = :clientId', { clientId })
           .leftJoinAndSelect('caseStudies.clients', 'clientCaseStudies', 'clientCaseStudies.id = :clientId', { clientId })
-          .leftJoinAndSelect('video.playlist', 'playlist', 'playlist.fk_client = :clientId', { clientId })
+          .leftJoinAndSelect('videos.clients', 'client', 'client.id = :clientId', { clientId })
           .leftJoinAndSelect('checks.clients', 'clients', 'client.id = :clientId', { clientId })
       }
       query.where('course.id = :courseId', { courseId })
