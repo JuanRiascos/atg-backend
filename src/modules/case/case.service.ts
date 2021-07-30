@@ -30,11 +30,18 @@ export class CaseService {
     return caseStudy
   }
 
-  async getCases(courseId: number) {
+  async getLastCases(clientId: number) {
     let cases
     try {
       cases = await this.caseRepository.createQueryBuilder('case')
-        .innerJoin('case.course', 'course', 'course.id = :courseId', { courseId })
+        .select(['case.id', 'case.title', 'case.free'])
+        .addSelect(['view.id', 'view.first', 'client.id'])
+        .addSelect(['course.id', 'course.color', 'course.iconCases'])
+        .leftJoin('case.clients', 'client', 'client.id = :clientId', { clientId })
+        .leftJoin('case.views', 'view', 'view.first = true')
+        .innerJoin('case.course', 'course')
+        .orderBy('case.id', 'DESC')
+        .limit(5)
         .getMany()
     } catch (error) {
       return { error }

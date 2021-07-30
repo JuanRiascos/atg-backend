@@ -31,11 +31,18 @@ export class ExtraService {
   }
 
 
-  async getExtraReps(courseId: number) {
+  async getLastExtras(clientId: number) {
     let extraReps
     try {
       extraReps = await this.extraRepsRepository.createQueryBuilder('extra')
-        .innerJoin('extra.course', 'course', 'course.id = :courseId', { courseId })
+        .select(['extra.id', 'extra.title', 'extra.type', 'extra.free'])
+        .addSelect(['view.id', 'view.first', 'client.id'])
+        .addSelect(['course.id', 'course.color', 'course.iconReps'])
+        .leftJoin('extra.clients', 'client', 'client.id = :clientId', { clientId })
+        .leftJoin('extra.views', 'view', 'view.first = true')
+        .innerJoin('extra.course', 'course')
+        .orderBy('extra.id', 'DESC')
+        .limit(5)
         .getMany()
     } catch (error) {
       return { error }
