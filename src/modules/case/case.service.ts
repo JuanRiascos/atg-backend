@@ -30,17 +30,21 @@ export class CaseService {
     return caseStudy
   }
 
-  async getLastCases(clientId: number) {
+  async getLastCases(clientId: number, params?: any) {
+    const { searchTerm } = params
     let cases
     try {
-      cases = await this.caseRepository.createQueryBuilder('case')
+      let query = this.caseRepository.createQueryBuilder('case')
         .select(['case.id', 'case.title', 'case.free'])
-        .addSelect(['view.id', 'view.first', 'client.id'])
+        .addSelect(['client.id'])
         .addSelect(['course.id', 'course.color', 'course.iconCases'])
         .leftJoin('case.clients', 'client', 'client.id = :clientId', { clientId })
-        .leftJoin('case.views', 'view', 'view.first = true')
         .innerJoin('case.course', 'course')
-        .orderBy('case.id', 'DESC')
+
+      if (searchTerm)
+        query.where('case.title ILIKE :searchTerm', { searchTerm: `%${searchTerm}%` })
+
+      cases = await query.orderBy('case.id', 'DESC')
         .limit(5)
         .getMany()
     } catch (error) {

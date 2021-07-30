@@ -16,10 +16,11 @@ export class VideoService {
     private readonly httpService: HttpService,
   ) { }
 
-  async getLastVideos(clientId: number) {
+  async getLastVideos(clientId: number, params?: any) {
+    const { searchTerm } = params
     let videos
     try {
-      videos = await this.videoRepository.createQueryBuilder('video')
+      let query = this.videoRepository.createQueryBuilder('video')
         .select(['video.id', 'video.title', 'video.subtitle', 'video.description', 'video.duration',
           'video.image', 'video.url', 'video.free', 'video.order'
         ])
@@ -28,6 +29,10 @@ export class VideoService {
         .leftJoin('video.clients', 'client', 'client.id = :clientId', { clientId })
         .leftJoin('video.views', 'view', 'view.first = true')
         .innerJoin('video.course', 'course')
+      if (searchTerm)
+        query.where('video.title ILIKE :searchTerm', { searchTerm: `%${searchTerm}%` })
+
+      videos = await query
         .orderBy('video.id', 'DESC')
         .limit(5)
         .getMany()

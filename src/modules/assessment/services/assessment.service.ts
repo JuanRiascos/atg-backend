@@ -23,6 +23,31 @@ export class AssessmentService {
     @InjectRepository(Answer) private readonly answerRepository: Repository<Answer>
   ) { }
 
+  async getLastAssessments(clientId: number, params?: any) {
+    const { searchTerm } = params
+
+    let assessments
+    try {
+      let query = this.assessmentRepository.createQueryBuilder('assessment')
+        .select(['assessment.id', 'assessment.title', 'assessment.free'])
+        /* .addSelect(['client.id']) */
+        .addSelect(['course.id', 'course.color'])
+        /* .leftJoin('assessment.clients', 'client', 'client.id = :clientId', { clientId }) */
+        .innerJoin('assessment.course', 'course')
+
+      if (searchTerm)
+        query.where('assessment.title ILIKE :searchTerm', { searchTerm: `%${searchTerm}%` })
+
+      assessments = await query.orderBy('assessment.id', 'DESC')
+        .limit(5)
+        .getMany()
+    } catch (error) {
+      return { error }
+    }
+
+    return assessments
+  }
+
   async getAssessments(clientId: number) {
     let assessments
     try {

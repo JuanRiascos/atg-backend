@@ -31,17 +31,22 @@ export class ExtraService {
   }
 
 
-  async getLastExtras(clientId: number) {
+  async getLastExtras(clientId: number, params?: any) {
+    const { searchTerm } = params
+
     let extraReps
     try {
-      extraReps = await this.extraRepsRepository.createQueryBuilder('extra')
+      let query = this.extraRepsRepository.createQueryBuilder('extra')
         .select(['extra.id', 'extra.title', 'extra.type', 'extra.free'])
-        .addSelect(['view.id', 'view.first', 'client.id'])
+        .addSelect(['client.id'])
         .addSelect(['course.id', 'course.color', 'course.iconReps'])
         .leftJoin('extra.clients', 'client', 'client.id = :clientId', { clientId })
-        .leftJoin('extra.views', 'view', 'view.first = true')
         .innerJoin('extra.course', 'course')
-        .orderBy('extra.id', 'DESC')
+
+      if (searchTerm)
+        query.where('extra.title ILIKE :searchTerm', { searchTerm: `%${searchTerm}%` })
+
+      extraReps = await query.orderBy('extra.id', 'DESC')
         .limit(5)
         .getMany()
     } catch (error) {

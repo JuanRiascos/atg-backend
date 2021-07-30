@@ -30,8 +30,8 @@ export class ExtraController {
   @Get('/last')
   @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Roles(roles.CLIENT)
-  async getLastExtras(@Req() req): Promise<ResponseError | ResponseSuccess> {
-    const response: any = await this.extraService.getLastExtras(req?.user?.atgAppClientId)
+  async getLastExtras(@Req() req, @Query() params): Promise<ResponseError | ResponseSuccess> {
+    const response: any = await this.extraService.getLastExtras(req?.user?.atgAppClientId, params)
 
     if (response.error)
       throw new BadRequestException(response)

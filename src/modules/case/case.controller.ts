@@ -30,8 +30,8 @@ export class CaseController {
   @Get('/last')
   @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Roles(roles.CLIENT)
-  async getLastCases(@Req() req): Promise<ResponseError | ResponseSuccess> {
-    const response: any = await this.caseService.getLastCases(req?.user?.atgAppClientId)
+  async getLastCases(@Req() req, @Query() params): Promise<ResponseError | ResponseSuccess> {
+    const response: any = await this.caseService.getLastCases(req?.user?.atgAppClientId, params)
 
     if (response.error)
       throw new BadRequestException(response)
