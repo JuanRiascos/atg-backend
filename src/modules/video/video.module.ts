@@ -15,6 +15,7 @@ import { Check } from 'src/entities/academy/check.entity';
 import { CheckService } from './services/check.service';
 import { CheckClient } from 'src/entities/academy/check-client.entity';
 import { Playlist } from 'src/entities/academy/playlist.entity';
+import { Course } from 'src/entities/academy/course.entity';
 
 @Module({
   imports: [
@@ -27,7 +28,8 @@ import { Playlist } from 'src/entities/academy/playlist.entity';
       Check,
       VideoQualification,
       CheckClient,
-      Playlist
+      Playlist,
+      Course
     ]),
     HttpModule
   ],

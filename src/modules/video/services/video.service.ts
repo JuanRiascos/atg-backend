@@ -1,5 +1,6 @@
 import { HttpService, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { Course } from 'src/entities/academy/course.entity';
 import { VideoQualification } from 'src/entities/academy/video-qualification.entity';
 import { Video } from 'src/entities/academy/video.entity';
 import { ViewVideos } from 'src/entities/academy/views-videos.entity';
@@ -11,6 +12,7 @@ export class VideoService {
 
   constructor(
     @InjectRepository(Video) private readonly videoRepository: Repository<Video>,
+    @InjectRepository(Course) private readonly courseRepository: Repository<Course>,
     @InjectRepository(ViewVideos) private readonly viewRepository: Repository<ViewVideos>,
     @InjectRepository(VideoQualification) private readonly videoQualificationRepository: Repository<VideoQualification>,
     private readonly httpService: HttpService,
@@ -35,6 +37,62 @@ export class VideoService {
       videos = await query
         .orderBy('video.id', 'DESC')
         .limit(5)
+        .getMany()
+    } catch (error) {
+      return { error }
+    }
+
+    for (const video of videos) {
+      if (video.url) {
+        let response
+        try {
+          response = await this.httpService.get(
+            `https://api.vimeo.com/videos/${video?.url?.split('/')[3]?.toString()}`,
+            {
+              headers: {
+                'Authorization': `bearer cfa08e688690c7a6d1297b46e953a795`,
+                'Content-Type': `application/json`,
+                'Accept': `application/vnd.vimeo.*+json;version=3.4`
+              }
+            }
+          ).toPromise()
+        } catch (error) {
+
+        }
+
+        const data = await response?.data
+        let file = data?.files[0]
+
+        video['file'] = file
+      }
+    }
+
+    return videos
+  }
+
+  async getVideosByCategory(clientId: number, params?: any) {
+    const { searchTerm, courseId } = params
+    let videos
+    try {
+      let query = this.courseRepository.createQueryBuilder('course')
+        .select(['course.id', 'course.title', 'course.color'])
+        .addSelect(['video.id', 'video.title', 'video.subtitle', 'video.description', 'video.duration',
+          'video.image', 'video.url', 'video.free', 'video.order'
+        ])
+        .addSelect(['view.id', 'view.first', 'client.id'])
+        .addSelect(['courseTwo.id', 'courseTwo.color', 'courseTwo.title'])
+        .innerJoin('course.videos', 'video')
+        .leftJoin('video.clients', 'client', 'client.id = :clientId', { clientId })
+        .leftJoin('video.views', 'view', 'view.first = true')
+      if (courseId)
+        query.innerJoin('video.course', 'courseTwo', 'courseTwo.id = :courseId', { courseId })
+      else
+        query.innerJoin('video.course', 'courseTwo')
+      if (searchTerm)
+        query.where('video.title ILIKE :searchTerm', { searchTerm: `%${searchTerm}%` })
+
+      videos = await query
+        .orderBy('video.order', 'ASC')
         .getMany()
     } catch (error) {
       return { error }

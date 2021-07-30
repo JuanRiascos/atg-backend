@@ -47,6 +47,18 @@ export class VideoController {
     return { success: 'OK', payload: response }
   }
 
+  @Get('/by-category')
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Roles(roles.CLIENT)
+  async getVideosByCategory(@Req() req, @Query() params): Promise<ResponseError | ResponseSuccess> {
+    const response: any = await this.videoService.getVideosByCategory(req?.user?.atgAppClientId, params)
+
+    if (response.error)
+      throw new BadRequestException(response)
+
+    return { success: 'OK', payload: response }
+  }
+
   @Get('/top')
   @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Roles(roles.ADMIN)
