@@ -10,6 +10,10 @@ import { Person } from "src/entities/user/person.entity";
 import { States, StateSubscription } from "src/entities/@enums/index.enum";
 import { Client } from "src/entities/client/client.entity";
 import { ViewVideos } from "src/entities/academy/views-videos.entity";
+import { ViewCaseStudies } from "src/entities/academy/views-case-studies.entity";
+import { ViewExtraReps } from "src/entities/academy/views-extra-reps.entity";
+import { SessionClient } from "src/entities/client/session-client.entity";
+import moment = require('moment');
 
 @Injectable()
 export class PersonService {
@@ -17,7 +21,10 @@ export class PersonService {
     @InjectRepository(User) private readonly userRepository: Repository<User>,
     @InjectRepository(Person) private readonly personRepository: Repository<Person>,
     @InjectRepository(Client) private readonly clientRepository: Repository<Client>,
-    @InjectRepository(ViewVideos) private readonly viewRepository: Repository<ViewVideos>,
+    @InjectRepository(ViewVideos) private readonly viewVideosRepository: Repository<ViewVideos>,
+    @InjectRepository(ViewCaseStudies) private readonly viewCasesRepository: Repository<ViewCaseStudies>,
+    @InjectRepository(ViewExtraReps) private readonly viewExtrasRepository: Repository<ViewExtraReps>,
+    @InjectRepository(SessionClient) private readonly sessionRepository: Repository<SessionClient>,
     private readonly sendgridService: SendgridService,
   ) { }
 
@@ -43,14 +50,6 @@ export class PersonService {
     if (!userValidate)
       return { error: 'USER_INACTIVE', message: 'El usuario se encuentra inactivo.' }
 
-    let watched = 0
-    if (clientId) {
-      watched = await this.viewRepository.createQueryBuilder('view')
-        .innerJoin('view.client', 'client', 'client.id = :clientId', { clientId })
-        .where('view.first = true')
-        .getCount()
-    }
-
 
     const atgAppClientId = userValidate?.client?.id
 
@@ -63,7 +62,6 @@ export class PersonService {
       ...userValidate?.person,
       ...userValidate?.client,
       atgAppClientId,
-      watched,
       stateSubscription: userValidate?.client?.subscriptions?.length > 0 ?
         StateSubscription.Active
         :
@@ -71,6 +69,68 @@ export class PersonService {
     }
 
     return response
+  }
+
+  async getMyAnalytics(clientId: number) {
+    //Videos Watched
+    let [videos, count] = await this.viewVideosRepository.createQueryBuilder('view')
+      .addSelect(['video.id', 'video.duration'])
+      .innerJoin('view.client', 'client', 'client.id = :clientId', { clientId })
+      .innerJoin('view.video', 'video')
+      .where('view.first = true')
+      .getManyAndCount()
+
+    //Watch Time
+    let watchTime = ''
+    let totalSeconds = 0
+    for (const item of videos) {
+      totalSeconds += item.video.duration
+    }
+    let totalMinutes = (totalSeconds / 60)
+    if (totalMinutes >= 60) {
+      let hourTime = Math.floor((totalMinutes / 60))
+      let minutesTime = Math.round(totalMinutes % 60)
+      watchTime = `${hourTime}hr ${minutesTime}min`
+    } else {
+      let minutesTime = Math.floor((totalSeconds / 60))
+      let secondsTime = Math.round(totalSeconds % 60)
+      watchTime = `${minutesTime}min ${secondsTime}secs`
+    }
+
+    //Resources Viewed
+    let casesViewed = await this.viewCasesRepository.createQueryBuilder('view')
+      .innerJoin('view.client', 'client', 'client.id = :clientId', { clientId })
+      .where('view.first = true')
+      .getCount()
+    let extrasViewed = await this.viewExtrasRepository.createQueryBuilder('view')
+      .innerJoin('view.client', 'client', 'client.id = :clientId', { clientId })
+      .where('view.first = true')
+      .getCount()
+    let resourcesViewed = casesViewed + extrasViewed
+
+    //TimeInApp
+    let sessions = await this.sessionRepository.createQueryBuilder('session')
+      .innerJoin('session.client', 'client', 'client.id = :clientId', { clientId })
+      .getMany()
+    let add = 0
+    for (const item of sessions) {
+      if (!item.endTime)
+        continue
+      let endTime = moment(item.endTime, 'HH:mm:ss')
+      let startTime = moment(item.startTime, 'HH:mm:ss')
+      let diff = +Math.abs(moment.duration(endTime.diff(startTime)).as('minutes')).toPrecision(4)
+      add += diff
+    }
+    let hours = Math.floor((add / 60))
+    var minutes = Math.round(add % 60)
+
+    return {
+      videosWatched: count,
+      resourcesViewed,
+      timeInApp: `${hours}hr ${minutes}min`,
+      watchTime
+    }
+
   }
 
   async updatePerson(id: number, body: UpdatePersonDto) {

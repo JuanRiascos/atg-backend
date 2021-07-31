@@ -17,6 +17,9 @@ import { Sport } from 'src/entities/user/sport.entity';
 import { SportService } from './services/sport.service';
 import { ExpoService } from './services/expo.service';
 import { ViewVideos } from 'src/entities/academy/views-videos.entity';
+import { ViewCaseStudies } from 'src/entities/academy/views-case-studies.entity';
+import { ViewExtraReps } from 'src/entities/academy/views-extra-reps.entity';
+import { SessionClient } from 'src/entities/client/session-client.entity';
 
 @Module({
   imports: [
@@ -28,7 +31,10 @@ import { ViewVideos } from 'src/entities/academy/views-videos.entity';
       Sport,
       UserRole,
       UserPermission,
-      ViewVideos
+      ViewVideos,
+      ViewCaseStudies,
+      ViewExtraReps,
+      SessionClient,
     ])
   ],
   controllers: [UserController],
