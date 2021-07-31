@@ -17,7 +17,6 @@ export class ExtraService {
     let extra
     try {
       extra = await this.extraRepsRepository.createQueryBuilder('extra')
-        .innerJoinAndSelect('extra.course', 'course')
         .leftJoinAndSelect('extra.clients', 'client', 'client.id = :clientId', { clientId })
         .where('extra.id = :extraId', { extraId })
         .getOne()
@@ -25,15 +24,30 @@ export class ExtraService {
       return { error }
     }
 
+    if (!extra)
+      return { error: 'NOT_FOUND' }
+
     return extra
   }
 
 
-  async getExtraReps(courseId: number) {
+  async getLastExtras(clientId: number, params?: any) {
+    const { searchTerm } = params
+
     let extraReps
     try {
-      extraReps = await this.extraRepsRepository.createQueryBuilder('extra')
-        .innerJoin('extra.course', 'course', 'course.id = :courseId', { courseId })
+      let query = this.extraRepsRepository.createQueryBuilder('extra')
+        .select(['extra.id', 'extra.title', 'extra.type', 'extra.free'])
+        .addSelect(['client.id'])
+        .addSelect(['course.id', 'course.color', 'course.iconReps'])
+        .leftJoin('extra.clients', 'client', 'client.id = :clientId', { clientId })
+        .innerJoin('extra.course', 'course')
+
+      if (searchTerm)
+        query.where('extra.title ILIKE :searchTerm', { searchTerm: `%${searchTerm}%` })
+
+      extraReps = await query.orderBy('extra.id', 'DESC')
+        .limit(5)
         .getMany()
     } catch (error) {
       return { error }
@@ -43,7 +57,7 @@ export class ExtraService {
   }
 
   async addExtraRep(data: ExtraDto, fileUrl: string) {
-    const { courseId, title, type, free, typeDoc, richText } = data
+    const { courseId, title, type, free, typeDoc, richText, authorizedSendEmail } = data
 
     let count = await this.extraRepsRepository.createQueryBuilder('extra')
       .orderBy('extra.order', 'ASC')
@@ -67,6 +81,7 @@ export class ExtraService {
         title,
         type,
         free,
+        authorizedSendEmail,
         typeDoc,
         order: (count + 1),
         course: { id: courseId }

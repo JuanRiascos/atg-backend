@@ -1,7 +1,9 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
+import { CheckClient } from "src/entities/academy/check-client.entity";
 import { Check } from "src/entities/academy/check.entity";
 import { Video } from "src/entities/academy/video.entity";
+import { Client } from "src/entities/client/client.entity";
 import { Repository } from "typeorm";
 import { CheckDto } from "../dto/check.dto";
 
@@ -10,7 +12,9 @@ export class CheckService {
 
   constructor(
     @InjectRepository(Check) private readonly checkRepository: Repository<Check>,
-    @InjectRepository(Video) private readonly videoRepository: Repository<Video>
+    @InjectRepository(Video) private readonly videoRepository: Repository<Video>,
+    @InjectRepository(Client) private readonly clientRepository: Repository<Client>,
+    @InjectRepository(CheckClient) private readonly checkClientRepository: Repository<CheckClient>,
   ) { }
 
   async addCheck(body: CheckDto) {
@@ -82,5 +86,64 @@ export class CheckService {
       .getMany()
 
     return response
+  }
+
+  async answerClient(clientId, checkId) {
+    try {
+      const check = await this.checkRepository.createQueryBuilder('check')
+      .select(['check.id'])
+      .addSelect(['video.id'])
+      .innerJoin('check.video', 'video')
+      .where('check.id = :checkId', { checkId })
+      .getOne()
+      
+      if(check.video){
+        const findLastAnswer = await this.checkRepository.createQueryBuilder('check')
+        .innerJoin('check.video', 'video')
+        .where('video.id = :videoId', { videoId: check.video.id })
+        .getMany()
+  
+        if(findLastAnswer?.length > 0){
+          for (const lastAnswer of findLastAnswer) {
+            await this.checkClientRepository.delete({
+              client: { id: clientId },
+              check: { id: lastAnswer.id }
+            })
+          }
+        }
+      }
+      
+      await this.checkClientRepository.save({
+        client: { id: clientId },
+        check: { id: checkId }
+      })
+      
+      return 'OK'
+    } catch (error) {
+      return { error }
+    }
+  }
+
+  async getCheckByVideo(videoId, clientId) {
+    const videoChecks: any = await this.videoRepository.createQueryBuilder("video")
+    .select(['video.id'])
+    .addSelect(['checks.id', 'checks.description'])
+    .addSelect(['checkClients.id'])
+    .innerJoin('video.checks', 'checks')
+    .leftJoin('checks.clients', 'checkClients', 'checkClients.client.id = :clientId', { clientId })
+    .orderBy('checks.order', 'ASC')
+    .where("video.id = :videoId", { videoId })
+    .getOne()
+    
+    if(!videoChecks)
+      return []
+
+    return videoChecks.checks.map(item => {
+      return {
+        id: item.id, 
+        description: item.description,
+        checkClient: item.clients?.length > 0
+      }
+    })
   }
 }

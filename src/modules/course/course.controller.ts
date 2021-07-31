@@ -19,8 +19,8 @@ export class CourseController {
 
   @Get('/all')
   @UseGuards(AuthGuard('jwt'))
-  async getCourses(): Promise<ResponseError | ResponseSuccess> {
-    const response: any = await this.findService.getCourses()
+  async getCourses(@Req() req): Promise<ResponseError | ResponseSuccess> {
+    const response: any = await this.findService.getCourses(req?.user?.atgAppClientId)
 
     if (response.error)
       throw new BadRequestException(response)
@@ -50,6 +50,7 @@ export class CourseController {
     { name: 'image' },
     { name: 'iconReps' },
     { name: 'iconCases' },
+    { name: 'icon' }
   ], multer.storageGCS('courses/covers')))
   async createCourse(@UploadedFiles() files, @Body() body): Promise<ResponseError | ResponseSuccess> {
     const data = JSON.parse(body.data)
@@ -57,7 +58,8 @@ export class CourseController {
       data,
       files?.image,
       files?.iconCases,
-      files?.iconReps
+      files?.iconReps,
+      files?.icon
     )
 
     if (response.error)
@@ -73,6 +75,7 @@ export class CourseController {
     { name: 'image' },
     { name: 'iconReps' },
     { name: 'iconCases' },
+    { name: 'icon' }
   ], multer.storageGCS('courses/covers')))
   async updateCourse(@Param('courseId', ParseIntPipe) courseId: number, @UploadedFiles() files, @Body() body): Promise<ResponseError | ResponseSuccess> {
     const data = JSON.parse(body.data)
@@ -81,7 +84,8 @@ export class CourseController {
       data,
       files?.image,
       files?.iconCases,
-      files?.iconReps
+      files?.iconReps,
+      files?.icon
     )
 
     if (response.error)

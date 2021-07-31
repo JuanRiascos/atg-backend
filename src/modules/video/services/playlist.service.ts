@@ -6,6 +6,8 @@ import { Video } from 'src/entities/academy/video.entity';
 import { Client } from 'src/entities/client/client.entity';
 import { ExtraReps } from 'src/entities/academy/extra-reps.entity';
 import { CaseStudies } from 'src/entities/academy/case-studies.entity';
+import { Playlist } from 'src/entities/academy/playlist.entity';
+import { StatePlaylist } from 'src/entities/@enums/index.enum';
 
 @Injectable()
 export class PlaylistService {
@@ -15,6 +17,7 @@ export class PlaylistService {
     @InjectRepository(ExtraReps) private readonly extraRepsRepository: Repository<ExtraReps>,
     @InjectRepository(CaseStudies) private readonly caseStudiesRepository: Repository<CaseStudies>,
     @InjectRepository(Client) private readonly clientRepository: Repository<Client>,
+    @InjectRepository(Playlist) private readonly playlistRepository: Repository<Playlist>,
     private readonly httpService: HttpService
   ) {
   }
@@ -35,6 +38,7 @@ export class PlaylistService {
     await this.videoRepository.save(video)
 
     return { success: 'OK' }
+  
   }
 
   async changeCaseStudiesPlayList(clientId: number, caseStudieId: number) {

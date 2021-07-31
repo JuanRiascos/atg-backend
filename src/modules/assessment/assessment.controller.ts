@@ -25,6 +25,18 @@ export class AssessmentController {
     private readonly jwtService: JwtService
   ) { }
 
+  @Get('/last')
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Roles(roles.CLIENT)
+  async getLastAssessments(@Req() req, @Query() params): Promise<ResponseError | ResponseSuccess> {
+    const response: any = await this.assessmentService.getLastAssessments(req?.user?.atgAppClientId, params)
+
+    if (response.error)
+      throw new BadRequestException(response)
+
+    return { success: 'OK', payload: response }
+  }
+
   @Get('/all')
   @UseGuards(AuthGuard('jwt'))
   async getAssessments(@Req() req): Promise<ResponseError | ResponseSuccess> {

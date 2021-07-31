@@ -11,10 +11,13 @@ import {
 import { States } from "../@enums/index.enum";
 import { AssessmentClientTry } from "../academy/assessment-client-try.entity";
 import { CaseStudies } from "../academy/case-studies.entity";
+import { CheckClient } from "../academy/check-client.entity";
 import { Check } from "../academy/check.entity";
 import { ClientQuestion } from "../academy/client-question.entity";
 import { ExtraReps } from "../academy/extra-reps.entity";
 import { Interest } from "../academy/interest.entity";
+import { VideoQualification } from "../academy/video-qualification.entity";
+import { Playlist } from "../academy/playlist.entity";
 import { Video } from "../academy/video.entity";
 import { ViewCaseStudies } from "../academy/views-case-studies.entity";
 import { ViewExtraReps } from "../academy/views-extra-reps.entity";
@@ -72,6 +75,9 @@ export class Client {
   @OneToMany(() => Subscription, subscription => subscription.client)
   subscriptions: Subscription[];
 
+  /* @OneToMany(() => Playlist, playlist => playlist.client)
+  playlist: Playlist[]; */
+
   @ManyToMany(type => Video, video => video.clients, {
     onDelete: 'CASCADE', onUpdate: 'CASCADE'
   })
@@ -99,8 +105,9 @@ export class Client {
   @OneToMany(() => ViewVideos, view => view.client)
   viewsVideos: ViewVideos[]
 
-  @ManyToMany(() => Check, check => check.clients, {
-    onDelete: 'CASCADE', onUpdate: 'CASCADE'
-  })
-  checks: Check[]
+  @OneToMany(() => VideoQualification, videoQualification => videoQualification.client)
+  qualifications: VideoQualification[]
+
+  @OneToMany(() => CheckClient, checkClient => checkClient.client)
+  checks: CheckClient[]
 }

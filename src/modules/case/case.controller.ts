@@ -27,16 +27,17 @@ export class CaseController {
     return { success: 'OK', payload: response }
   }
 
-  @Get('/all/:courseId')
-  async getCasesCourse(@Param('courseId', ParseIntPipe) courseId: number): Promise<ResponseError | ResponseSuccess> {
-    const response: any = await this.caseService.getCases(courseId)
+  @Get('/last')
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Roles(roles.CLIENT)
+  async getLastCases(@Req() req, @Query() params): Promise<ResponseError | ResponseSuccess> {
+    const response: any = await this.caseService.getLastCases(req?.user?.atgAppClientId, params)
 
     if (response.error)
       throw new BadRequestException(response)
 
     return { success: 'OK', payload: response }
   }
-
 
   @Get('/top')
   @UseGuards(AuthGuard('jwt'), RolesGuard)

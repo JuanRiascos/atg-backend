@@ -24,6 +24,9 @@ export class CaseStudies {
   @Column('boolean', { default: false })
   free: boolean
 
+  @Column('boolean', { default: false, nullable: true })
+  authorizedSendEmail: boolean
+
   @Column("bigint", { nullable: true })
   order: number;
 

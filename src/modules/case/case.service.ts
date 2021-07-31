@@ -17,7 +17,6 @@ export class CaseService {
     let caseStudy
     try {
       caseStudy = await this.caseRepository.createQueryBuilder('case')
-        .innerJoinAndSelect('case.course', 'course')
         .leftJoinAndSelect('case.clients', 'client', 'client.id = :clientId', { clientId })
         .where('case.id = :caseId', { caseId })
         .getOne()
@@ -25,14 +24,28 @@ export class CaseService {
       return { error }
     }
 
+    if (!caseStudy)
+      return { error: 'NOT_FOUND' }
+
     return caseStudy
   }
 
-  async getCases(courseId: number) {
+  async getLastCases(clientId: number, params?: any) {
+    const { searchTerm } = params
     let cases
     try {
-      cases = await this.caseRepository.createQueryBuilder('case')
-        .innerJoin('case.course', 'course', 'course.id = :courseId', { courseId })
+      let query = this.caseRepository.createQueryBuilder('case')
+        .select(['case.id', 'case.title', 'case.free'])
+        .addSelect(['client.id'])
+        .addSelect(['course.id', 'course.color', 'course.iconCases'])
+        .leftJoin('case.clients', 'client', 'client.id = :clientId', { clientId })
+        .innerJoin('case.course', 'course')
+
+      if (searchTerm)
+        query.where('case.title ILIKE :searchTerm', { searchTerm: `%${searchTerm}%` })
+
+      cases = await query.orderBy('case.id', 'DESC')
+        .limit(5)
         .getMany()
     } catch (error) {
       return { error }
@@ -42,7 +55,7 @@ export class CaseService {
   }
 
   async addCase(data: CaseDto, fileUrl: string) {
-    const { courseId, title, free, typeDoc, richText } = data
+    const { courseId, title, free, typeDoc, richText, authorizedSendEmail } = data
 
     let count = await this.caseRepository.createQueryBuilder('case')
       .orderBy('case.order', 'ASC')
@@ -66,6 +79,7 @@ export class CaseService {
         title,
         free,
         typeDoc,
+        authorizedSendEmail,
         order: (count + 1),
         course: { id: courseId }
       })

@@ -35,9 +35,11 @@ export class VideoController {
     private readonly checkService: CheckService
   ) { }
 
-  @Get('/all/:courseId')
-  async getCasesCourse(@Param('courseId', ParseIntPipe) courseId: number): Promise<ResponseError | ResponseSuccess> {
-    const response: any = await this.videoService.getVideosCourse(courseId)
+  @Get('/last')
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Roles(roles.CLIENT)
+  async getLastVideos(@Req() req, @Query() params): Promise<ResponseError | ResponseSuccess> {
+    const response: any = await this.videoService.getLastVideos(req?.user?.atgAppClientId, params)
 
     if (response.error)
       throw new BadRequestException(response)
@@ -62,6 +64,25 @@ export class VideoController {
   @Roles(roles.CLIENT)
   async addView(@Req() req, @Body() body: any): Promise<ResponseError | ResponseSuccess> {
     const response: any = await this.videoService.addViewVideo(req?.user?.atgAppClientId, body)
+
+    if (response.error)
+      throw new BadRequestException(response)
+
+    return { success: 'OK', payload: response }
+  }
+
+  @Get('/qualification')
+  @UseGuards(AuthGuard('jwt'))
+  async getQualification(@Req() req, @Query('videoId') videoId): Promise<ResponseError | ResponseSuccess> {
+    const response = await this.videoService.getQualification(req?.user?.atgAppClientId, videoId)
+
+    return { success: 'OK', payload: response }
+  }
+
+  @Post('/qualification')
+  @UseGuards(AuthGuard('jwt'))
+  async qualification(@Req() req, @Body() body): Promise<ResponseError | ResponseSuccess> {
+    const response = await this.videoService.qualification(req?.user?.atgAppClientId, body.videoId, body.value)
 
     if (response.error)
       throw new BadRequestException(response)
@@ -138,7 +159,7 @@ export class VideoController {
   async changeVideoPlayList(
     @Req() req,
     @Param('id', ParseIntPipe) id: number
-    
+
   ): Promise<ResponseError | ResponseSuccess> {
     const response = await this.playlistService.changeVideoPlayList(req?.user?.atgAppClientId, id)
     return { success: 'OK', payload: response }
@@ -161,7 +182,7 @@ export class VideoController {
   async changeCaseStudiesPlayList(
     @Req() req,
     @Param('id', ParseIntPipe) id: number
-    
+
   ): Promise<ResponseError | ResponseSuccess> {
     const response = await this.playlistService.changeCaseStudiesPlayList(req?.user?.atgAppClientId, id)
     return { success: 'OK', payload: response }
@@ -172,7 +193,7 @@ export class VideoController {
   async changeExtraRepsPlayList(
     @Req() req,
     @Param('id', ParseIntPipe) id: number
-    
+
   ): Promise<ResponseError | ResponseSuccess> {
     const response = await this.playlistService.changeExtraRepsPlayList(req?.user?.atgAppClientId, id)
     return { success: 'OK', payload: response }

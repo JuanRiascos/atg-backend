@@ -27,10 +27,11 @@ export class ExtraController {
     return { success: 'OK', payload: response }
   }
 
-
-  @Get('/all/:courseId')
-  async getExtraRepsCourse(@Param('courseId', ParseIntPipe) courseId: number): Promise<ResponseError | ResponseSuccess> {
-    const response: any = await this.extraService.getExtraReps(courseId)
+  @Get('/last')
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Roles(roles.CLIENT)
+  async getLastExtras(@Req() req, @Query() params): Promise<ResponseError | ResponseSuccess> {
+    const response: any = await this.extraService.getLastExtras(req?.user?.atgAppClientId, params)
 
     if (response.error)
       throw new BadRequestException(response)
