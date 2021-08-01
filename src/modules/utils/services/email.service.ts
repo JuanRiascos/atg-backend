@@ -23,7 +23,7 @@ export class EmailService {
     const attachments = [body?.file]
 
     await this.sendgridService.sendEmail(
-      body?.resource?.toEmail,
+      user?.email,
       Templates.RESOURCE_SEND,
       {
         title: body?.resource?.title
