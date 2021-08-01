@@ -69,6 +69,17 @@ export class UserController {
     return { success: 'OK', payload: response }
   }
 
+  @Get('/my-analytics')
+  @UseGuards(AuthGuard('jwt'))
+  async getMyAnayltics(@Req() req): Promise<ResponseError | ResponseSuccess> {
+    const response: any = await this.personService.getMyAnalytics(req?.user?.atgAppClientId);
+
+    if (response.error)
+      throw new UnauthorizedException(response)
+
+    return { success: 'OK', payload: response }
+  }
+
   @Put('/update-person')
   @UseGuards(AuthGuard('jwt'))
   async updatePerson(@Request() req, @Body() body: UpdatePersonDto): Promise<ResponseError | ResponseSuccess> {
