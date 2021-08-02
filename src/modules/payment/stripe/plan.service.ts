@@ -11,11 +11,10 @@ export class PlanService {
 
   constructor(
     @InjectRepository(Plan) private readonly planRepository: Repository<Plan>,
-    @InjectRepository(Client) private readonly clientRepository: Repository<Client>
+    @InjectRepository(Client) private readonly clientRepository: Repository<Client>,
   ) { }
 
   async getPlans(req) {
-
     const client = await this.clientRepository.createQueryBuilder('client')
       .select(["client.id"])
       .leftJoin(
